@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Booking – PT Mitra Asa Pratama</title>
+  <style>
+    :root {
+      --primary:#007bff;
+      --bg:#f4f7fa;
+      --card-bg:#ffffff;
+      --radius:1rem;
+      --shadow:0 4px 12px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;}
+    body{background:var(--bg);padding:1.25rem;}
+    header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;}
+    header img{height:48px;width:auto;}
+    h1{font-size:1.5rem;font-weight:600;color:#222;}
+
+    .grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+    .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.25rem;display:flex;flex-direction:column;justify-content:space-between;min-height:180px;}
+    .card h2{font-size:1.25rem;color:#222;margin-bottom:.5rem;}
+    .status{font-weight:600;margin-bottom:1rem;}
+    .available{color:green;}
+    .occupied{color:red;}
+    .btn{background:var(--primary);border:none;color:#fff;padding:.65rem 1rem;border-radius:.5rem;font-size:1rem;cursor:pointer;transition:opacity .2s ease;}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+    footer{margin-top:2rem;font-size:.8rem;color:#666;text-align:center;}
+  </style>
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header>
+    <img src="logo-map.jpg" alt="PT Mitra Asa Pratama logo">
+    <h1>Peminjaman Ruang Meeting</h1>
+  </header>
+
+  <!-- ===== Room Cards ===== -->
+  <section class="grid">
+    <!-- Arjuna -->
+    <div class="card">
+      <div>
+        <h2>Ruang Meeting Arjuna</h2>
+        <p class="status available">Tersedia</p>
+      </div>
+      <button class="btn" onclick="window.open('https://forms.gle/yourGoogleFormID?entry.123456=Arjuna','_blank')">Ajukan Peminjaman</button>
+    </div>
+
+    <!-- Srikandi -->
+    <div class="card">
+      <div>
+        <h2>Ruang Meeting Srikandi</h2>
+        <p class="status occupied">Terpakai (09.00 – 11.00)</p>
+      </div>
+      <button class="btn" disabled>Ajukan Peminjaman</button>
+    </div>
+
+    <!-- Gatotkaca -->
+    <div class="card">
+      <div>
+        <h2>Ruang Meeting Gatotkaca</h2>
+        <p class="status available">Tersedia</p>
+      </div>
+      <button class="btn" onclick="window.open('https://forms.gle/yourGoogleFormID?entry.123456=Gatotkaca','_blank')">Ajukan Peminjaman</button>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> PT Mitra Asa Pratama
+  </footer>
+
+  <script>
+    // Update footer year automatically
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // TODO: Ganti status occupied/available secara manual, atau integrasikan ke Google Calendar API.
+  </script>
+</body>
+</html>
