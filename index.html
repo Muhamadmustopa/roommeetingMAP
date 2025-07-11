@@ -4,132 +4,108 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Peminjaman Ruang Meeting</title>
-  
-  <!-- TailwindCSS CDN -->
+
+  <!-- Tailwind -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <!-- ==========  Config & Script  ========== -->
+  <!-- ========= Konfigurasi ========= -->
   <script>
+    /* ID kalender Google */
     const calendarIds = {
-      arjuna:  "dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d@group.calendar.google.com",
-      srikandi:"4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753@group.calendar.google.com",
-      gatotkaca:"a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2@group.calendar.google.com"
+      arjuna:   'dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d@group.calendar.google.com',
+      srikandi: '4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753@group.calendar.google.com',
+      gatotkaca:'a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2@group.calendar.google.com'
     };
-    const apiKey     = "AIzaSyBee80FlAkCPEy4O5lbSgS2ygmetMY0_2w"; // read-only key
-    const refreshSec = 60; // refresh interval in seconds
+    const apiKey     = 'AIzaSyBee80FlAkCPEy4O5lbSgS2ygmetMY0_2w';      // read‑only
+    const refreshSec = 60;                                            // refresh tiap 60 dtk
     const formLink   = 'https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link';
 
+    /* -------- Cek status ruang -------- */
     async function roomBusy(calId){
       const now     = new Date();
       const timeMin = now.toISOString();
-      const timeMax = new Date(now.getTime()+ 60*1000).toISOString();
+      const timeMax = new Date(now.getTime()+60*1000).toISOString();
       const url = `https://www.googleapis.com/calendar/v3/calendars/${calId}/events?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${timeMin}&timeMax=${timeMax}`;
-      try {
-        const res  = await fetch(url);
-        const data = await res.json();
-        return (data.items && data.items.length>0);
-      } catch(e){ return false; }
+      const res  = await fetch(url).catch(()=>null);
+      const data = await res?.json?.();
+      return data?.items?.length > 0;
     }
 
+    /* -------- Update status + grafik -------- */
     async function updateStatus(){
       const usage = [];
       for(const [room,id] of Object.entries(calendarIds)){
-        const busy  = await roomBusy(id);
-        const el    = document.getElementById(`status-${room}`);
-        el.textContent = busy ? "DIPAKAI" : "TERSEDIA";
-        el.className   = busy ? "text-red-600 font-extrabold text-3xl text-center" : "text-green-600 font-extrabold text-3xl text-center";
+        const busy = await roomBusy(id);
+        const el   = document.getElementById(`status-${room}`);
+        el.textContent = busy ? 'DIPAKAI' : 'TERSEDIA';
+        el.className   = busy
+          ? 'text-red-600 font-extrabold text-3xl text-center'
+          : 'text-green-600 font-extrabold text-3xl text-center';
         usage.push(busy ? 1 : 0);
       }
       drawChart(usage);
     }
 
-    function drawChart(data){
+    /* -------- Grafik doughnut -------- */
+    function drawChart(arr){
       const ctx = document.getElementById('usageChart').getContext('2d');
-      if(window.usageChartInstance){window.usageChartInstance.destroy();}
-      window.usageChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Terpakai','Tersedia'],
-          datasets: [{
-            data: [data.filter(b=>b===1).length, data.filter(b=>b===0).length],
-            backgroundColor:['#EF4444','#22C55E']
-          }]
-        },
+      if(window.usageChartInstance) window.usageChartInstance.destroy();
+      window.usageChartInstance = new Chart(ctx,{
+        type:'doughnut',
+        data:{labels:['Terpakai','Tersedia'],
+          datasets:[{data:[arr.filter(x=>x).length, arr.filter(x=>!x).length],
+            backgroundColor:['#EF4444','#22C55E']}]},
         options:{plugins:{legend:{display:false}},cutout:'70%'}
       });
     }
 
-    window.addEventListener('DOMContentLoaded',()=>{
-      updateStatus();
-      setInterval(updateStatus,refreshSec*1000);
+    /* -------- Build kartu & init -------- */
+    document.addEventListener('DOMContentLoaded',()=>{
+      const rooms=[{key:'arjuna',name:'Ruang Meeting Arjuna'},
+                   {key:'srikandi',name:'Ruang Meeting Srikandi'},
+                   {key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}];
 
-      const cardsContainer = document.getElementById('cards');
-      const template       = document.getElementById('card-template');
-      const rooms = [
-        {key:'arjuna',   name:'Ruang Meeting Arjuna'},
-        {key:'srikandi', name:'Ruang Meeting Srikandi'},
-        {key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}
-      ];
+      const tpl = document.getElementById('card-template');
+      const wrap= document.getElementById('cards');
 
       rooms.forEach(r=>{
-        const clone = template.content.cloneNode(true);
-        clone.querySelector('.room-title').textContent = r.name;
-        const statusEl = clone.querySelector('.room-status');
-        statusEl.id    = `status-${r.key}`;
-        const linkBtn  = clone.querySelector('.room-link');
-        linkBtn.href   = formLink;
-        cardsContainer.appendChild(clone);
+        const node = tpl.content.cloneNode(true);
+        node.querySelector('.room-title').textContent = r.name;
+        const st   = node.querySelector('.room-status');
+        st.id = `status-${r.key}`;
+        const link = node.querySelector('.room-link');
+        link.href  = formLink;                            // set href
+        link.addEventListener('click',e=>{               // fallback JS
+          e.preventDefault(); window.open(formLink,'_blank');
+        });
+        wrap.appendChild(node);
       });
+
+      updateStatus();                 // first fetch
+      setInterval(updateStatus,refreshSec*1000);
     });
   </script>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col items-center">
-  <!-- ===== Header ===== -->
+  <!-- ---------- Header ---------- -->
   <header class="w-full bg-white shadow p-6 flex flex-col items-center">
-    <img src="LOGO MAP.jpg" alt="Logo MAP" class="h-20 w-auto rounded mb-3" />
-    <h1 class="text-5xl font-black text-center">Dashboard Peminjaman Ruang Meeting</h1>
+    <img src="logo.jpg" alt="Logo" class="h-20 mb-3 rounded" />
+    <h1 class="text-4xl font-black text-center">Dashboard Peminjaman Ruang Meeting</h1>
   </header>
 
-  <!-- ===== Nav Tabs ===== -->
-  <nav class="mt-6 mb-4">
+  <!-- ---------- Navigasi ---------- -->
+  <nav class="mt-5 mb-4">
     <ul class="flex space-x-4 text-xl font-semibold">
-      <li><a href="#status" class="hover:underline">Status Ruangan</a></li>
+      <li><a href="#status"   class="hover:underline">Status Ruangan</a></li>
       <li><a href="#dashboard" class="hover:underline">Dashboard</a></li>
       <li><a href="#kalender" class="hover:underline">Kalender</a></li>
     </ul>
   </nav>
 
-  <!-- ===== Room Status ===== -->
+  <!-- ---------- Kartu Status ---------- -->
   <section id="status" class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl px-4">
     <template id="card-template">
-      <div class="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center text-center">
-        <h2 class="room-title text-3xl font-bold mb-4 text-center"></h2>
-        <p class="room-status text-gray-500 text-3xl font-extrabold mb-6 text-center">Memuat…</p>
-        <a class="room-link w-full" target="_blank">
-          <a href="${formLink}" class="room-link w-full" target="_blank">
-  <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-full text-2xl font-semibold">
-    Ajukan Peminjaman
-  </button> </a>     
-          <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-full text-2xl font-semibold">Ajukan Peminjaman</button>
-        </a> 
-      </div>
-    </template>
-    <div id="cards" class="contents"></div>
-  </section>
-
-  <!-- ===== Dashboard ===== -->
-  <section id="dashboard" class="w-full max-w-2xl mt-12 px-6">
-    <h2 class="text-4xl font-bold mb-6 text-center">Statistik Pemakaian Saat Ini</h2>
-    <canvas id="usageChart" height="300"></canvas>
-  </section>
-
-  <!-- ===== Kalender Embed ===== -->
-  <section id="kalender" class="w-full max-w-6xl mt-12 px-4 mb-12 flex flex-col items-center">
-    <h2 class="text-4xl font-bold mb-4 text-center">Kalender Ruang Meeting</h2>
-    <iframe src="https://calendar.google.com/calendar/embed?src=dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d%40group.calendar.google.com&src=4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753%40group.calendar.google.com&src=a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
-  </section>
-
-  <footer class="bg-white w-full py-4 text-center text-gray-600 text-sm">© 2025 PT Mitra Asa Pratama</footer>
-</body>
-</html>
+      <d
