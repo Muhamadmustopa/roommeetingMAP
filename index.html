@@ -7,7 +7,7 @@
   
   <!-- TailwindCSS CDN -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <!-- ==========  Config & Script  ========== -->
   <script>
@@ -68,7 +68,7 @@
 <body class="bg-gray-100 min-h-screen flex flex-col items-center">
   <!-- ===== Header ===== -->
   <header class="w-full bg-white shadow p-6 flex flex-col items-center">
-    <img src="logo-map.jpg" alt="Logo MAP" class="h-20 w-auto rounded mb-3" />
+    <img src="LOGO MAP.jpg" alt="Logo MAP" class="h-20 w-auto rounded mb-3" />
     <h1 class="text-5xl font-black text-center">Dashboard Peminjaman Ruang Meeting</h1>
   </header>
 
@@ -116,6 +116,13 @@
       {key:'srikandi', name:'Ruang Meeting Srikandi'},
       {key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}
     ];
+
+    // ===== Link Google Form per ruang (ganti jika berbeda) =====
+    const formLinks = {
+      arjuna:   'https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link',
+      srikandi: 'https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link',
+      gatotkaca:'https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link'
+    };
     const cardsContainer = document.getElementById('cards');
     const template       = document.getElementById('card-template');
 
