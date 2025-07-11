@@ -5,47 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Peminjaman Ruang Meeting</title>
 
-  <!-- Tailwind v2 CDN (tetap) -->
+  <!-- Tailwind v2 -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
-  <!-- Chart.js -->
+  <!-- Chart.js for doughnut chart -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script>
-  /* …kode konfigurasi & fungsi lain… */
-
-  document.addEventListener('DOMContentLoaded', () => {
-    feather.replace();                     // sudah ada
-
-    /* ========= POTONGAN TOGGLE SIDEBAR ========= */
-    const sidebar  = document.getElementById('sidebar');
-    const btnOpen  = document.getElementById('btn-open');
-    const btnClose = document.getElementById('btn-close');
-
-    btnOpen.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
-    btnClose.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
-
-    // Klik di luar sidebar saat layar <768 px → tutup
-    document.addEventListener('click', e => {
-      if (!sidebar.contains(e.target) && !btnOpen.contains(e.target) && window.innerWidth < 768) {
-        sidebar.classList.add('-translate-x-full');
-      }
-    });
-
-    /* ========= KODE LAIN (membangun kartu, update status, dll.) ========= */
-    // …rooms.forEach(…), updateStatus(), dst.
-  });
-</script>
-
 
   <style>
-    /* animasi sidebar */
+    /* animasi slide sidebar */
     .sidebar { transition: transform 0.25s ease; }
   </style>
 
-  <!-- ========= Konfigurasi ========= -->
+  <!-- ======== JavaScript ========== -->
   <script>
-    /* ID kalender Google */
+    /* ---------------- Konfigurasi ---------------- */
     const calendarIds = {
       arjuna:   'dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d@group.calendar.google.com',
       srikandi: '4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753@group.calendar.google.com',
@@ -55,7 +29,7 @@
     const refreshSec = 60;
     const formLink   = 'https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=dialog';
 
-    /* -------- Cek status ruang -------- */
+    /* ------------- Fungsi Utilitas -------------- */
     async function roomBusy(calId){
       const now     = new Date();
       const timeMin = now.toISOString();
@@ -66,22 +40,6 @@
       return data?.items?.length > 0;
     }
 
-    /* -------- Update status + grafik -------- */
-    async function updateStatus(){
-      const usage = [];
-      for(const [room,id] of Object.entries(calendarIds)){
-        const busy = await roomBusy(id);
-        const el   = document.getElementById(`status-${room}`);
-        el.textContent = busy ? 'DIPAKAI' : 'TERSEDIA';
-        el.className   = busy
-          ? 'text-red-600 font-extrabold text-3xl text-center'
-          : 'text-green-600 font-extrabold text-3xl text-center';
-        usage.push(busy ? 1 : 0);
-      }
-      drawChart(usage);
-    }
-
-    /* -------- Grafik doughnut -------- */
     function drawChart(arr){
       const ctx = document.getElementById('usageChart').getContext('2d');
       if(window.usageChartInstance) window.usageChartInstance.destroy();
@@ -94,22 +52,37 @@
       });
     }
 
-    /* -------- Build kartu & init -------- */
+    async function updateStatus(){
+      const usage = [];
+      for(const [room,id] of Object.entries(calendarIds)){
+        const busy = await roomBusy(id);
+        const el   = document.getElementById(`status-${room}`);
+        el.textContent = busy ? 'DIPAKAI' : 'TERSEDIA';
+        el.className   = busy ? 'text-red-600 font-extrabold text-2xl text-center'
+                              : 'text-green-600 font-extrabold text-2xl text-center';
+        usage.push(busy ? 1 : 0);
+      }
+      drawChart(usage);
+    }
+
+    /* ------------- Init DOMContentLoaded -------------- */
     document.addEventListener('DOMContentLoaded',()=>{
       feather.replace();
 
-      /* sidebar toggle */
+      /* toggle sidebar */
       const sidebar  = document.getElementById('sidebar');
       const btnOpen  = document.getElementById('btn-open');
       const btnClose = document.getElementById('btn-close');
-      btnOpen.addEventListener('click',()=> sidebar.classList.remove('-translate-x-full'));
-      btnClose.addEventListener('click',()=> sidebar.classList.add('-translate-x-full'));
-      document.addEventListener('click',e=>{
-        if(!sidebar.contains(e.target)&&!btnOpen.contains(e.target)&&window.innerWidth<768){
+
+      btnOpen.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+      btnClose.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+      document.addEventListener('click', e => {
+        if (!sidebar.contains(e.target) && !btnOpen.contains(e.target) && window.innerWidth < 768) {
           sidebar.classList.add('-translate-x-full');
         }
       });
 
+      /* build kartu ruangan */
       const rooms=[{key:'arjuna',name:'Ruang Meeting Arjuna'},
                    {key:'srikandi',name:'Ruang Meeting Srikandi'},
                    {key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}];
@@ -120,7 +93,7 @@
       rooms.forEach(r=>{
         const node = tpl.content.cloneNode(true);
         node.querySelector('.room-title').textContent = r.name;
-        const st   = node.querySelector('.room-status');
+        const st = node.querySelector('.room-status');
         st.id = `status-${r.key}`;
         const link = node.querySelector('.room-link');
         link.href  = formLink;
@@ -129,20 +102,22 @@
       });
 
       updateStatus();
-      setInterval(updateStatus,refreshSec*1000);
+      setInterval(updateStatus, refreshSec*1000);
     });
   </script>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex">
-  <!-- ====== Sidebar ====== -->
+  <!-- ===== Sidebar ===== -->
   <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-white shadow-lg -translate-x-full md:translate-x-0 z-40">
+    <!-- Header Sidebar -->
     <div class="flex items-center justify-between p-4 border-b">
-      <span class="text-xl font-bold text-indigo-600">MAP- MEETING</span>
+      <span class="text-xl font-bold text-indigo-500">MAP R MEETING</span>
       <button id="btn-close" class="md:hidden p-2 rounded hover:bg-gray-100">
         <i data-feather="x"></i>
       </button>
     </div>
+    <!-- Menu -->
     <nav class="mt-4">
       <ul class="space-y-1">
         <li>
@@ -165,15 +140,9 @@
         </li>
       </ul>
     </nav>
-    <div class="absolute bottom-0 w-full p-4 border-t">
-      <button class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-red-600 hover:bg-red-50">
-        <i data-feather="log-out"></i>
-        <span>Keluar</span>
-      </button>
-    </div>
   </aside>
 
-  <!-- ====== Main Content ====== -->
+  <!-- ===== Main ===== -->
   <div class="flex-1 flex flex-col overflow-x-hidden">
     <!-- Top bar -->
     <header class="w-full bg-white shadow p-4 flex items-center gap-4">
@@ -185,13 +154,7 @@
 
     <!-- Konten -->
     <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
-      <!-- ---------- Header lama ---------- -->
-      <section class="w-full bg-white shadow p-6 flex flex-col items-center md:hidden">
-        <!-- logo untuk mobile -->
-        <img src="logo.jpg" alt="Logo" class="h-16 mb-3 rounded" />
-      </section>
-
-      <!-- ---------- Kartu Status ---------- -->
+      <!-- Kartu Status -->
       <section id="status" class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl px-4 mt-8">
         <template id="card-template">
           <div class="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center text-center">
@@ -207,14 +170,14 @@
         <div id="cards" class="contents"></div>
       </section>
 
-      <!-- ---------- Dashboard ---------- -->
+      <!-- Dashboard -->
       <section id="dashboard" class="w-full max-w-2xl mt-12 px-6">
         <h2 class="text-3xl font-bold mb-6 text-center">Statistik Pemakaian Saat Ini</h2>
         <canvas id="usageChart" height="100"></canvas>
       </section>
 
-      <!-- ---------- Kalender ---------- -->
-      <section id="kalender" class="w-full max-w-6xl mt-10 px-2 mb-10 flex flex-col items-center space-y-16">
+      <!-- Kalender -->
+      <section id="kalender" class="w-full max-w-6xl mt-12 px-2 mb-10 flex flex-col items-center space-y-16">
         <!-- Arjuna -->
         <div class="w-full flex flex-col items-center">
           <h2 class="text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Arjuna</h2>
@@ -222,7 +185,7 @@
             <iframe src="https://calendar.google.com/calendar/embed?src=dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d%40group.calendar.google.com&ctz=Asia/Jakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
           </div>
         </div>
-        <!-- Gatotkaca -->
+        <!-- Gatot Kaca -->
         <div class="w-full flex flex-col items-center">
           <h2 class="text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Gatot Kaca</h2>
           <div class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
@@ -233,7 +196,7 @@
         <div class="w-full flex flex-col items-center">
           <h2 class="text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Srikandi</h2>
           <div class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
-            <iframe src="https://calendar.google.com/calendar/embed?src=4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+           <iframe src="https://calendar.google.com/calendar/embed?src=4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
           </div>
         </div>
       </section>
