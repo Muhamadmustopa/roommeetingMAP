@@ -11,6 +11,32 @@
   <script src="https://unpkg.com/feather-icons"></script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+  /* …kode konfigurasi & fungsi lain… */
+
+  document.addEventListener('DOMContentLoaded', () => {
+    feather.replace();                     // sudah ada
+
+    /* ========= POTONGAN TOGGLE SIDEBAR ========= */
+    const sidebar  = document.getElementById('sidebar');
+    const btnOpen  = document.getElementById('btn-open');
+    const btnClose = document.getElementById('btn-close');
+
+    btnOpen.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+    btnClose.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+
+    // Klik di luar sidebar saat layar <768 px → tutup
+    document.addEventListener('click', e => {
+      if (!sidebar.contains(e.target) && !btnOpen.contains(e.target) && window.innerWidth < 768) {
+        sidebar.classList.add('-translate-x-full');
+      }
+    });
+
+    /* ========= KODE LAIN (membangun kartu, update status, dll.) ========= */
+    // …rooms.forEach(…), updateStatus(), dst.
+  });
+</script>
+
 
   <style>
     /* animasi sidebar */
@@ -112,7 +138,7 @@
   <!-- ====== Sidebar ====== -->
   <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-white shadow-lg -translate-x-full md:translate-x-0 z-40">
     <div class="flex items-center justify-between p-4 border-b">
-      <span class="text-xl font-bold text-indigo-600">Mitra Booking</span>
+      <span class="text-xl font-bold text-indigo-600">MAP- MEETING</span>
       <button id="btn-close" class="md:hidden p-2 rounded hover:bg-gray-100">
         <i data-feather="x"></i>
       </button>
