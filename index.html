@@ -47,7 +47,7 @@
       <li><a href="#dashboard" class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600"><i data-feather="bar-chart-2" class="text-indigo-400"></i>Dashboard</a></li>
       <li><a href="#kalender"  class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600"><i data-feather="calendar"  class="text-indigo-400"></i>Kalender</a></li>
       <li><a href="https://docs.google.com/spreadsheets/d/1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA/preview"target="_blank" class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors">
-    <i data-feather="file-text" class="text-indigo-400"></i><span>Daftar Booking</span>
+    <i data-feather="file-text" class="text-indigo-400"></i><span>List Booking</span>
   </a>
 </li>
 
@@ -80,9 +80,9 @@
     overlay.classList.add('hidden');
   }
 
-  btnOpen.addEventListener('click', openSidebar);
-  btnClose.addEventListener('click', closeSidebar);
-  overlay.addEventListener('click', closeSidebar);
+  btnOpen.addEventListener('onclick', openSidebar);
+  btnClose.addEventListener('onclick', closeSidebar);
+  overlay.addEventListener('onclick', closeSidebar);
 </script>
 
   <!-- ============ MAIN ============ -->
@@ -95,29 +95,40 @@
         <i data-feather="menu"></i>
       </button>
       <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">
-                         Dashboard Peminjaman Ruang Meeting
+                         Peminjaman Ruang Meeting
       </h1>
     </header>
 
     <!-- ============ CONTENT ============ -->
     <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
+<!-- KARTU STATUS ================================================= -->
+<section id="status"
+         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-5xl px-3 mt-6">
 
-      <!-- KARTU STATUS -->
-      <section id="status"
-               class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-2 w-full max-w-3xl px-3 mt-3">
-        <template id="card-template">
-          <div class="bg-white p-3 sm:p-2 rounded-2xl shadow flex flex-col items-center text-center">
-            <h2 class="room-title text-xl sm:text-2xl font-semibold mb-3"></h2>
-            <p  class="room-status text-gray-500 text-xl font-bold mb-5">Memuat…</p>
-            <a  class="room-link w-full" target="_blank" rel="noopener">
-              <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-full font-semibold">
-                Ajukan Peminjaman
-              </button>
-            </a>
-          </div>
-        </template>
-        <div id="cards" class="contents"></div>
-      </section>
+  <!-- Template kartu -->
+  <template id="card-template">
+    <div class="card-wrapper bg-gradient-to-br from-gray-50 via-white to-gray-100
+                border-4 border-indigo-300 rounded-2xl shadow-lg
+                flex flex-col items-center text-center p-6 transition-all">
+      <h2 class="room-title text-2xl font-bold mb-4 text-indigo-700 drop-shadow">Ruang Meeting</h2>
+
+      <!-- status, warna di‑update script -->
+      <p class="room-status text-3xl font-extrabold mb-6 text-gray-500">Memuat…</p>
+
+      <a class="room-link w-full" target="_blank" rel="noopener">
+        <button class="w-full py-3 rounded-full font-semibold
+                       bg-indigo-500 hover:bg-indigo-600 active:scale-95
+                       text-white shadow-md transition-transform">
+          Ajukan Peminjaman
+        </button>
+      </a>
+    </div>
+  </template>
+
+  <!-- diisi via JS -->
+  <div id="cards" class="contents"></div>
+</section>
+
 
       <!-- DASHBOARD CHART -->
       <section id="dashboard" class="w-full max-w-2xl mt-12 px-6">
