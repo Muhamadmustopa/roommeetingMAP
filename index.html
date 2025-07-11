@@ -9,15 +9,17 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
-  <!-- Chart.js for doughnut chart -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <style>
-    /* animasi slide sidebar */
     .sidebar { transition: transform 0.25s ease; }
+    /* ketika sidebar terbuka di desktop, beri margin kiri agar judul tidak bergeser */
+    @media (min-width: 768px) {
+      .with-sidebar { margin-left: 16rem; } /* 64px×4 = 256px → w-64 */
+    }
   </style>
 
-  <!-- ======== JavaScript ========== -->
   <script>
     /* ---------------- Konfigurasi ---------------- */
     const calendarIds = {
@@ -29,7 +31,6 @@
     const refreshSec = 60;
     const formLink   = 'https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=dialog';
 
-    /* ------------- Fungsi Utilitas -------------- */
     async function roomBusy(calId){
       const now     = new Date();
       const timeMin = now.toISOString();
@@ -65,44 +66,51 @@
       drawChart(usage);
     }
 
-    /* ------------- Init DOMContentLoaded -------------- */
     document.addEventListener('DOMContentLoaded',()=>{
       feather.replace();
 
-      /* toggle sidebar */
+      /* Toggle Sidebar */
       const sidebar  = document.getElementById('sidebar');
       const btnOpen  = document.getElementById('btn-open');
       const btnClose = document.getElementById('btn-close');
+      const header   = document.getElementById('main-header');
 
-      btnOpen.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
-      btnClose.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+      const showSidebar = () => {
+        sidebar.classList.remove('-translate-x-full');
+        header.classList.add('with-sidebar');
+      };
+      const hideSidebar = () => {
+        sidebar.classList.add('-translate-x-full');
+        header.classList.remove('with-sidebar');
+      };
+
+      btnOpen.addEventListener('click', showSidebar);
+      btnClose.addEventListener('click', hideSidebar);
       document.addEventListener('click', e => {
         if (!sidebar.contains(e.target) && !btnOpen.contains(e.target) && window.innerWidth < 768) {
-          sidebar.classList.add('-translate-x-full');
+          hideSidebar();
         }
       });
 
-      /* build kartu ruangan */
+      /* Build kartu */
       const rooms=[{key:'arjuna',name:'Ruang Meeting Arjuna'},
                    {key:'srikandi',name:'Ruang Meeting Srikandi'},
                    {key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}];
-
-      const tpl = document.getElementById('card-template');
-      const wrap= document.getElementById('cards');
-
+      const tpl=document.getElementById('card-template');
+      const wrap=document.getElementById('cards');
       rooms.forEach(r=>{
-        const node = tpl.content.cloneNode(true);
-        node.querySelector('.room-title').textContent = r.name;
-        const st = node.querySelector('.room-status');
-        st.id = `status-${r.key}`;
-        const link = node.querySelector('.room-link');
-        link.href  = formLink;
+        const node=tpl.content.cloneNode(true);
+        node.querySelector('.room-title').textContent=r.name;
+        const st=node.querySelector('.room-status');
+        st.id=`status-${r.key}`;
+        const link=node.querySelector('.room-link');
+        link.href=formLink;
         link.addEventListener('click',e=>{e.preventDefault();window.open(formLink,'_blank');});
         wrap.appendChild(node);
       });
 
       updateStatus();
-      setInterval(updateStatus, refreshSec*1000);
+      setInterval(updateStatus,refreshSec*1000);
     });
   </script>
 </head>
@@ -110,49 +118,26 @@
 <body class="bg-gray-100 min-h-screen flex">
   <!-- ===== Sidebar ===== -->
   <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-white shadow-lg -translate-x-full md:translate-x-0 z-40">
-    <!-- Header Sidebar -->
     <div class="flex items-center justify-between p-4 border-b">
-      <span class="text-xl font-bold text-indigo-500">MAP R MEETING</span>
-      <button id="btn-close" class="md:hidden p-2 rounded hover:bg-gray-100">
-        <i data-feather="x"></i>
-      </button>
+      <span class="text-xl font-bold text-indigo-400">MAP Room Meet</span>
+      <button id="btn-close" class="md:hidden p-2 rounded hover:bg-gray-100"><i data-feather="x"></i></button>
     </div>
-    <!-- Menu -->
     <nav class="mt-4">
       <ul class="space-y-1">
-        <li>
-          <a href="#status" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50">
-            <i data-feather="monitor"></i>
-            <span>Status</span>
-          </a>
-        </li>
-        <li>
-          <a href="#dashboard" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50">
-            <i data-feather="bar-chart-2"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="#kalender" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50">
-            <i data-feather="calendar"></i>
-            <span>Kalender</span>
-          </a>
-        </li>
+        <li><a href="#status" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50"><i data-feather="monitor"></i><span>Status</span></a></li>
+        <li><a href="#dashboard" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50"><i data-feather="bar-chart-2"></i><span>Dashboard</span></a></li>
+        <li><a href="#kalender" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50"><i data-feather="calendar"></i><span>Kalender</span></a></li>
       </ul>
     </nav>
   </aside>
 
   <!-- ===== Main ===== -->
   <div class="flex-1 flex flex-col overflow-x-hidden">
-    <!-- Top bar -->
-    <header class="w-full bg-white shadow p-4 flex items-center gap-4">
-      <button id="btn-open" class="md:hidden p-2 rounded hover:bg-gray-100">
-        <i data-feather="menu"></i>
-      </button>
-      <h1 class="text-2xl font-black">Dashboard Peminjaman Ruang Meeting</h1>
+    <header id="main-header" class="w-full bg-white shadow p-4 flex items-center gap-4 md:gap-6">
+      <button id="btn-open" class="md:hidden p-2 rounded hover:bg-gray-100"><i data-feather="menu"></i></button>
+      <h1 class="text-2xl font-black whitespace-nowrap">Dashboard Peminjaman Ruang Meeting</h1>
     </header>
 
-    <!-- Konten -->
     <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
       <!-- Kartu Status -->
       <section id="status" class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl px-4 mt-8">
@@ -160,21 +145,14 @@
           <div class="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center text-center">
             <h2 class="room-title text-2xl font-bold mb-4"></h2>
             <p class="room-status text-gray-500 text-2xl font-extrabold mb-6">Memuat…</p>
-            <a class="room-link w-full" target="_blank">
-              <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-full text-xl font-semibold">
-                Ajukan Peminjaman
-              </button>
-            </a>
+            <a class="room-link w-full" target="_blank"><button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-full text-xl font-semibold">Ajukan Peminjaman</button></a>
           </div>
         </template>
         <div id="cards" class="contents"></div>
       </section>
 
       <!-- Dashboard -->
-      <section id="dashboard" class="w-full max-w-2xl mt-12 px-6">
-        <h2 class="text-3xl font-bold mb-6 text-center">Statistik Pemakaian Saat Ini</h2>
-        <canvas id="usageChart" height="100"></canvas>
-      </section>
+      <section id="dashboard" class="w-full max-w-2xl mt-7 px-4"><h2 class="text-3xl font-bold mb-6 text-center">Statistik Pemakaian Saat Ini</h2><canvas id="usageChart" height="100"></canvas></section>
 
       <!-- Kalender -->
       <section id="kalender" class="w-full max-w-6xl mt-12 px-2 mb-10 flex flex-col items-center space-y-16">
