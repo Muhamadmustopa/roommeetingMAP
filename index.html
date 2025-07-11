@@ -22,32 +22,61 @@
 <body class="bg-gray-100 min-h-screen flex">
 
   <!-- ============ SIDEBAR ============ -->
-<!-- ===== Tombol ☰ PEMBUKA (hanya tampil di mobile) ===== -->
-<button id="btn-open" class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded bg-gray-800 text-white">
+<!-- Tombol ☰ – di luar sidebar (muncul hanya di mobile) -->
+<button id="btn-open"
+        class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded bg-gray-800 text-white">
   <i data-feather="menu"></i>
 </button>
 
-<!-- ===== Sidebar Gelap ===== -->
+<!-- ==== Sidebar ==== -->
 <aside id="sidebar"
-       class="sidebar fixed inset-y-0 left-0 w-56 bg-gray-900 shadow-lg -translate-x-full lg:translate-x-0
-              z-40 transition-transform duration-300">
+       class="fixed inset-y-0 left-0 w-56 bg-gray-900 shadow-lg -translate-x-full
+              lg:translate-x-0 z-40 transition-transform duration-300">
   <div class="flex items-center justify-between p-4 border-b border-gray-700">
-    <span class="text-xl font-semibold text-white tracking-wide">MAP Meeting</span>
-
-    <!-- Tombol ✕ PENUTUP (muncul hanya di mobile) -->
-    <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800 text-white" aria-label="Tutup menu">
+    <span class="text-xl font-semibold text-white">MAP Meeting</span>
+    <!-- Tombol ✕ – tutup sidebar -->
+    <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800 text-white">
       <i data-feather="x"></i>
     </button>
   </div>
 
   <nav class="mt-4">
     <ul class="space-y-1 text-white">
-      <li><a href="#status"   class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors"><i data-feather="monitor"   class="text-indigo-400"></i>Status</a></li>
-      <li><a href="#dashboard" class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors"><i data-feather="bar-chart-2" class="text-indigo-400"></i>Dashboard</a></li>
-      <li><a href="#kalender"  class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors"><i data-feather="calendar"  class="text-indigo-400"></i>Kalender</a></li>
+      <li><a href="#status"    class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600"><i data-feather="monitor"   class="text-indigo-400"></i>Status</a></li>
+      <li><a href="#dashboard" class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600"><i data-feather="bar-chart-2" class="text-indigo-400"></i>Dashboard</a></li>
+      <li><a href="#kalender"  class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600"><i data-feather="calendar"  class="text-indigo-400"></i>Kalender</a></li>
     </ul>
   </nav>
 </aside>
+
+<!-- Overlay gelap (klik di luar juga menutup) -->
+<div id="overlay"
+     class="fixed inset-0 bg-black bg-opacity-40 hidden z-30 lg:hidden"></div>
+
+<!-- ===== Feather Icons & Toggle Script ===== -->
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace();                             // render ikon
+
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const btnOpen = document.getElementById('btn-open');
+  const btnClose= document.getElementById('btn-close');
+
+  function openSidebar(){
+    sidebar.classList.remove('-translate-x-full');
+    overlay.classList.remove('hidden');
+  }
+  function closeSidebar(){
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  }
+
+  btnOpen.addEventListener('click', openSidebar);
+  btnClose.addEventListener('click', closeSidebar);
+  overlay.addEventListener('click', closeSidebar);
+</script>
+
       <li>
         <a href="#status" class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors">
           <i data-feather="monitor" class="text-indigo-400"></i><span>Status</span>
