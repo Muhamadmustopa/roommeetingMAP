@@ -22,19 +22,32 @@
 <body class="bg-gray-100 min-h-screen flex">
 
   <!-- ============ SIDEBAR ============ -->
-<!-- ===== Sidebar Gelap ===== -->
-<aside id="sidebar"
-       class="sidebar fixed inset-y-0 left-0 w-56 bg-gray-900 shadow-lg -translate-x-full lg:translate-x-0 z-40 transition-transform duration-300">
-  <div class="flex items-center justify-between p-4 border-b border-gray-700">
-    <span class="text-xl font-semibold text-white tracking-wide">MAP Meeting</span>
-  <button id="btn-open" class="lg:hidden p-2 rounded hover:bg-gray-200">
+<!-- ===== Tombol ☰ PEMBUKA (hanya tampil di mobile) ===== -->
+<button id="btn-open" class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded bg-gray-800 text-white">
   <i data-feather="menu"></i>
 </button>
-      <i data-feather="x" class="text-white"></i>
+
+<!-- ===== Sidebar Gelap ===== -->
+<aside id="sidebar"
+       class="sidebar fixed inset-y-0 left-0 w-56 bg-gray-900 shadow-lg -translate-x-full lg:translate-x-0
+              z-40 transition-transform duration-300">
+  <div class="flex items-center justify-between p-4 border-b border-gray-700">
+    <span class="text-xl font-semibold text-white tracking-wide">MAP Meeting</span>
+
+    <!-- Tombol ✕ PENUTUP (muncul hanya di mobile) -->
+    <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800 text-white" aria-label="Tutup menu">
+      <i data-feather="x"></i>
     </button>
   </div>
+
   <nav class="mt-4">
     <ul class="space-y-1 text-white">
+      <li><a href="#status"   class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors"><i data-feather="monitor"   class="text-indigo-400"></i>Status</a></li>
+      <li><a href="#dashboard" class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors"><i data-feather="bar-chart-2" class="text-indigo-400"></i>Dashboard</a></li>
+      <li><a href="#kalender"  class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors"><i data-feather="calendar"  class="text-indigo-400"></i>Kalender</a></li>
+    </ul>
+  </nav>
+</aside>
       <li>
         <a href="#status" class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors">
           <i data-feather="monitor" class="text-indigo-400"></i><span>Status</span>
