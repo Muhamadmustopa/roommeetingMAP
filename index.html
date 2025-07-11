@@ -18,6 +18,7 @@
     };
     const apiKey     = "AIzaSyBee80FlAkCPEy4O5lbSgS2ygmetMY0_2w"; // read-only key
     const refreshSec = 60; // refresh interval in seconds
+    const formLink   = 'https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link';
 
     async function roomBusy(calId){
       const now     = new Date();
@@ -43,7 +44,6 @@
       drawChart(usage);
     }
 
-    // Simple usage chart (number of rooms in use)
     function drawChart(data){
       const ctx = document.getElementById('usageChart').getContext('2d');
       if(window.usageChartInstance){window.usageChartInstance.destroy();}
@@ -52,7 +52,8 @@
         data: {
           labels: ['Terpakai','Tersedia'],
           datasets: [{
-            data: [data.filter(b=>b===1).length, data.filter(b=>b===0).length]
+            data: [data.filter(b=>b===1).length, data.filter(b=>b===0).length],
+            backgroundColor:['#EF4444','#22C55E']
           }]
         },
         options:{plugins:{legend:{display:false}},cutout:'70%'}
@@ -62,6 +63,24 @@
     window.addEventListener('DOMContentLoaded',()=>{
       updateStatus();
       setInterval(updateStatus,refreshSec*1000);
+
+      const cardsContainer = document.getElementById('cards');
+      const template       = document.getElementById('card-template');
+      const rooms = [
+        {key:'arjuna',   name:'Ruang Meeting Arjuna'},
+        {key:'srikandi', name:'Ruang Meeting Srikandi'},
+        {key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}
+      ];
+
+      rooms.forEach(r=>{
+        const clone = template.content.cloneNode(true);
+        clone.querySelector('.room-title').textContent = r.name;
+        const statusEl = clone.querySelector('.room-status');
+        statusEl.id    = `status-${r.key}`;
+        const linkBtn  = clone.querySelector('.room-link');
+        linkBtn.href   = formLink;
+        cardsContainer.appendChild(clone);
+      });
     });
   </script>
 </head>
@@ -88,8 +107,12 @@
         <h2 class="room-title text-3xl font-bold mb-4 text-center"></h2>
         <p class="room-status text-gray-500 text-3xl font-extrabold mb-6 text-center">Memuat…</p>
         <a class="room-link w-full" target="_blank">
-          <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-full text-2xl font-semibold">Ajukan Peminjaman</button>
-        </a>
+          <a href="${formLink}" class="room-link w-full" target="_blank">
+  <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-full text-2xl font-semibold">
+    Ajukan Peminjaman
+  </button> </a>     
+          <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-full text-2xl font-semibold">Ajukan Peminjaman</button>
+        </a> 
       </div>
     </template>
     <div id="cards" class="contents"></div>
@@ -104,38 +127,9 @@
   <!-- ===== Kalender Embed ===== -->
   <section id="kalender" class="w-full max-w-6xl mt-12 px-4 mb-12 flex flex-col items-center">
     <h2 class="text-4xl font-bold mb-4 text-center">Kalender Ruang Meeting</h2>
-    <iframe src="https://calendar.google.com/calendar/embed?src=dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+    <iframe src="https://calendar.google.com/calendar/embed?src=dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d%40group.calendar.google.com&src=4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753%40group.calendar.google.com&src=a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
   </section>
 
-  <footer class="bg-white w-full py-4 text-center text-gray-600 text-sm">© 2025 PT Mitra Asa Pratama</footer>
-
-  <!-- ===== Build Cards Dynamically ===== -->
-  <script>
-    const rooms = [
-      {key:'arjuna',   name:'Ruang Meeting Arjuna'},
-      {key:'srikandi', name:'Ruang Meeting Srikandi'},
-      {key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}
-    ];
-
-    // ===== Link Google Form per ruang (ganti jika berbeda) =====
-    const formLinks = {
-      arjuna:   'https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link',
-      srikandi: 'https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link',
-      gatotkaca:'https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link'
-    };
-    const cardsContainer = document.getElementById('cards');
-    const template       = document.getElementById('card-template');
-
-    rooms.forEach(r=>{
-      const clone = template.content.cloneNode(true);
-      clone.querySelector('.room-title').textContent = r.name;
-      const statusEl = clone.querySelector('.room-status');
-      statusEl.id    = `status-${r.key}`;
-      const linkBtn  = clone.querySelector('.room-link');
-      linkBtn.href   = `https://forms.gle/yourGoogleFormID?entry.123456=${encodeURIComponent(r.name.split(' ')[2])}`;
-      cardsContainer.appendChild(clone);
-    });
-  </script>
+  <footer class="bg-white w-full py-4 text-center text-gray-600 text-sm">© 2025 PT Mitra Asa Pratama</footer>
 </body>
 </html>
-
