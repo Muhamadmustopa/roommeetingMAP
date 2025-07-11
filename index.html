@@ -1,79 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Room Meeting MAP </title>
-  <style>
-    :root {
-      --primary:#007bff;
-      --bg:#f4f7fa;
-      --card-bg:#ffffff;
-      --radius:1rem;
-      --shadow:0 4px 12px rgba(0,0,0,.08);
-    }
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;}
-    body{background:var(--bg);padding:1.25rem;}
-    header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;}
-    header img{height:48px;width:auto;}
-    h1{font-size:1.5rem;font-weight:600;color:#222;}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Ruang Meeting</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+  <script>
+    const calendarIds = {
+      arjuna: "dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d@group.calendar.google.com",
+      srikandi: "4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753@group.calendar.google.com",
+      gatotkaca: "a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2@group.calendar.google.com"
+    };
 
-    .grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
-    .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.25rem;display:flex;flex-direction:column;justify-content:space-between;min-height:180px;}
-    .card h2{font-size:1.25rem;color:#222;margin-bottom:.5rem;}
-    .status{font-weight:600;margin-bottom:1rem;}
-    .available{color:green;}
-    .occupied{color:red;}
-    .btn{background:var(--primary);border:none;color:#fff;padding:.65rem 1rem;border-radius:.5rem;font-size:1rem;cursor:pointer;transition:opacity .2s ease;}
-    .btn:disabled{opacity:.5;cursor:not-allowed;}
-    footer{margin-top:2rem;font-size:.8rem;color:#666;text-align:center;}
-  </style>
+    const apiKey = "AIzaSyBee80FlAkCPEy4O5lbSgS2ygmetMY0_2w";
+
+    async function checkRoomStatus(calendarId) {
+      const now = new Date().toISOString();
+      const maxTime = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&timeMin=${now}&timeMax=${maxTime}&singleEvents=true&orderBy=startTime`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return (data.items && data.items.length > 0) ? "Dipakai" : "Tersedia";
+    }
+
+    async function updateStatus() {
+      const statusIds = ["arjuna", "srikandi", "gatotkaca"];
+      for (const id of statusIds) {
+        const status = await checkRoomStatus(calendarIds[id]);
+        const label = document.getElementById(`status-${id}`);
+        label.textContent = status;
+        label.className = status === "Tersedia" ? "text-green-600 font-semibold" : "text-red-600 font-semibold";
+      }
+    }
+
+    window.onload = () => {
+      updateStatus();
+      setInterval(updateStatus, 60000);
+    }
+  </script>
 </head>
-<body>
-  <!-- ===== Header ===== -->
-  <header>
-    <img src="logo-map.jpg" alt="PT Mitra Asa Pratama logo">
-    <h1>Peminjaman Ruang Meeting</h1>
+<body class="bg-gray-100 min-h-screen p-4">
+  <header class="flex items-center space-x-4">
+    <img src="LOGO MAP.jpg" alt="Logo" class="h-12" />
+    <h1 class="text-2xl font-bold">Dashboard Peminjaman Ruang Meeting</h1>
   </header>
 
-  <!-- ===== Room Cards ===== -->
-  <section class="grid">
-    <!-- Arjuna -->
-    <div class="card">
-      <div>
-        <h2>Ruang Meeting Arjuna</h2>
-        <p class="status available">Tersedia</p>
-      </div>
-      <button class="btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link')">Ajukan Peminjaman</button>
+  <main class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold">Ruang Arjuna</h2>
+      <p id="status-arjuna" class="text-gray-500">Memuat...</p>
+      <a href="https://forms.gle/yourGoogleFormID?entry.123456=Arjuna" target="_blank">
+        <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">Ajukan Peminjaman</button>
+      </a>
     </div>
 
-    <!-- Srikandi -->
-    <div class="card">
-      <div>
-        <h2>Ruang Meeting Srikandi</h2>
-        <p class="status available">Tersedia</p>
-      </div>
-      <button class="btn"  onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link')">Ajukan Peminjaman</button>
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold">Ruang Srikandi</h2>
+      <p id="status-srikandi" class="text-gray-500">Memuat...</p>
+      <a href="https://forms.gle/yourGoogleFormID?entry.123456=Srikandi" target="_blank">
+        <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">Ajukan Peminjaman</button>
+      </a>
     </div>
 
-    <!-- Gatotkaca -->
-    <div class="card">
-      <div>
-        <h2>Ruang Meeting Gatotkaca</h2>
-        <p class="status available">Tersedia</p>
-      </div>
-      <button class="btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc6bqdhM2zxSn3neHSd-_7jO7RalopVRcjcemCD3kqhaKGjSw/viewform?usp=sf_link')">Ajukan Peminjaman</button>
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold">Ruang Gatotkaca</h2>
+      <p id="status-gatotkaca" class="text-gray-500">Memuat...</p>
+      <a href="https://forms.gle/yourGoogleFormID?entry.123456=Gatotkaca" target="_blank">
+        <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">Ajukan Peminjaman</button>
+      </a>
     </div>
-  </section>
+  </main>
 
-  <footer>
-    © <span id="year"></span> PT Mitra Asa Pratama
-  </footer>
-
-  <script>
-    // Update footer year automatically
-    document.getElementById('year').textContent = new Date().getFullYear();
-    // TODO: Ganti status occupied/available secara manual, atau integrasikan ke Google Calendar API.
-  </script>
+  <footer class="text-center mt-10 text-gray-600 text-sm">© 2025 PT Mitra Asa Pratama</footer>
 </body>
 </html>
