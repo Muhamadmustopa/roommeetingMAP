@@ -6,236 +6,120 @@
   <title>Dashboard Peminjaman Ruang Meeting</title>
 
   <!-- Tailwind v2 -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
   <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <style>
-    .sidebar { transition: transform 0.25s ease; }
-    /* ketika sidebar terbuka di desktop, beri margin kiri agar judul tidak bergeser */
-    @media (min-width: 768px) {
-      .with-sidebar { margin-left: 16rem; } /* 64px×4 = 256px → w-64 */
+    .sidebar{transition:transform .25s ease}
+    @media(min-width:768px){                     /* judul tetap rata kiri di desktop */
+      #main-header{margin-left:16rem}            /* lebar sidebar = 64 × 4 = 256 px */
     }
   </style>
-
-  <script>
-    /* ---------------- Konfigurasi ---------------- */
-    const calendarIds = {
-      arjuna:   'dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d@group.calendar.google.com',
-      srikandi: '4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753@group.calendar.google.com',
-      gatotkaca:'a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2@group.calendar.google.com'
-    };
-    const apiKey     = 'AIzaSyBee80FlAkCPEy4O5lbSgS2ygmetMY0_2w';
-    const refreshSec = 60;
-    const formLink   = 'https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=dialog';
-
-    async function roomBusy(calId){
-      const now     = new Date();
-      const timeMin = now.toISOString();
-      const timeMax = new Date(now.getTime()+60*1000).toISOString();
-      const url = `https://www.googleapis.com/calendar/v3/calendars/${calId}/events?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${timeMin}&timeMax=${timeMax}`;
-      const res  = await fetch(url).catch(()=>null);
-      const data = await res?.json?.();
-      return data?.items?.length > 0;
-    }
-
-    function drawChart(arr){
-      const ctx = document.getElementById('usageChart').getContext('2d');
-      if(window.usageChartInstance) window.usageChartInstance.destroy();
-      window.usageChartInstance = new Chart(ctx,{
-        type:'doughnut',
-        data:{labels:['Terpakai','Tersedia'],
-          datasets:[{data:[arr.filter(x=>x).length, arr.filter(x=>!x).length],
-            backgroundColor:['#EF4444','#22C55E']}]},
-        options:{plugins:{legend:{display:false}},cutout:'70%'}
-      });
-    }
-
-    async function updateStatus(){
-      const usage = [];
-      for(const [room,id] of Object.entries(calendarIds)){
-        const busy = await roomBusy(id);
-        const el   = document.getElementById(`status-${room}`);
-        el.textContent = busy ? 'DIPAKAI' : 'TERSEDIA';
-        el.className   = busy ? 'text-red-600 font-extrabold text-2xl text-center'
-                              : 'text-green-600 font-extrabold text-2xl text-center';
-        usage.push(busy ? 1 : 0);
-      }
-      drawChart(usage);
-    }
-
-    document.addEventListener('DOMContentLoaded',()=>{
-      feather.replace();
-
-      /* Toggle Sidebar */
-      const sidebar  = document.getElementById('sidebar');
-      const btnOpen  = document.getElementById('btn-open');
-      const btnClose = document.getElementById('btn-close');
-      const header   = document.getElementById('main-header');
-
-      const showSidebar = () => {
-        sidebar.classList.remove('-translate-x-full');
-        header.classList.add('with-sidebar');
-      };
-      const hideSidebar = () => {
-        sidebar.classList.add('-translate-x-full');
-        header.classList.remove('with-sidebar');
-      };
-
-      btnOpen.addEventListener('click', showSidebar);
-      btnClose.addEventListener('click', hideSidebar);
-      document.addEventListener('click', e => {
-        if (!sidebar.contains(e.target) && !btnOpen.contains(e.target) && window.innerWidth < 768) {
-          hideSidebar();
-        }
-      });
-
-      /* Build kartu */
-      const rooms=[{key:'arjuna',name:'Ruang Meeting Arjuna'},
-                   {key:'srikandi',name:'Ruang Meeting Srikandi'},
-                   {key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}];
-      const tpl=document.getElementById('card-template');
-      const wrap=document.getElementById('cards');
-      rooms.forEach(r=>{
-        const node=tpl.content.cloneNode(true);
-        node.querySelector('.room-title').textContent=r.name;
-        const st=node.querySelector('.room-status');
-        st.id=`status-${r.key}`;
-        const link=node.querySelector('.room-link');
-        link.href=formLink;
-        link.addEventListener('click',e=>{e.preventDefault();window.open(formLink,'_blank');});
-        wrap.appendChild(node);
-      });
-
-      updateStatus();
-      setInterval(updateStatus,refreshSec*1000);
-    });
-  </script>
 </head>
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.getElementById('sidebar');
-    const btnOpen = document.getElementById('btn-open');
-    const btnClose = document.getElementById('btn-close');
-
-    if (btnOpen && btnClose && sidebar) {
-      btnOpen.addEventListener('click', () => {
-        sidebar.classList.remove('-translate-x-full');
-      });
-
-      btnClose.addEventListener('click', () => {
-        sidebar.classList.add('-translate-x-full');
-      });
-
-      // Klik di luar sidebar (mobile) → tutup
-      document.addEventListener('click', e => {
-        if (
-          !sidebar.contains(e.target) &&
-          !btnOpen.contains(e.target) &&
-          window.innerWidth < 768
-        ) {
-          sidebar.classList.add('-translate-x-full');
-        }
-      });
-    }
-  });
-</script>
-
-<!-- ========== SIDEBAR ========== -->
-<aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-50 md:translate-x-0">
-  <div class="flex items-center justify-between px-4 py-3 border-b">
-    <h2 class="text-xl font-bold">Menu</h2>
-    <button id="btn-close" class="md:hidden text-gray-600 text-2xl font-bold">
-      ✕
-    </button>
-  </div>
-  <nav class="mt-4 px-4 space-y-2">
-    <a href="#status" class="block px-3 py-2 rounded hover:bg-gray-100">Status Ruangan</a>
-    <a href="#dashboard" class="block px-3 py-2 rounded hover:bg-gray-100">Dashboard</a>
-    <a href="#kalender" class="block px-3 py-2 rounded hover:bg-gray-100">Kalender Acara</a>
-  </nav>
-</aside>
 
 <body class="bg-gray-100 min-h-screen flex">
-  <!-- ===== Sidebar ===== -->
-  <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-white shadow-lg -translate-x-full md:translate-x-0 z-40">
+
+  <!-- ========= SIDEBAR ========= -->
+  <aside id="sidebar"
+         class="sidebar fixed inset-y-0 left-0 w-64 bg-white shadow-lg -translate-x-full md:translate-x-0 z-40">
     <div class="flex items-center justify-between p-4 border-b">
-      <span class="text-xl font-bold text-indigo-400">MAP Room Meet</span>
-      <button id="btn-close" class="md:hidden p-2 rounded hover:bg-gray-100"><i data-feather="x"></i></button>
+      <span class="text-xl font-bold text-indigo-500">MAP Room Meet</span>
+      <button id="btn-close" class="md:hidden p-2 rounded hover:bg-gray-100">
+        <i data-feather="x"></i>
+      </button>
     </div>
     <nav class="mt-4">
       <ul class="space-y-1">
-        <li><a href="#status" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50"><i data-feather="monitor"></i><span>Status</span></a></li>
-        <li><a href="#dashboard" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50"><i data-feather="bar-chart-2"></i><span>Dashboard</span></a></li>
-        <li><a href="#kalender" class="flex items-center gap-3 py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-50"><i data-feather="calendar"></i><span>Kalender</span></a></li>
+        <li><a href="#status"   class="flex gap-3 py-2 px-4 rounded-lg hover:bg-indigo-50"><i data-feather="monitor"></i><span>Status</span></a></li>
+        <li><a href="#dashboard" class="flex gap-3 py-2 px-4 rounded-lg hover:bg-indigo-50"><i data-feather="bar-chart-2"></i><span>Dashboard</span></a></li>
+        <li><a href="#kalender" class="flex gap-3 py-2 px-4 rounded-lg hover:bg-indigo-50"><i data-feather="calendar"></i><span>Kalender</span></a></li>
       </ul>
     </nav>
   </aside>
 
-  <!-- ===== Main ===== -->
+  <!-- ========= MAIN ========= -->
   <div class="flex-1 flex flex-col overflow-x-hidden">
-    <header id="main-header" <header class="w-full bg-white shadow p-6 flex flex-col md:flex-row items-center justify-between">
-  <!-- Tombol buka sidebar (mobile only) -->
-  <button id="btn-open" class="md:hidden text-3xl text-gray-700 mb-3 md:mb-0">
-    ☰
-  </button>
-  <div class="text-center w-full">
-    <h1 class="text-2xl md:text-4xl font-black">Dashboard Peminjaman Ruang Meeting</h1>
-  </div>
-</header>
 
-      
-      <button id="btn-open" class="md:hidden p-2 rounded hover:bg-gray-100"><i data-feather="menu"></i></button>
-      <h1 class="text-2xl font-black whitespace-nowrap">Dashboard Peminjaman Ruang Meeting</h1>
+    <!-- HEADER -->
+    <header id="main-header"
+            class="w-full bg-white shadow p-4 flex items-center gap-4 md:gap-6">
+      <button id="btn-open" class="md:hidden p-2 rounded hover:bg-gray-100">
+        <i data-feather="menu"></i>
+      </button>
+      <h1 class="text-2xl md:text-3xl font-black whitespace-nowrap">
+        Dashboard Peminjaman Ruang Meeting
+      </h1>
     </header>
 
+    <!-- ========== KONTEN ========== -->
     <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
-      <!-- Kartu Status -->
+
+      <!-- KARTU STATUS -->
       <section id="status" class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl px-4 mt-8">
         <template id="card-template">
           <div class="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center text-center">
             <h2 class="room-title text-2xl font-bold mb-4"></h2>
-            <p class="room-status text-gray-500 text-2xl font-extrabold mb-6">Memuat…</p>
-            <a class="room-link w-full" target="_blank"><button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-full text-xl font-semibold">Ajukan Peminjaman</button></a>
+            <p  class="room-status text-gray-500 text-2xl font-extrabold mb-6">Memuat…</p>
+            <a  class="room-link w-full" target="_blank">
+              <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-full text-xl font-semibold">
+                Ajukan Peminjaman
+              </button>
+            </a>
           </div>
         </template>
         <div id="cards" class="contents"></div>
       </section>
 
-      <!-- Dashboard -->
-      <section id="dashboard" class="w-full max-w-2xl mt-7 px-4"><h2 class="text-3xl font-bold mb-6 text-center">Statistik Pemakaian Saat Ini</h2><canvas id="usageChart" height="100"></canvas></section>
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="w-full max-w-2xl mt-12 px-6">
+        <h2 class="text-3xl font-bold mb-6 text-center">Statistik Pemakaian Saat Ini</h2>
+        <canvas id="usageChart" height="100"></canvas>
+      </section>
 
-      <!-- Kalender -->
+      <!-- KALENDER -->
       <section id="kalender" class="w-full max-w-6xl mt-12 px-2 mb-10 flex flex-col items-center space-y-16">
-        <!-- Arjuna -->
+        <!-- contoh 1 -->
         <div class="w-full flex flex-col items-center">
           <h2 class="text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Arjuna</h2>
           <div class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
-            <iframe src="https://calendar.google.com/calendar/embed?src=dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d%40group.calendar.google.com&ctz=Asia/Jakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+            <iframe src="https://calendar.google.com/calendar/embed?src=dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d%40group.calendar.google.com&ctz=Asia/Jakarta"
+                    style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
           </div>
         </div>
-        <!-- Gatot Kaca -->
-        <div class="w-full flex flex-col items-center">
-          <h2 class="text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Gatot Kaca</h2>
-          <div class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
-            <iframe src="https://calendar.google.com/calendar/embed?src=a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
-          </div>
-        </div>
-        <!-- Srikandi -->
-        <div class="w-full flex flex-col items-center">
-          <h2 class="text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Srikandi</h2>
-          <div class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
-           <iframe src="https://calendar.google.com/calendar/embed?src=4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
-          </div>
-        </div>
+        <!-- …Tambahkan kalender lain sesuai kebutuhan… -->
       </section>
 
       <footer class="bg-white w-full py-4 text-center text-gray-600 text-sm mt-auto">
-        © 2025 PT Mitra Asa Pratama
+        © 2025 PT Mitra Asa Pratama
       </footer>
     </main>
   </div>
+
+  <!-- ========= SCRIPT ========= -->
+  <script>
+  /* --- sidebar toggle --- */
+  document.addEventListener('DOMContentLoaded', () => {
+    feather.replace();                                    // ikon
+
+    const sidebar  = document.getElementById('sidebar');
+    const btnOpen  = document.getElementById('btn-open');
+    const btnClose = document.getElementById('btn-close');
+
+    btnOpen .addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+    btnClose.addEventListener('click', () => sidebar.classList.add   ('-translate-x-full'));
+
+    // klik di luar sidebar (mobile) → tutup
+    document.addEventListener('click', e => {
+      if (!sidebar.contains(e.target) && !btnOpen.contains(e.target) && window.innerWidth < 768) {
+        sidebar.classList.add('-translate-x-full');
+      }
+    });
+
+    /* --- kode lain (status ruangan, chart, dsb.) bisa ditempatkan di sini --- */
+  });
+  </script>
 </body>
 </html>
