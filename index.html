@@ -9,31 +9,27 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
-  <!-- Chart.js (jika dibutuhkan) -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <style>
     .sidebar{transition:transform .25s ease}
-    @media(min-width:1024px){ /* desktop ≥ lg (1024 px) */
-      #main-header{margin-left:14rem}  /* w-56 = 14rem = 224 px */
-    }
+    /* judul bergeser hanya di desktop (≥ lg = 1024 px) */
+    @media(min-width:1024px){#main-header{margin-left:14rem}} /* 14 rem = w‑56 */
   </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex">
 
-  <!-- ================= SIDEBAR ================= -->
+  <!-- ============ SIDEBAR ============ -->
   <aside id="sidebar"
          class="sidebar fixed inset-y-0 left-0 w-56 bg-white shadow-lg -translate-x-full lg:translate-x-0 z-40">
     <div class="flex items-center justify-between p-4 border-b">
       <span class="text-xl font-semibold text-indigo-600">MAP Meeting</span>
-      <button id="btn-close"
-              class="lg:hidden p-2 rounded hover:bg-gray-200"
-              aria-label="Tutup menu">
+      <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-200" aria-label="Tutup menu">
         <i data-feather="x"></i>
       </button>
     </div>
-
     <nav class="mt-4">
       <ul class="space-y-1 text-gray-700">
         <li><a href="#status"   class="flex gap-3 items-center py-2 px-4 rounded hover:bg-indigo-50"><i data-feather="monitor"></i>Status</a></li>
@@ -43,23 +39,21 @@
     </nav>
   </aside>
 
-  <!-- ================= MAIN ================= -->
+  <!-- ============ MAIN ============ -->
   <div class="flex-1 flex flex-col overflow-x-hidden">
 
     <!-- HEADER -->
     <header id="main-header"
             class="bg-white shadow px-4 py-3 flex items-center gap-4 lg:gap-6">
-      <button id="btn-open"
-              class="lg:hidden p-2 rounded hover:bg-gray-200"
-              aria-label="Buka menu">
+      <button id="btn-open" class="lg:hidden p-2 rounded hover:bg-gray-200" aria-label="Buka menu">
         <i data-feather="menu"></i>
       </button>
       <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold whitespace-nowrap">
-        Dashboard Peminjaman Ruang Meeting
+                         Dashboard Peminjaman Ruang Meeting
       </h1>
     </header>
 
-    <!-- ================= CONTENT ================= -->
+    <!-- ============ CONTENT ============ -->
     <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
 
       <!-- KARTU STATUS -->
@@ -79,7 +73,132 @@
         <div id="cards" class="contents"></div>
       </section>
 
-      <!-- DASHBOARD CHART (opsional) -->
+      <!-- DASHBOARD CHART -->
       <section id="dashboard" class="w-full max-w-2xl mt-12 px-6">
         <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-center">Statistik Pemakaian Saat Ini</h2>
-        <canvas id="u
+        <canvas id="usageChart" height="100"></canvas>
+      </section>
+
+      <!-- KALENDER -->
+      <section id="kalender"
+               class="w-full max-w-6xl mt-14 px-2 mb-10 flex flex-col items-center space-y-16">
+        <!-- Arjuna -->
+        <div class="w-full flex flex-col items-center">
+          <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Arjuna</h2>
+          <div class="w-full md:w-4/5 lg:w-2/3">
+            <iframe src="https://calendar.google.com/calendar/embed?src=dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d%40group.calendar.google.com&ctz=Asia/Jakarta"
+                    width="100%" height="300" frameborder="0" scrolling="no"></iframe>
+          </div>
+        </div>
+        <!-- Gatotkaca -->
+        <div class="w-full flex flex-col items-center">
+          <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Gatot Kaca</h2>
+          <div class="w-full md:w-4/5 lg:w-2/3">
+            <iframe src="https://calendar.google.com/calendar/embed?src=a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2%40group.calendar.google.com&ctz=Asia/Jakarta"
+                    width="100%" height="300" frameborder="0" scrolling="no"></iframe>
+          </div>
+        </div>
+        <!-- Srikandi -->
+        <div class="w-full flex flex-col items-center">
+          <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center">Kalender Ruang Meeting Srikandi</h2>
+          <div class="w-full md:w-4/5 lg:w-2/3">
+           <iframe src="https://calendar.google.com/calendar/embed?src=4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753%40group.calendar.google.com&ctz=Asia/Jakarta"
+                   width="100%" height="300" frameborder="0" scrolling="no"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <footer class="bg-white w-full py-4 text-center text-gray-500 text-sm mt-auto">
+        © 2025 PT Mitra Asa Pratama
+      </footer>
+    </main>
+  </div>
+
+  <!-- ============ SCRIPT ============ -->
+  <script>
+  /* ---------- Konfigurasi ---------- */
+  const calendarIds = {
+    arjuna   :'dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d@group.calendar.google.com',
+    srikandi :'4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753@group.calendar.google.com',
+    gatotkaca:'a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2@group.calendar.google.com'
+  };
+  const apiKey     = 'AIzaSyBee80FlAkCPEy4O5lbSgS2ygmetMY0_2w';
+  const refreshSec = 60;
+  const formLink   = 'https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=dialog';
+
+  /* ---------- DOM READY ---------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    feather.replace();                                   // ikon
+
+    const sidebar  = document.getElementById('sidebar');
+    const btnOpen  = document.getElementById('btn-open');
+    const btnClose = document.getElementById('btn-close');
+
+    /* === Toggle sidebar (mobile) === */
+    btnOpen && btnOpen.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+    btnClose&& btnClose.addEventListener('click',() => sidebar.classList.add   ('-translate-x-full'));
+    document.addEventListener('click', e=>{
+      if(!sidebar.contains(e.target)&&!btnOpen.contains(e.target)&&window.innerWidth<1024){
+        sidebar.classList.add('-translate-x-full');
+      }
+    });
+
+    /* === Build kartu ruangan === */
+    const rooms = [
+      {key:'arjuna',   name:'Ruang Meeting Arjuna'},
+      {key:'srikandi', name:'Ruang Meeting Srikandi'},
+      {key:'gatotkaca',name:'Ruang Meeting Gatot Kaca'}
+    ];
+    const tpl  = document.getElementById('card-template');
+    const wrap = document.getElementById('cards');
+    rooms.forEach(r=>{
+      const n = tpl.content.cloneNode(true);
+      n.querySelector('.room-title').textContent = r.name;
+      n.querySelector('.room-status').id        = `status-${r.key}`;
+      n.querySelector('.room-link').href        = formLink;
+      wrap.appendChild(n);
+    });
+
+    updateStatus();
+    setInterval(updateStatus, refreshSec*1000);
+  });
+
+  /* ---------- Status & Chart ---------- */
+  async function roomBusy(calId){
+    const now     = new Date();
+    const timeMin = now.toISOString();
+    const timeMax = new Date(now.getTime()+60*1000).toISOString();
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${calId}/events?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${timeMin}&timeMax=${timeMax}`;
+    const res  = await fetch(url).catch(()=>null);
+    const data = await res?.json?.();
+    return data?.items?.length>0;
+  }
+
+  async function updateStatus(){
+    const usage=[];
+    for(const [room,id] of Object.entries(calendarIds)){
+      const busy = await roomBusy(id);
+      const el   = document.getElementById(`status-${room}`);
+      el.textContent = busy?'DIPAKAI':'TERSEDIA';
+      el.className   = busy
+        ?'text-red-600 font-extrabold text-xl text-center'
+        :'text-green-600 font-extrabold text-xl text-center';
+      usage.push(busy?1:0);
+    }
+    drawChart(usage);
+  }
+
+  function drawChart(arr){
+    const ctx=document.getElementById('usageChart').getContext('2d');
+    if(window.usageChartInstance) window.usageChartInstance.destroy();
+    window.usageChartInstance=new Chart(ctx,{
+      type:'doughnut',
+      data:{labels:['Terpakai','Tersedia'],
+        datasets:[{data:[arr.filter(x=>x).length,arr.filter(x=>!x).length],
+          backgroundColor:['#EF4444','#22C55E']}]},
+      options:{plugins:{legend:{display:false}},cutout:'70%'}
+    });
+  }
+  </script>
+</body>
+</html>
