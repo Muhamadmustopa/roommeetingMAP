@@ -35,7 +35,7 @@
        class="fixed inset-y-0 left-0 w-56 bg-gray-900 shadow-lg -translate-x-full
               lg:translate-x-0 z-40 transition-transform duration-300">
   <div class="flex items-center justify-between p-4 border-b border-gray-700">
-    <span class="text-xl font-semibold text-white">MAP Meeting</span>
+    <span class="text-xl font-semibold text-blue">MAP Meeting</span>
     <!-- Tombol ✕ – tutup sidebar -->
     <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800 text-white">
       <i data-feather="x"></i>
@@ -133,9 +133,9 @@
 
 
       <!-- DASHBOARD CHART -->
-      <section id="dashboard" class="w-full max-w-2xl mt-12 px-6">
+      <section id="dashboard" class="w-full max-w-2xl mt-12 px-4">
         <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-center">Pemakaian saat ini</h3>
-        <canvas id="usageChart" height="100"></canvas>
+        <canvas id="usageChart" height="50"></canvas>
       </section>
 
       <!-- KALENDER -->
@@ -204,7 +204,7 @@
 
     /* === Build kartu ruangan === */
     const rooms = [
-      {key:'arjuna',   name:'Ruang Meeting Arjuna'},
+      {key:'arjuna',   name:'Ruang Meeting      Arjuna'},
       {key:'srikandi', name:'Ruang Meeting Srikandi'},
       {key:'gatotkaca',name:'Ruang Meeting Gatot Kaca'}
     ];
