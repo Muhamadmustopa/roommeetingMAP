@@ -63,6 +63,36 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', setBodyClass);
   setBodyClass();
 })();
+const formLink = 'https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=sharing&ouid=101264464207911273124';
+
+// Fungsi pasang link ke tombol setelah DOM dimuat
+window.addEventListener('DOMContentLoaded', () => {
+  const cardsContainer = document.getElementById('cards');
+  const template = document.getElementById('card-template');
+  
+  const rooms = [
+    { key: 'arjuna', name: 'Ruang Meeting Arjuna' },
+    { key: 'srikandi', name: 'Ruang Meeting Srikandi' },
+    { key: 'gatotkaca', name: 'Ruang Meeting Gatotkaca' }
+  ];
+
+  rooms.forEach(room => {
+    const clone = template.content.cloneNode(true);
+    clone.querySelector('.room-title').textContent = room.name;
+
+    const statusEl = clone.querySelector('.room-status');
+    statusEl.id = `status-${room.key}`;
+
+    const linkEl = clone.querySelector('.room-link');
+    linkEl.href = formLink;
+    linkEl.addEventListener('click', e => {
+      e.preventDefault();
+      window.open(formLink, '_blank');
+    });
+
+    cardsContainer.appendChild(clone);
+  });
+});
 
 //-----------------------------------------
 // Example: adjust card font on small screens
