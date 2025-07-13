@@ -21,20 +21,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if(!sidebar) return; // halaman tanpa sidebar
 
-  // buka sidebar
-  function openSidebar(){
-    sidebar.classList.remove('-translate-x-full');
-    overlay.classList.remove('hidden');
-  }
-  // tutup sidebar
-  function closeSidebar(){
-    sidebar.classList.add('-translate-x-full');
-    overlay.classList.add('hidden');
-  }
-  btnOpen?.addEventListener('click', openSidebar);
-  btnClose?.addEventListener('click', closeSidebar);
-  overlay?.addEventListener('click', closeSidebar);
-})();
+// buka & tutup sidebar di mobile
+document.getElementById('btn-open').onclick = () => {
+  sidebar.classList.remove('-translate-x-full');
+  overlay.classList.remove('hidden');
+};
+document.getElementById('btn-close').onclick = () => {
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('hidden');
+};
+overlay.onclick = () => {
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('hidden');
+};
+
 
 //-----------------------------------------
 // Auto‑scroll close sidebar (mobile)
