@@ -65,7 +65,7 @@
             <a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a>
           </li>
           <li>
-            <a href="list-booking.html" class="block py-2 px-4 hover:bg-indigo-600">List&nbsp;List Booking</a>
+            <a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a>
           </li>
         </ul>
       </nav>
@@ -120,46 +120,33 @@
           <div id="cards" class="contents"></div>
         </section>
 
-        <!-- DASHBOARD CHART -->
-        <section id="dashboard" class="w-full max-w-3xl mt-16 px-4">
-          <div
-            class="bg-gradient-to-br from-indigo-50 via-white to-indigo-100 rounded-3xl shadow-2xl p-8"
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-8 h-8 text-indigo-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M11 17a4 4 0 100-8 4 4 0 000 8z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <h3 class="text-3xl font-extrabold text-indigo-400">
-                Status Pemakaian Saat Ini
-              </h3>
-            </div>
-            <!-- Chart wrapper -->
-            <div class="relative w-full flex justify-center">
-              <canvas id="usageChart" class="max-w-sm"></canvas>
-              <span
-                id="chartLabel"
-                class="absolute inset-0 flex items-center justify-center text-4xl font-black text-gray-700"
-              ></span>
-            </div>
-          </div>
-        </section>
-      </main>
+       <!-- DASHBOARD CHART ====================================================== -->
+<section id="dashboard" class="w-full max-w-3xl mt-16 px-4">
+  <div class="bg-gradient-to-br from-indigo-50 via-white to-indigo-100
+              rounded-3xl shadow-2xl p-8">
+
+    <!-- Header kartu -->
+    <div class="flex items-center gap-3 mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-600"
+           fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M11 17a4 4 0 100-8 4 4 0 000 8z" />
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h3 class="text-3xl font-extrabold text-indigo-700">Status Pemakaian Saat Ini</h3>
+    </div>
+
+    <!-- Chart wrapper (relative agar % di tengah) -->
+    <div class="relative w-full flex justify-center">
+      <canvas id="usageChart" class="max-w-sm"></canvas>
+      <!-- teks persen ditaruh via JS -->
+      <span id="chartLabel" class="absolute inset-0 flex items-center justify-center
+                                   text-4xl font-black text-gray-700"></span>
+    </div>
+  </div>
+</section>
+
 
       <!-- ===== FOOTER ===== -->
       <footer class="w-full mt-auto">
