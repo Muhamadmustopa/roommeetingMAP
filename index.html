@@ -58,6 +58,18 @@
   </aside>
 
   <!-- Wrapper utama -->
+  <body class="bg-gray-100 min-h-screen flex flex-col">
+  <!-- Sidebar (fixed, tidak berubah) -->
+  <aside id="sidebar" class="fixed ...">...</aside>
+
+  <!-- Wrapper konten utama (digeser karena sidebar) -->
+  <div class="flex-1 flex flex-col overflow-x-hidden lg:ml-64">
+    <!-- Header -->
+    ...
+    
+    <!-- Main -->
+    ...
+  </div>
   <div class="flex-1 flex flex-col overflow-x-hidden lg:ml-64">
   <!-- ========= HEADER ========= -->
 <header id="main-header"
@@ -181,7 +193,7 @@
     // Cek status pemakaian Google Calendar
     async function roomBusy(id) {
       const now = new Date();
-      const url = `https://www.googleapis.com/calendar/v3/calendars/${id}/events?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${now.toISOString()}&timeMax=${new Date(now.getTime() + 60000).toISOString()}`;
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${id}/events?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${now.toISOString()}&timeMax=${new Date(now.getTime() + 30000).toISOString()}`;
       const res = await fetch(url).catch(() => null);
       const data = await res?.json?.();
       return data?.items?.length > 0;
@@ -221,7 +233,7 @@
     }
 
     updateStatus();
-    setInterval(updateStatus, 60000); // Perbarui tiap 1 menit
+    setInterval(updateStatus, 30000); // Perbarui tiap 1 menit
   </script>
 </body>
 </html>
