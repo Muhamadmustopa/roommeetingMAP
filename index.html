@@ -49,10 +49,41 @@
 
   <!-- ===== MAIN WRAPPER ===== -->
   <div class="flex-1 flex flex-col overflow-x-hidden lg:pl-64">
-    <!-- HEADER -->
-    <header id="main-header" class="bg-blue shadow px-4 py-3 flex items-center gap-4">
-      <h1 class="text-2xl font-bold">Peminjaman Ruang Meeting</h1>
-    </header>
+  <!-- ========= HEADER ========= -->
+<header id="main-header"
+        class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-700
+               text-white shadow-lg sticky top-0 z-40">
+
+  <!-- Bar judul -->
+  <div class="flex items-center justify-center py-3">
+    <h1 class="text-xl sm:text-2xl font-extrabold tracking-wide drop-shadow">
+      Peminjaman Ruang Meeting
+    </h1>
+  </div>
+
+  <!-- Bar menu geser -->
+  <nav class="overflow-x-auto no-scrollbar">
+    <ul class="flex w-max space-x-6 px-4 pb-2">
+      <li><a href="#status"
+             class="inline-block py-2 px-3 rounded-full bg-white/10 hover:bg-white/20
+                    whitespace-nowrap transition-colors">Status</a></li>
+
+      <li><a href="#dashboard"
+             class="inline-block py-2 px-3 rounded-full bg-white/10 hover:bg-white/20
+                    whitespace-nowrap transition-colors">Dashboard</a></li>
+
+      <li><a href="kalender.html"
+             class="inline-block py-2 px-3 rounded-full bg-white/10 hover:bg-white/20
+                    whitespace-nowrap transition-colors">Kalender</a></li>
+
+      <li><a href="list-booking.html"
+             class="inline-block py-2 px-3 rounded-full bg-white/10 hover:bg-white/20
+                    whitespace-nowrap transition-colors">Daftar Booking</a></li>
+
+      <!-- Tambah menu lain di sini -->
+    </ul>
+  </nav>
+</header>
 
     <!-- ===== CONTENT ===== -->
     <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
