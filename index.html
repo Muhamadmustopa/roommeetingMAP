@@ -23,24 +23,28 @@
 
 <body class="bg-gray-100 min-h-screen flex">
 
-  <!-- Tombol burger (Mobile) -->
-  <button id="btn-open" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-gray-800 text-white rounded">
-    <i data-feather="menu" aria-hidden="true"></i>
-    <span class="sr-only">Buka menu</span>
-  </button>
+ <!-- Tombol Burger (hanya mobile) -->
+<button id="btn-open"
+        class="lg:hidden fixed top-4 left-4 z-50 p-3 bg-gray-800 text-white rounded-full hover:bg-gray-700 active:scale-95 transition">
+  <i data-feather="menu" aria-hidden="true"></i>
+  <span class="sr-only">Buka menu</span>
+</button>
 
-  <!-- Overlay hitam untuk mobile -->
-  <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
+<!-- Overlay (klik tutup) -->
+<div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
 
-  <!-- Sidebar -->
-  <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg -translate-x-full lg:translate-x-0 z-50 sidebar">
-    <div class="flex items-center justify-between p-4 border-b border-gray-700">
-      <span class="text-xl font-semibold">MAP Meeting</span>
-      <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
-        <i data-feather="x" aria-hidden="true">C</i>
-        <span class="sr-only">Tutup menu</span>
-      </button>
-    </div>
+<!-- SIDEBAR -->
+<aside id="sidebar"
+       class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg
+              -translate-x-full lg:translate-x-0 z-50 transition-transform duration-300">
+  <div class="flex items-center justify-between p-4 border-b border-gray-700">
+    <span class="text-xl font-semibold">MAP Meeting</span>
+    <!-- Tombol ✕ -->
+    <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
+      <i data-feather="x" aria-hidden="true"></i>
+      <span class="sr-only">Tutup menu</span>
+    </button>
+  </div>
     <nav class="mt-4">
       <ul class="space-y-1">
         <li><a href="#status" class="block py-2 px-4 hover:bg-indigo-600">Status</a></li>
@@ -62,8 +66,8 @@
   <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
     <!-- Logo kiri -->
     <div class="flex items-center gap-2">
-      <img src="logo-map.jpg" alt="Logo MAP" class="h-9 w-auto rounded shadow" />
-      <span class="hidden sm:inline text-lg font-semibold">MAP Corp</span>
+      <img src="logo.jpg" alt="Logo MAP" class="h-9 w-auto rounded shadow" />
+      <span class="hidden sm:inline text-lg font-semibold"></span>
     </div>
 
     <!-- Judul tengah -->
@@ -75,7 +79,7 @@
     <!-- Placeholder kanan (agar judul tetap tengah) -->
     <div class="w-12 sm:w-20"></div>
   </div>
-
+</header>
     <!-- Main Content -->
     <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
 
