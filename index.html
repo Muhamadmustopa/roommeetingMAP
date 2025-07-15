@@ -1,189 +1,340 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Peminjaman Ruang Meeting – MAP</title>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peminjaman Ruang Meeting – MAP</title>
 
-  <!-- Tailwind & CSS kustom -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+    <!-- Tailwind CSS v3 (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Feather & Chart.js -->
-  <script src="https://unpkg.com/feather-icons"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Feather Icons & Chart.js -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <style>
-    .sidebar{transition:transform .3s ease}
-    @media(min-width:1024px){#main-header{margin-left:16rem}}
-  </style>
-</head>
-<body class="bg-gray-100 min-h-screen flex">
+    <!-- Extra style tweaks -->
+    <style>
+      .sidebar {
+        transition: transform 0.3s ease;
+      }
+      @media (min-width: 1024px) {
+        #main-header {
+          margin-left: 16rem; /* = width-64 sidebar */
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex text-gray-800">
+    <!-- ===== Mobile Burger ===== -->
+    <button
+      id="btn-open"
+      aria-label="Buka menu"
+      class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded bg-gray-800 text-white"
+    >
+      <i data-feather="menu"></i>
+    </button>
 
-  <!-- ===== Mobile Burger ===== -->
-  <button id="btn-open" class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded bg-gray-800 text-white">
-    <i data-feather="menu"></i>
-  </button>
+    <!-- Overlay Mobile -->
+    <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
 
-  <!-- Overlay Mobile -->
-  <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
+    <!-- ===== SIDEBAR ===== -->
+    <aside
+      id="sidebar"
+      class="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg -translate-x-full lg:translate-x-0 z-50 sidebar"
+    >
+      <div class="flex items-center justify-between p-4 border-b border-gray-700">
+        <span class="text-xl font-semibold">MAP&nbsp;Meeting</span>
+        <!-- Tombol ✕ pada sidebar -->
+        <button
+          id="btn-close"
+          aria-label="Tutup menu"
+          class="lg:hidden p-2 rounded hover:bg-gray-800"
+        >
+          <i data-feather="x"></i>
+        </button>
+      </div>
+      <nav class="mt-4">
+        <ul class="space-y-1">
+          <li>
+            <a href="#status" class="block py-2 px-4 hover:bg-indigo-600">Status</a>
+          </li>
+          <li>
+            <a href="#dashboard" class="block py-2 px-4 hover:bg-indigo-600">Dashboard</a>
+          </li>
+          <li>
+            <a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a>
+          </li>
+          <li>
+            <a href="list-booking.html" class="block py-2 px-4 hover:bg-indigo-600">List&nbsp;List Booking</a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg -translate-x-full lg:translate-x-0 z-50 sidebar">
-    <div class="flex items-center justify-between p-4 border-b border-gray-700">
-      <span class="text-xl font-semibold">MAP Meeting</span>
-      <!-- Tombol ✕ pada sidebar -->
-<button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
-  <i data-feather="x"></i>
-</button>
-    </div>
-    <nav class="mt-4">
-      <ul class="space-y-1">
-        <li><a href="#status" class="block py-2 px-4 hover:bg-indigo-600">Status</a></li>
-        <li><a href="#dashboard" class="block py-2 px-4 hover:bg-indigo-600">Dashboard</a></li>
-        <li><a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a></li>
-        <li><a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a></li>
-      </ul>
-    </nav>
-  </aside>
+    <!-- ===== MAIN WRAPPER ===== -->
+    <div class="flex-1 flex flex-col overflow-x-hidden lg:pl-64">
+      <!-- ========= HEADER ========= -->
+      <header
+        id="main-header"
+        class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-700 text-white shadow-lg sticky top-0 z-40"
+      >
+        <div class="flex items-center justify-center py-3">
+          <h1 class="text-xl sm:text-2xl font-bold tracking-wide drop-shadow">
+            Peminjaman Ruang Meeting – MAP
+          </h1>
+        </div>
+      </header>
 
-  <!-- ===== MAIN WRAPPER ===== -->
-  <div class="flex-1 flex flex-col overflow-x-hidden lg:pl-64">
-  <!-- ========= HEADER ========= -->
-<header id="main-header"
-        class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-700
-               text-white shadow-lg sticky top-0 z-40">
+      <!-- ===== CONTENT ===== -->
+      <main
+        class="flex-1 overflow-y-auto flex flex-col items-center pb-10 selection:bg-indigo-200"
+      >
+        <!-- KARTU STATUS -->
+        <section
+          id="status"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-5xl px-3 mt-6"
+        >
+          <template id="card-template">
+            <div
+              class="card-wrapper bg-gradient-to-br from-gray-50 via-white to-gray-100 border-4 border-indigo-300 rounded-2xl shadow-lg flex flex-col items-center text-center p-6 transition hover:scale-[1.02]"
+            >
+              <h2
+                class="room-title text-2xl font-bold mb-4 text-indigo-700 drop-shadow-sm"
+              >
+                Ruang Meeting
+              </h2>
+              <p
+                class="room-status text-3xl font-extrabold mb-6 text-gray-500"
+              >
+                Memuat…
+              </p>
+              <a class="room-link w-full" target="_blank" rel="noopener">
+                <button
+                  class="w-full py-3 rounded-full font-semibold bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white shadow-md transition"
+                >
+                  Ajukan Peminjaman
+                </button>
+              </a>
+            </div>
+          </template>
+          <div id="cards" class="contents"></div>
+        </section>
 
-  <!-- Bar judul -->
-  <div class="flex items-center justify-center py-3">
-    <h1 class="text-xl sm:text-2xl font-bold tracking-wide drop-shadow">
-      Peminjaman Ruang Meeting- MAP
-    </h1>
-  </div>
+        <!-- DASHBOARD CHART -->
+        <section id="dashboard" class="w-full max-w-3xl mt-16 px-4">
+          <div
+            class="bg-gradient-to-br from-indigo-50 via-white to-indigo-100 rounded-3xl shadow-2xl p-8"
+          >
+            <div class="flex items-center gap-3 mb-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 text-indigo-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M11 17a4 4 0 100-8 4 4 0 000 8z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h3 class="text-3xl font-extrabold text-indigo-400">
+                Status Pemakaian Saat Ini
+              </h3>
+            </div>
+            <!-- Chart wrapper -->
+            <div class="relative w-full flex justify-center">
+              <canvas id="usageChart" class="max-w-sm"></canvas>
+              <span
+                id="chartLabel"
+                class="absolute inset-0 flex items-center justify-center text-4xl font-black text-gray-700"
+              ></span>
+            </div>
+          </div>
+        </section>
+      </main>
 
-    <!-- ===== CONTENT ===== -->
-    <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
-
-      <!-- KARTU STATUS -->
-      <section id="status" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-5xl px-3 mt-6">
-        <template id="card-template">
-          <div class="card-wrapper bg-gradient-to-br from-gray-50 via-white to-gray-100 border-4 border-indigo-300 rounded-2xl shadow-lg flex flex-col items-center text-center p-6 transition-all">
-            <h2 class="room-title text-2xl font-bold mb-4 text-indigo-700">Ruang Meeting</h2>
-            <p class="room-status text-3xl font-extrabold mb-6 text-gray-500">Memuat…</p>
-            <a class="room-link w-full" target="_blank" rel="noopener">
-              <button class="w-full py-3 rounded-full font-semibold bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white shadow-md transition-transform">Ajukan Peminjaman</button>
+      <!-- ===== FOOTER ===== -->
+      <footer class="w-full mt-auto">
+        <div class="relative">
+          <div
+            class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-700 py-5"
+          ></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <a
+              href="#"
+              class="group inline-flex items-center gap-2 text-lg sm:text-xl font-semibold tracking-wide text-white drop-shadow hover:drop-shadow-lg transition"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6 group-hover:scale-110 transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-1.79 8-4V6c0-2.21-3.582-4-8-4S4 3.79 4 6v10c0 2.21 3.582 4 8 4z"
+                />
+              </svg>
+              <span class="group-hover:underline">© 2025 Mitra Asa Pratama</span>
             </a>
           </div>
-        </template>
-        <div id="cards" class="contents"></div>
-      </section>
-
-      <!-- DASHBOARD CHART -->
-<section id="dashboard" class="w-full max-w-3xl mt-16 px-4">
-  <div class="bg-gradient-to-br from-indigo-50 via-white to-indigo-100
-              rounded-3xl shadow-2xl p-8">
-
-    <!-- Header kartu -->
-    <div class="flex items-center gap-3 mb-6">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-600"
-           fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M11 17a4 4 0 100-8 4 4 0 000 8z" />
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <h3 class="text-3xl font-extrabold text-indigo-400">Status Pemakaian Saat Ini</h3>
+        </div>
+      </footer>
     </div>
 
-    <!-- Chart wrapper (relative agar % di tengah) -->
-    <div class="relative w-full flex justify-center">
-      <canvas id="usageChart" class="max-w-sm"></canvas>
-      <!-- teks persen ditaruh via JS -->
-      <span id="chartLabel" class="absolute inset-0 flex items-center justify-center
-                                   text-4xl font-black text-gray-700"></span>
-    </div>
-  </div>
-</section>
+    <!-- ===== SCRIPT ===== -->
+    <script type="module">
+      // Init feather icons
+      feather.replace();
 
-    <footer class="w-full mt-auto">
-  <div class="relative">
-    <!-- latar gradasi biru -->
-    <div class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-700 py-5"></div>
+      /* ---------------- Google Calendar ---------------- */
+      const API_KEY = "AIzaSyBee80FlAkCPEy4O5lbSgS2ygmetMY0_2w";
+      const FORM_LINK =
+        "https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=sf_link";
 
-    <!-- teks & ikon -->
-    <div class="absolute inset-0 flex items-center justify-center">
-      <a href="#"
-         class="group inline-flex items-center gap-2 text-lg sm:text-xl font-semibold tracking-wide
-                text-white drop-shadow hover:drop-shadow-lg transition-all">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="w-6 h-6 group-hover:scale-110 transition-transform"
-             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-1.79 8-4V6c0-2.21-3.582-4-8-4S4 3.79 4 6v10c0 2.21 3.582 4 8 4z" />
-        </svg>
-        <span class="group-hover:underline">© 2025 Mitra Asa Pratama</span>
-      </a>
-    </div>
-  </div>
-</footer>
+      // Calendar IDs
+      const CALENDAR_IDS = {
+        arjuna:
+          "dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d@group.calendar.google.com",
+        srikandi:
+          "4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753@group.calendar.google.com",
+        gatotkaca:
+          "a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2@group.calendar.google.com",
+      } as const;
 
+      /* ---------------- Sidebar on mobile ---------------- */
+      const sidebar = document.getElementById("sidebar")!;
+      const overlay = document.getElementById("overlay")!;
+      document.getElementById("btn-open")!.onclick = () => {
+        sidebar.classList.remove("-translate-x-full");
+        overlay.classList.remove("hidden");
+      };
+      document.getElementById("btn-close")!.onclick = () => {
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+      };
+      overlay.onclick = () => {
+        sidebar.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+      };
 
-  <!-- ===== SCRIPT ===== -->
-  <script>
-  feather.replace();
-  const apiKey  = 'AIzaSyBee80FlAkCPEy4O5lbSgS2ygmetMY0_2w';
-  const formLink = 'https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=sharing&ouid=101264464207911273124';
-  const calendarIds={
-    arjuna:'dc49966a239199414780de061d7d0cb226e45b4398f1585fd46950f2a44bcc2d@group.calendar.google.com',
-    srikandi:'4b908ab3e0e0eecd09957c9cf6c2d124039222e96112a13ce10a1a322a78b753@group.calendar.google.com',
-    gatotkaca:'a1c8e0d5a5c5c870325fc8bca859002f0c4c2523876bef16176e960312fe68b2@group.calendar.google.com'
-  };
+      /* ---------------- Build room cards ---------------- */
+      const rooms: { key: keyof typeof CALENDAR_IDS; name: string }[] = [
+        { key: "arjuna", name: "Ruang Meeting Arjuna" },
+        { key: "srikandi", name: "Ruang Meeting Srikandi" },
+        { key: "gatotkaca", name: "Ruang Meeting Gatotkaca" },
+      ];
 
-  /* ----- Sidebar mobile ----- */
-  const sidebar=document.getElementById('sidebar');
-  const overlay=document.getElementById('overlay');
-  document.getElementById('btn-open').onclick=()=>{sidebar.classList.remove('-translate-x-full');overlay.classList.remove('hidden');};
-  document.getElementById('btn-close').onclick=()=>{sidebar.classList.add('-translate-x-full');overlay.classList.add('hidden');};
-  overlay.onclick=()=>{sidebar.classList.add('-translate-x-full');overlay.classList.add('hidden');};
+      const tpl = document.getElementById("card-template") as HTMLTemplateElement;
+      const wrap = document.getElementById("cards")!;
+      rooms.forEach((room) => {
+        const node = tpl.content.cloneNode(true) as HTMLElement;
+        (node.querySelector(".room-title") as HTMLElement).textContent = room.name;
+        (node.querySelector(".room-status") as HTMLElement).id = `status-${room.key}`;
+        const link = node.querySelector(".room-link") as HTMLAnchorElement;
+        link.href = FORM_LINK;
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.open(FORM_LINK, "_blank");
+        });
+        wrap.appendChild(node);
+      });
 
-  /* ----- Build cards ----- */
-  const rooms=[{key:'arjuna',name:'Ruang Meeting Arjuna'},{key:'srikandi',name:'Ruang Meeting Srikandi'},{key:'gatotkaca',name:'Ruang Meeting Gatotkaca'}];
-  const tpl=document.getElementById('card-template');
-  const wrap=document.getElementById('cards');
-  rooms.forEach(r=>{
-    const n=tpl.content.cloneNode(true);
-    n.querySelector('.room-title').textContent=r.name;
-    n.querySelector('.room-status').id=`status-${r.key}`;
-    const link=n.querySelector('.room-link');
-    link.href=formLink;link.onclick=e=>{e.preventDefault();window.open(formLink,'_blank');};
-    wrap.appendChild(n);
-  });
+      /* ---------------- Calendar helpers ---------------- */
+      async function isRoomBusy(calendarId: string): Promise<boolean> {
+        try {
+          const now = new Date();
+          const timeMin = now.toISOString();
+          const timeMax = new Date(now.getTime() + 60_000).toISOString(); // +1 minute
 
-  async function roomBusy(id){
-    const now=new Date();
-    const url=`https://www.googleapis.com/calendar/v3/calendars/${id}/events?key=${apiKey}&singleEvents=true&orderBy=startTime&timeMin=${now.toISOString()}&timeMax=${new Date(now.getTime()+60000).toISOString()}`;
-    const res=await fetch(url).catch(()=>null);
-    const data=await res?.json?.();
-    return data?.items?.length>0;
-  }
-  async function updateStatus(){
-    const usage=[];
-    for(const [room,id] of Object.entries(calendarIds)){
-      const busy=await roomBusy(id);
-      const el=document.getElementById(`status-${room}`);
-      el.textContent=busy?'DIPAKAI':'TERSEDIA';
-      el.className=busy?'text-red-600 font-extrabold text-3xl':'text-green-600 font-extrabold text-3xl';
-      usage.push(busy?1:0);
-    }
-    drawChart(usage);
-  }
-  function drawChart(arr){
-    const ctx=document.getElementById('usageChart').getContext('2d');
-    if(window.usageChartInstance)window.usageChartInstance.destroy();
-    window.usageChartInstance=new Chart(ctx,{type:'doughnut',data:{labels:['Terpakai','Tersedia'],datasets:[{data:[arr.filter(x=>x).length,arr.filter(x=>!x).length],backgroundColor:['#EF4444','#22C55E']}]},options:{plugins:{legend:{display:false}},cutout:'70%'}});
-  }
-  updateStatus();
-  setInterval(updateStatus,60000);
-  </script>
-</body>
+          const url =
+            `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?` +
+            new URLSearchParams({
+              key: API_KEY,
+              singleEvents: "true",
+              orderBy: "startTime",
+              timeMin,
+              timeMax,
+            });
+
+          const res = await fetch(url);
+          if (!res.ok) throw new Error("Network response was not ok");
+          const data = (await res.json()) as { items?: unknown[] };
+          return (data.items?.length ?? 0) > 0;
+        } catch (err) {
+          console.error("Failed checking calendar:", err);
+          return false; // assume available on error
+        }
+      }
+
+      async function updateStatus() {
+        const usage: number[] = [];
+
+        for (const [roomKey, calendarId] of Object.entries(CALENDAR_IDS)) {
+          const busy = await isRoomBusy(calendarId);
+          const el = document.getElementById(`status-${roomKey}`)!;
+          el.textContent = busy ? "DIPAKAI" : "TERSEDIA";
+          el.className = busy
+            ? "text-red-600 font-extrabold text-3xl"
+            : "text-green-600 font-extrabold text-3xl";
+          usage.push(busy ? 1 : 0);
+        }
+        drawChart(usage);
+      }
+
+      /* ---------------- Chart ---------------- */
+      let usageChart: Chart | undefined;
+      function drawChart(arr: number[]) {
+        const ctx = (
+          document.getElementById("usageChart") as HTMLCanvasElement
+        ).getContext("2d")!;
+        usageChart?.destroy();
+        usageChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Terpakai", "Tersedia"],
+            datasets: [
+              {
+                data: [arr.filter(Boolean).length, arr.filter((x) => !x).length],
+                backgroundColor: ["#EF4444", "#22C55E"],
+              },
+            ],
+          },
+          options: {
+            cutout: "70%",
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `${ctx.label}: ${ctx.raw}`,
+                },
+              },
+            },
+          },
+        });
+        // Update center label
+        const total = arr.length;
+        const occupied = arr.filter(Boolean).length;
+        document.getElementById("chartLabel")!.textContent = `${(
+          (occupied / total) *
+          100
+        ).toFixed(0)}%`;
+      }
+
+      // Initial load + interval refresh
+      updateStatus();
+      setInterval(updateStatus, 60_000);
+    </script>
+  </body>
 </html>
