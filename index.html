@@ -34,28 +34,50 @@
 
 <!-- Overlay (klik tutup) -->
 <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-<!-- SIDEBAR -->
-<aside id="sidebar"
-       class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg
-              -translate-x-full lg:translate-x-0 z-50 transition-transform duration-300">
-  <div class="flex items-center justify-between p-4 border-b border-gray-700">
-    <span class="text-xl font-semibold">MAP Meeting</span>
-    <!-- Tombol ✕ -->
-    <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
-      <i data-feather="x" aria-hidden="true"></i>
-      <span class="sr-only">Tutup menu</span>
-    </button>
-  </div>
-    <nav class="mt-4">
-      <ul class="space-y-1">
-        <li><a href="#status" class="block py-2 px-4 hover:bg-indigo-600">Status</a></li>
-        <li><a href="#dashboard" class="block py-2 px-4 hover:bg-indigo-600">Dashboard</a></li>
-        <li><a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalender</a></li>
-        <li><a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a></li>
-      </ul>
+  <!-- ===== Tombol Burger (mobile) ===== -->
+  <button id="btn-open"
+          class="lg:hidden fixed top-4 left-4 z-50 p-3 bg-gray-800 text-white
+                 rounded-full hover:bg-gray-700 active:scale-95 transition">
+    <i data-feather="menu" aria-hidden="true"></i>
+    <span class="sr-only">Buka menu</span>
+  </button>
+
+  <!-- ===== Overlay Gelap (mobile) ===== -->
+  <div id="overlay"
+       class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside id="sidebar"
+         class="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg
+                -translate-x-full lg:translate-x-0 z-50 transition-transform duration-300">
+    <div class="flex items-center justify-between p-4 border-b border-gray-700">
+      <span class="text-xl font-semibold">MAP Meeting</span>
+      <!-- Tombol ✕ (mobile) -->
+      <button id="btn-close"
+              class="lg:hidden p-2 rounded hover:bg-gray-800 active:scale-95 transition">
+        <i data-feather="x" aria-hidden="true"></i>
+        <span class="sr-only">Tutup menu</span>
+      </button>
+    </div>
+
+    <nav class="mt-4 space-y-1">
+      <a href="#status"    class="block py-2 px-4 hover:bg-indigo-600">Status</a>
+      <a href="#dashboard" class="block py-2 px-4 hover:bg-indigo-600">Dashboard</a>
+      <a href="kalender.html"     class="block py-2 px-4 hover:bg-indigo-600">Kalender</a>
+      <a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a>
     </nav>
   </aside>
+
+  <!-- ===== WRAPPER KONTEN ===== -->
+  <div class="flex-1 flex flex-col lg:ml-64"><!-- header + main + footer di sini --></div>
+
+  <!-- Feather Icons & Script -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="sidebar.js"></script>
+</body>
+
 
   
   <!-- ========= HEADER ========= -->
@@ -140,20 +162,36 @@
     };
 
     // Sidebar mobile toggle
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    document.getElementById('btn-open').onclick = () => {
-      sidebar.classList.remove('-translate-x-full');
-      overlay.classList.remove('hidden');
-    };
-    document.getElementById('btn-close').onclick = () => {
-      sidebar.classList.add('-translate-x-full');
-      overlay.classList.add('hidden');
-    };
-    overlay.onclick = () => {
-      sidebar.classList.add('-translate-x-full');
-      overlay.classList.add('hidden');
-    };
+  // Render ikon Feather
+feather.replace();
+
+// Elemen penting
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const btnOpen = document.getElementById('btn-open');
+const btnClose= document.getElementById('btn-close');
+
+// Fungsi bantu
+function openSidebar(){
+  sidebar.classList.remove('-translate-x-full');
+  overlay.classList.remove('hidden');
+}
+function closeSidebar(){
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('hidden');
+}
+
+// Event listener
+btnOpen .addEventListener('click', openSidebar);
+btnClose.addEventListener('click', closeSidebar);
+overlay .addEventListener('click', closeSidebar);
+
+// Tutup otomatis saat klik link (hanya mobile)
+sidebar.querySelectorAll('a').forEach(link=>{
+  link.addEventListener('click', () => {
+    if (window.innerWidth < 1024) closeSidebar();
+  });
+});
 
     // Build Cards
     const rooms = [
