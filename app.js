@@ -81,6 +81,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+/** Inisialisasi pertama */
+const ctx = document.getElementById('usageChart').getContext('2d');
+let chartInstance = null;
+
+/** Contoh data dummy—ganti dengan data nyata */
+const used = 1;   // ruang terpakai
+const free = 2;   // ruang tersedia
+drawChart(used, free);
+
+function drawChart(used, free){
+  // Perbarui label % di tengah
+  const percent = Math.round((used / (used + free)) * 100);
+  document.getElementById('chartLabel').textContent = percent + '%';
+
+  // Hancurkan jika sudah ada chart lama
+  if (chartInstance) chartInstance.destroy();
+
+  // Gambar chart baru
+  chartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Dipakai', 'Tersedia'],
+      datasets: [{
+        data: [used, free],
+        backgroundColor: ['#EF4444', '#22C55E'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      cutout: '70%'
+    }
+  });
+}
+
    
 //-----------------------------------------
 // Resize handler – tambah kelas body breakpoints
