@@ -48,6 +48,40 @@ overlay.onclick = () => {
   }));
 })();
 
+document.addEventListener('DOMContentLoaded', () => {
+  /* ----- data ruangan ----- */
+  const rooms = [
+    { key: 'arjuna',   name: 'Ruang Meeting Arjuna'   },
+    { key: 'srikandi', name: 'Ruang Meeting Srikandi' },
+    { key: 'gatotkaca',name: 'Ruang Meeting Gatotkaca'}
+  ];
+
+  const formLink = 'https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform';
+
+  /* ----- cloning kartu ----- */
+  const tpl   = document.getElementById('card-template');
+  const cards = document.getElementById('cards');
+
+  rooms.forEach(r => {
+    const node = tpl.content.cloneNode(true);
+
+    // set judul & id status
+    node.querySelector('.room-title').textContent = r.name;
+    node.querySelector('.room-status').id = `status-${r.key}`;
+
+    // link form
+    const link = node.querySelector('.room-link');
+    link.href  = formLink;
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      window.open(formLink, '_blank');
+    });
+
+    cards.appendChild(node);
+  });
+});
+
+   
 //-----------------------------------------
 // Resize handler – tambah kelas body breakpoints
 //-----------------------------------------
