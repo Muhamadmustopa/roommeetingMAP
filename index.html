@@ -53,12 +53,28 @@
 
   <!-- Wrapper utama -->
   <div class="flex-1 flex flex-col overflow-x-hidden lg:pl-64">
-    <!-- Header -->
-    <header id="main-header" class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-700 text-white shadow-lg sticky top-0 z-40">
-      <div class="flex items-center justify-center py-3">
-        <h1 class="text-xl sm:text-2xl font-bold tracking-wide drop-shadow">Peminjaman Ruang Meeting – MAP</h1>
-      </div>
-    </header>
+  <!-- ========= HEADER ========= -->
+<header id="main-header"
+        class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-700
+               text-white shadow-lg sticky top-0 z-40">
+
+  <!-- Bar logo + judul -->
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+    <!-- Logo kiri -->
+    <div class="flex items-center gap-2">
+      <img src="logo-map.jpg" alt="Logo MAP" class="h-9 w-auto rounded shadow" />
+      <span class="hidden sm:inline text-lg font-semibold">MAP Corp</span>
+    </div>
+
+    <!-- Judul tengah -->
+    <h1 class="text-base sm:text-xl md:text-2xl font-extrabold tracking-wide drop-shadow
+               text-center flex-1">
+      Peminjaman Ruang Meeting
+    </h1>
+
+    <!-- Placeholder kanan (agar judul tetap tengah) -->
+    <div class="w-12 sm:w-20"></div>
+  </div>
 
     <!-- Main Content -->
     <main class="flex-1 overflow-y-auto flex flex-col items-center pb-10">
