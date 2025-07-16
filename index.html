@@ -37,11 +37,20 @@
   <aside id="sidebar"
          class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg
                 -translate-x-full lg:translate-x-0 z-50">
-    <div class="flex items-center justify-between p-4 border-b border-gray-700">
-      <span class="text-xl font-semibold">MAP Meeting</span>
-      <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
-        <i data-feather="x" aria-hidden="true"></i>
-        <span class="sr-only">Tutup menu</span>
+  <div class="flex items-center justify-between p-4 border-b border-gray-700">
+  <!-- Logo + Judul -->
+  <div class="flex items-center gap-2">
+    <img src="logo-map.jpg" alt="Logo MAP" class="h-8 w-8 rounded shadow" />
+    <span class="text-xl font-semibold">MAP Meeting</span>
+  </div>
+
+  <!-- Tombol Tutup -->
+  <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
+    <i data-feather="x" aria-hidden="true"></i>
+    <span class="sr-only">Tutup menu</span>
+  </button>
+</div>
+
       </button>
     </div>
     <nav class="mt-4 space-y-1">
