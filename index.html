@@ -98,18 +98,24 @@
       </section>
 
       <!-- DASHBOARD CHART -->
-      <section id="dashboard" class="max-w-3xl mx-auto">
-        <div class="bg-gradient-to-br from-indigo-50 via-white to-indigo-100 rounded-3xl shadow-2xl p-8">
-          <div class="flex items-center gap-3 mb-6">
-            <i data-feather="pie-chart" class="w-8 h-8 text-indigo-600"></i>
-            <h3 class="text-2xl font-extrabold text-indigo-400">Status Pemakaian Saat Ini</h3>
-          </div>
-          <div class="relative flex justify-center">
-            <canvas id="usageChart" class="max-w-xs sm:max-w-sm"></canvas>
-            <span id="chartLabel" class="absolute inset-0 flex items-center justify-center text-3xl font-black text-gray-700"></span>
-          </div>
-        </div>
-      </section>
+      <!-- SLIDER JADWAL MEETING -->
+<section id="jadwalMeeting" class="max-w-4xl mx-auto my-10">
+  <h3 class="text-2xl font-bold mb-4 text-indigo-600">📆 Jadwal Meeting Hari Ini</h3>
+  <div class="swiper mySwiper">
+    <div class="swiper-wrapper" id="calendarEvents">
+      <!-- Akan diisi otomatis -->
+    </div>
+    <!-- Navigasi -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- SwiperJS CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 
     </main>
   </div>
