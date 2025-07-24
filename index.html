@@ -101,79 +101,45 @@
         </template>
         <div id="cards" class="contents"></div>
       </section>
- <!-- SLIDER JADWAL MEETING -->
-  <section class="max-w-4xl mx-auto my-8 p-4 bg-white rounded-lg shadow">
-    <h2 class="text-2xl font-bold mb-4 text-indigo-600">📅 Jadwal Meeting Hari Ini</h2>
-    <div class="swiper mySwiper">
-      <div class="swiper-wrapper" id="calendarEvents">
-        <!-- Slides akan diisi otomatis -->
-      </div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-pagination"></div>
-    </div>
-  </section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  Tabletop.init({
+    key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
+    simpleSheet: true,
+    callback: function (data) {
+      const container = document.getElementById('calendarEvents');
+      container.innerHTML = '';
 
-  <!-- Swiper JS & Feather -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      feather.replace();
-
-      Tabletop.init({
-        key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
-        simpleSheet: true,
-        callback: data => {
-          const today = new Date().toISOString().slice(0, 10);
-          const filtered = data.filter(item => item['Tanggal pemakaian'] === today);
-          const container = document.getElementById('calendarEvents');
-          container.innerHTML = '';
-
-          if (filtered.length === 0) {
-            container.innerHTML = `
-              <div class="swiper-slide p-6 text-center text-gray-500">
-                Tidak ada jadwal meeting hari ini.
-              </div>`;
-          } else {
-            filtered.forEach(item => {
-              const tanggal = new Date(item['Tanggal pemakaian']);
-              const day = tanggal.getDate();
-              const monthYear = tanggal.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-              container.innerHTML += `
-                <div class="swiper-slide bg-indigo-50 p-6 rounded-xl shadow flex items-center">
-                  <div class="text-center mr-6">
-                    <div class="text-5xl font-extrabold text-indigo-700">${day}</div>
-                    <div class="text-sm text-gray-600">${monthYear}</div>
-                  </div>
-                  <div>
-                    <div class="text-lg font-semibold">${item['Agenda Meeting']}</div>
-                    <div class="text-gray-700">${item['Waktu pemakaian']} – ${item['Waktu selesai']}</div>
-                    <div class="mt-1 text-gray-500 text-sm">Ruangan: ${item.Ruangan}</div>
-                  </div>
-                </div>`;
-            });
-          }
-
-          new Swiper('.mySwiper', {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            navigation: {
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-            },
-            pagination: {
-              el: '.swiper-pagination',
-              clickable: true,
-            },
-            breakpoints: {
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            },
-          });
-        }
+      data.forEach(item => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide bg-white rounded-xl shadow p-5';
+        slide.innerHTML = `
+          <h4 class="text-lg font-bold text-indigo-600 mb-1">${item['Nama Ruangan'] || 'Ruang'}</h4>
+          <p class="text-gray-700 text-sm mb-1">📅 ${item['Tanggal']}</p>
+          <p class="text-gray-700 text-sm">⏰ ${item['Waktu Mulai']} - ${item['Waktu Selesai']}</p>
+          <p class="mt-2 text-gray-900 font-semibold">${item['Judul Meeting'] || ''}</p>
+          <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>
+        `;
+        container.appendChild(slide);
       });
-    });
-  </script>
+
+      // Inisialisasi Swiper setelah isi data
+      new Swiper('.mySwiper', {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+      });
+    }
+  });
+});
+</script>
 
   <!-- FOOTER -->
   <footer class="w-full mt-auto">
