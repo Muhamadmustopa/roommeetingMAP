@@ -3,102 +3,140 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jadwal Peminjaman Ruang Meeting</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" type="image/jpg" href="logo.jpg">
+  <title>Peminjaman Ruang Meeting – MAP</title>
+
+  <!-- Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <!-- Feather & Chart.js -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <!-- Ikon & Library -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
+
+
+  <!-- Custom Style -->
   <style>
-    body { font-family: sans-serif; }
-    .swiper-slide { display: flex; align-items: center; justify-content: center; }
-    .card {
-      @apply bg-white rounded-2xl shadow-lg p-4 w-72;
-    }
-    .sidebar {
-      @apply bg-gray-800 text-white w-full md:w-64 fixed md:static top-0 left-0 h-16 md:h-screen flex md:flex-col items-center justify-between md:justify-start p-4;
-    }
+    .sidebar { transition: transform 0.3s ease; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-gray-100">
-  <div class="flex flex-col md:flex-row min-h-screen">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="text-lg font-bold">Meeting Room</div>
-      <a href="https://forms.gle/your-google-form-link" target="_blank" class="mt-2 text-sm underline">Ajukan Peminjaman</a>
-    </div>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-    <!-- Main Content -->
-    <div class="flex-1 p-4 mt-16 md:mt-0">
-      <h1 class="text-xl font-bold mb-4">Jadwal Pemakaian Ruangan</h1>
+  <!-- ===== BURGER (mobile) ===== -->
+  <button id="btn-open"
+          class="lg:hidden fixed top-4 left-4 z-50 p-3 bg-gray-800 text-white
+                 rounded-full hover:bg-gray-700 active:scale-95 transition">
+    <i data-feather="menu" aria-hidden="true"></i>
+    <span class="sr-only">Buka menu</span>
+  </button>
 
-      <!-- Swiper -->
-      <div class="swiper">
-        <div class="swiper-wrapper" id="jadwal-wrapper">
-          <!-- Slide akan diisi oleh JavaScript -->
-        </div>
-        <!-- Navigasi -->
-        <div class="swiper-pagination"></div>
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
-      </div>
-    </div>
+  <!-- ===== OVERLAY ===== -->
+  <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside id="sidebar"
+         class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg
+                -translate-x-full lg:translate-x-0 z-50">
+  <div class="flex items-center justify-between p-4 border-b border-gray-700">
+  <!-- Logo + Judul -->
+  <div class="flex items-center gap-2">
+    <img src="logo-map.jpg" alt="Logo MAP" class="h-10 w-19 rounded shadow" />
   </div>
 
-  <script>
-    const spreadsheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXxxx/pub?gid=0&single=true&output=csv';
+  <!-- Tombol Tutup -->
+  <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
+    <i data-feather="x" aria-hidden="true"></i>
+    <span class="sr-only">Tutup menu</span>
+  </button>
+</div>
 
-    function formatTanggal(date) {
-      return date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      </button>
+    </div>
+    <nav class="mt-4 space-y-1">
+      <a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a>
+      <a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a>
+    </nav>
+  </aside>
+
+  <!-- ===== WRAPPER KONTEN ===== -->
+  <div class="flex-1 flex flex-col lg:ml-64">
+
+    <!-- HEADER -->
+    <header class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-700
+                   text-white shadow-lg sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-2">
+          <img src="logo.jpg" alt="Logo MAP" class="h-9 w-auto rounded shadow" />
+        </div>
+        <h1 class="text-base sm:text-xl md:text-2xl font-extrabold flex-1 text-center drop-shadow">
+          Peminjaman Ruang Meeting
+        </h1>
+        <div class="w-12 sm:w-20"></div>
+      </div>
+    </header>
+
+    <!-- ============ MAIN ============ -->
+    <main class="flex-1 overflow-y-auto p-4 space-y-10">
+
+        <div id="cards" class="contents"></div>
+      </section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  Tabletop.init({
+    key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
+    simpleSheet: true,
+    callback: function (data) {
+      const container = document.getElementById('calendarEvents');
+      container.innerHTML = '';
+
+      data.forEach(item => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide bg-white rounded-xl shadow p-5';
+        slide.innerHTML = `
+          <h4 class="text-lg font-bold text-indigo-600 mb-1">${item['Nama Ruangan'] || 'Ruang'}</h4>
+          <p class="text-gray-700 text-sm mb-1">📅 ${item['Tanggal']}</p>
+          <p class="text-gray-700 text-sm">⏰ ${item['Waktu Mulai']} - ${item['Waktu Selesai']}</p>
+          <p class="mt-2 text-gray-900 font-semibold">${item['Judul Meeting'] || ''}</p>
+          <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>
+        `;
+        container.appendChild(slide);
+      });
+
+      // Inisialisasi Swiper setelah isi data
+      new Swiper('.mySwiper', {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+      });
     }
+  });
+});
+</script>
 
-    function filterByDate(data, offset) {
-      const now = new Date();
-      now.setDate(now.getDate() + offset);
-      const tanggalFilter = now.toISOString().split('T')[0];
-      return data.filter(row => row.Tanggal === tanggalFilter);
-    }
+  <!-- FOOTER -->
+  <footer class="w-full mt-auto">
+    <div class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-700 py-5">
+      <div class="flex items-center justify-center text-white gap-2">
+        <i data-feather="shield" class="w-5 h-5"></i>
+        <span class="text-sm sm:text-base">© 2025 Mitra Asa Pratama</span>
+      </div>
+    </div>
+  </footer>
 
-    function createSlide(judul, data) {
-      const slide = document.createElement('div');
-      slide.className = 'swiper-slide';
-
-      let html = `<div class="card"><h2 class="font-bold text-lg mb-2">${judul}</h2>`;
-      if (data.length === 0) {
-        html += `<p class="text-sm text-gray-500">Tidak ada jadwal</p>`;
-      } else {
-        html += data.map(e => `<div class="mb-2 border-b pb-1"><strong>${e['Judul']}</strong><br>${e['Jam']}</div>`).join('');
-      }
-      html += '</div>';
-      slide.innerHTML = html;
-      return slide;
-    }
-
-    Papa.parse(spreadsheetURL, {
-      download: true,
-      header: true,
-      complete: function(results) {
-        const data = results.data;
-        const wrapper = document.getElementById('jadwal-wrapper');
-        wrapper.appendChild(createSlide('Kemarin', filterByDate(data, -1)));
-        wrapper.appendChild(createSlide('Hari Ini', filterByDate(data, 0)));
-        wrapper.appendChild(createSlide('Besok', filterByDate(data, 1)));
-        wrapper.appendChild(createSlide('Lusa', filterByDate(data, 2)));
-
-        new Swiper('.swiper', {
-          slidesPerView: 1,
-          spaceBetween: 10,
-          pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-          },
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          },
-        });
-      }
-    });
-  </script>
+  <!-- SCRIPT -->
+  <script src="sidebar.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
