@@ -20,6 +20,7 @@
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
 
   <!-- Custom Style -->
   <style>
@@ -87,7 +88,7 @@
     <!-- Logo & Judul -->
     <div class="flex items-center gap-2">
       <img src="map-log.png" alt="Logo MAP" class="h-10 w-auto rounded shadow" />
-      <span class="font-semibold text-lg">MAP</span>
+      <span class="font-semibold text-lg"></span>
     </div>
 
     <!-- Tombol X (Tutup Menu) -->
@@ -96,20 +97,10 @@
       <span class="sr-only">Tutup menu</span>
     </button>
   </div>
-
-  <!-- MENU NAV -->
-  <nav class="mt-4 space-y-1">
-    <a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a>
-    <a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a>
-  </nav>
-
 </aside>
-
-
       </button>
     </div>
     <nav class="mt-4 space-y-1">
-      
       <a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a>
       <a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a>
     </nav>
@@ -138,6 +129,44 @@
         <div id="cards" class="contents"></div>
 <!-- Tampilan 1 Baris Meeting Terdekat -->
 <section id="meetingTerdekat" class="bg-white p-5 rounded-xl shadow-md max-w-xl mx-auto">
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  Tabletop.init({
+    key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
+    simpleSheet: true,
+    callback: function (data) {
+      const container = document.getElementById('meetingCard');
+      container.innerHTML = '';
+
+      const today = new Date().toISOString().split('T')[0]; // format YYYY-MM-DD
+
+      const dataHariIni = data.filter(item => {
+        // Ubah format tanggal di Sheets ke format YYYY-MM-DD agar bisa dibandingkan
+        const sheetTanggal = new Date(item['Tanggal']);
+        const sheetTanggalFormatted = sheetTanggal.toISOString().split('T')[0];
+        return sheetTanggalFormatted === today;
+      });
+
+      if (dataHariIni.length === 0) {
+        container.innerHTML = '<p class="text-gray-500">Tidak ada meeting hari ini.</p>';
+        return;
+      }
+
+      dataHariIni.forEach(item => {
+        const elemen = document.createElement('div');
+        elemen.className = 'bg-gray-100 rounded p-3 shadow-sm';
+
+        elemen.innerHTML = `
+          <p class="font-semibold text-indigo-700">${item['Judul Meeting'] || '(Tanpa Judul)'}</p>
+          <p class="text-sm">🕒 ${item['Waktu Mulai']} – ${item['Waktu Selesai']}</p>
+          <p class="text-sm text-gray-600">📍 ${item['Nama Ruangan'] || 'Ruang Tidak Diketahui'}</p>
+        `;
+        container.appendChild(elemen);
+      });
+    }
+  });
+});
+</script>
   <h2 class="text-lg font-bold text-indigo-600 mb-2">📍 Jadwal Meeting Terdekat</h2>
   <div id="meetingCard" class="space-y-1 text-gray-700">
     <p>Loading...</p>
