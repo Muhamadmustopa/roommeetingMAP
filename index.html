@@ -3,333 +3,168 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/jpg" href="logo.jpg">
   <title>Peminjaman Ruang Meeting – MAP</title>
+  <link rel="icon" href="logo.jpg" type="image/jpg">
 
-  <!-- Tailwind -->
+  <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-  <!-- Swiper CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+  <!-- Swiper.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
-  <!-- Feather & Chart.js -->
-  <script src="https://unpkg.com/feather-icons"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  
-  <!-- Ikon & Library -->
+  <!-- Feather Icons & Tabletop -->
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
-
-  <!-- Custom Style -->
   <style>
     .sidebar { transition: transform 0.3s ease; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { scrollbar-width: none; }
   </style>
 </head>
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    Tabletop.init({
-      key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
-      simpleSheet: true,
-      callback: function (data) {
-        const card = document.getElementById('meetingCard');
-        card.innerHTML = ''; // Kosongkan dulu
-
-        const today = new Date();
-
-        // Filter data yang tanggalnya hari ini atau ke depan
-        const upcoming = data
-          .filter(item => {
-            const tanggal = new Date(item['Tanggal']);
-            return tanggal >= today;
-          })
-          .sort((a, b) => new Date(a['Tanggal']) - new Date(b['Tanggal'])); // Urutkan
-
-        if (upcoming.length > 0) {
-          const next = upcoming[0];
-          card.innerHTML = `
-            <h3 class="font-semibold text-gray-900">${next['Judul Meeting'] || 'Meeting Tanpa Judul'}</h3>
-            <p>📅 <span class="font-medium">${next['Tanggal']}</span></p>
-            <p>⏰ ${next['Waktu Mulai']} – ${next['Waktu Selesai']}</p>
-            <p>🏢 Ruang: ${next['Nama Ruangan']}</p>
-            <p>🙋‍♂️ PIC: ${next['Nama Pemesan'] || '-'}</p>
-          `;
-        } else {
-          card.innerHTML = `<p class="text-sm text-gray-500">Belum ada jadwal meeting berikutnya.</p>`;
-        }
-      }
-    });
-  });
-</script>
-
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- ===== BURGER (mobile) ===== -->
-  <button id="btn-open"
-          class="lg:hidden fixed top-4 left-4 z-50 p-3 bg-gray-800 text-white
-                 rounded-full hover:bg-gray-700 active:scale-95 transition">
-    <i data-feather="menu" aria-hidden="true"></i>
-    <span class="sr-only">Buka menu</span>
-  </button>
+<!-- BURGER BUTTON -->
+<button id="btn-open" class="lg:hidden fixed top-4 left-4 z-50 p-3 bg-gray-800 text-white rounded-full hover:bg-gray-700">
+  <i data-feather="menu"></i>
+</button>
 
-  <!-- ===== OVERLAY ===== -->
-  <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
+<!-- OVERLAY -->
+<div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
 
- <aside id="sidebar" class="fixed top-0 right-0 w-64 h-full bg-gray-900 text-white z-50 transform translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:transform-none">
-  <!-- Header Sidebar -->
-  <div class="flex items-center justify-between p-4 border-b border-gray-700">
-    <div class="flex items-center gap-2">
-      <img src="map-log.png" alt="Logo MAP" class="h-10 w-auto rounded shadow" />
-      <span class="font-semibold text-lg"></span>
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg -translate-x-full lg:translate-x-0 z-50">
+  <div class="p-4 border-b border-gray-700">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <img src="map-logo.png" alt="Logo MAP" class="h-10 w-auto rounded shadow" />
+      </div>
+      <button id="btn-close" class="lg:hidden z-50 p-2 rounded hover:bg-gray-800">
+        <i data-feather="x"></i>
+      </button>
     </div>
-    <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
-      <i data-feather="x" aria-hidden="true"></i>
-      <span class="sr-only">Tutup menu</span>
-    </button>
+    <nav class="mt-4 space-y-1">
+      <a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a>
+      <a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a>
+    </nav>
   </div>
-<!-- Overlay -->
-<div id="overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-40 lg:hidden"></div>
-
-  <!-- Navigasi -->
-  <nav class="mt-4 space-y-1">
-    <a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a>
-    <a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a>
-  </nav>
 </aside>
 
-  
-  <!-- ===== WRAPPER KONTEN ===== -->
-  <div class="flex-1 flex flex-col lg:ml-64">
+<!-- KONTEN UTAMA -->
+<div class="flex-1 flex flex-col lg:ml-64">
 
-    <!-- HEADER -->
-    <header class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-700
-                   text-white shadow-lg sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-        <div class="flex items-center gap-2">
-          <img src="logo.jpg" alt="Logo MAP" class="h-9 w-auto rounded shadow" />
-        </div>
-        <h1 class="text-base sm:text-xl md:text-2xl font-extrabold flex-1 text-center drop-shadow">
-          Peminjaman Ruang Meeting
-        </h1>
-        <div class="w-12 sm:w-20"></div>
-      </div>
-    </header>
-
-    <!-- ============ MAIN ============ -->
-    <main class="flex-1 overflow-y-auto p-4 space-y-10">
-
-        <div id="cards" class="contents"></div>
-<!-- Tampilan 1 Baris Meeting Terdekat -->
-<section id="meetingTerdekat" class="bg-white p-5 rounded-xl shadow-md max-w-xl mx-auto">
-  <script>
-document.addEventListener('DOMContentLoaded', function () {
-  Tabletop.init({
-    key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
-    simpleSheet: true,
-    callback: function (data) {
-      const container = document.getElementById('meetingCard');
-      container.innerHTML = '';
-
-      const today = new Date().toISOString().split('T')[0]; // format YYYY-MM-DD
-
-      const dataHariIni = data.filter(item => {
-        // Ubah format tanggal di Sheets ke format YYYY-MM-DD agar bisa dibandingkan
-        const sheetTanggal = new Date(item['Tanggal']);
-        const sheetTanggalFormatted = sheetTanggal.toISOString().split('T')[0];
-        return sheetTanggalFormatted === today;
-      });
-
-      if (dataHariIni.length === 0) {
-        container.innerHTML = '<p class="text-gray-500">Tidak ada meeting hari ini.</p>';
-        return;
-      }
-
-      dataHariIni.forEach(item => {
-        const elemen = document.createElement('div');
-        elemen.className = 'bg-gray-100 rounded p-3 shadow-sm';
-
-        elemen.innerHTML = `
-          <p class="font-semibold text-indigo-700">${item['Judul Meeting'] || '(Tanpa Judul)'}</p>
-          <p class="text-sm">🕒 ${item['Waktu Mulai']} – ${item['Waktu Selesai']}</p>
-          <p class="text-sm text-gray-600">📍 ${item['Nama Ruangan'] || 'Ruang Tidak Diketahui'}</p>
-        `;
-        container.appendChild(elemen);
-      });
-    }
-  });
-});
-</script>
-  <h2 class="text-lg font-bold text-indigo-600 mb-2">📍 Jadwal Meeting Terdekat</h2>
-  <div id="meetingCard" class="space-y-1 text-gray-700">
-    <p>Loading...</p>
-  </div>
-</section>
-
-      <!-- SLIDE PEMAKAIAN RUANG MEETING -->
-<section class="space-y-4">
-  <h2 class="text-xl font-bold text-indigo-700">Jadwal Pemakaian Ruangan</h2>
-  
-<!-- Embed Google Sheets Responsif -->
-<div class="w-full h-[75vh] md:h-[85vh] overflow-hidden rounded-xl shadow-md">
-  <iframe
-    class="w-full h-full border-0"
-    src="https://docs.google.com/spreadsheets/d/1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA/preview"
-    allowfullscreen
-    loading="lazy"
-  ></iframe>
-</div>
-
-  <!-- Swiper Container -->
-  <div class="swiper mySwiper">
-    <div class="swiper-wrapper" id="calendarEvents">
-      <!-- Slide dari Google Sheets akan muncul di sini -->
+  <!-- HEADER -->
+  <header class="bg-indigo-700 text-white shadow sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+      <img src="logo.jpg" class="h-9 w-auto rounded shadow" />
+      <h1 class="text-xl font-bold text-center flex-1">Peminjaman Ruang Meeting</h1>
+      <div class="w-9"></div>
     </div>
-    <!-- Tombol navigasi -->
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-    <!-- Pagination -->
-    <div class="swiper-pagination"></div>
-  </div>
-</section>
+  </header>
 
-      </section>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  Tabletop.init({
-    key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
-    simpleSheet: true,
-    callback: function (data) {
-      const container = document.getElementById('calendarEvents');
-      container.innerHTML = '';
+  <main class="p-4 space-y-6">
 
-      data.forEach(item => {
-        const slide = document.createElement('div');
-        slide.className = 'swiper-slide bg-white rounded-xl shadow p-5';
-        slide.innerHTML = `
-          <h4 class="text-lg font-bold text-indigo-600 mb-1">${item['Nama Ruangan'] || 'Ruang'}</h4>
-          <p class="text-gray-700 text-sm mb-1">📅 ${item['Tanggal']}</p>
-          <p class="text-gray-700 text-sm">⏰ ${item['Waktu Mulai']} - ${item['Waktu Selesai']}</p>
-          <p class="mt-2 text-gray-900 font-semibold">${item['Judul Meeting'] || ''}</p>
-          <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>
-        `;
-        container.appendChild(slide);
-      });
+    <!-- SLIDE JADWAL HARIAN -->
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper" id="calendarEvents">
+        <!-- Konten dari Google Sheets dimuat di sini -->
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
 
-      // Inisialisasi Swiper setelah isi data
-      new Swiper('.mySwiper', {
-        slidesPerView: 1,
-        spaceBetween: 20,
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        },
-      });
-    }
-  });
-});
-</script>
+    <!-- MEETING TERDEKAT (HARI INI) -->
+    <section id="meetingTerdekat" class="bg-white p-5 rounded-xl shadow-md max-w-xl mx-auto">
+      <h2 class="text-lg font-bold text-indigo-600 mb-2">📍 Jadwal Meeting Hari ini</h2>
+      <div id="meetingCard" class="space-y-1 text-gray-700">
+        <p>belum ada jadwal</p>
+      </div>
+    </section>
+
+    <!-- (OPSIONAL) GOOGLE SHEETS EMBED -->
+    <div class="w-full h-[75vh] md:h-[85vh] overflow-hidden rounded-xl shadow-md">
+      <iframe
+        class="w-full h-full border-0"
+        src="https://docs.google.com/spreadsheets/d/1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA/preview"
+        allowfullscreen
+        loading="lazy"
+      ></iframe>
+    </div>
+
+  </main>
 
   <!-- FOOTER -->
-  <footer class="w-full mt-auto">
-    <div class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-700 py-5">
-      <div class="flex items-center justify-center text-white gap-2">
-        <i data-feather="shield" class="w-5 h-5"></i>
-        <span class="text-sm sm:text-base">© 2025 Mitra Asa Pratama</span>
-      </div>
+  <footer class="mt-auto">
+    <div class="bg-indigo-600 text-white py-4 text-center text-sm">
+      <i data-feather="shield" class="inline-block w-4 h-4 mr-1"></i>
+      © 2025 Mitra Asa Pratama
     </div>
   </footer>
+</div>
 
-  <!-- SCRIPT -->
-  <script src="sidebar.js"></script>
-  <script src="app.js"></script> <!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-
-<!-- Feather Icons -->
-<script>feather.replace()</script>
-
-<!-- Inisialisasi Swiper + Ambil data dari Google Sheets -->
+<!-- SCRIPT UTAMA -->
 <script>
+  feather.replace();
+
+  // Sidebar Toggle
+  document.getElementById("btn-open").onclick = () => {
+    document.getElementById("sidebar").classList.remove("-translate-x-full");
+    document.getElementById("overlay").classList.remove("hidden");
+  };
+  document.getElementById("btn-close").onclick = () => {
+    document.getElementById("sidebar").classList.add("-translate-x-full");
+    document.getElementById("overlay").classList.add("hidden");
+  };
+
+  // Fetch data dari Google Sheets
   document.addEventListener('DOMContentLoaded', function () {
     Tabletop.init({
       key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
       simpleSheet: true,
       callback: function (data) {
-        const container = document.getElementById('calendarEvents');
-        container.innerHTML = '';
+        const calendarContainer = document.getElementById('calendarEvents');
+        const meetingToday = document.getElementById('meetingCard');
+        const today = new Date().toISOString().split('T')[0];
+        let todayMeetings = '';
 
         data.forEach(item => {
+          // Slider Semua Jadwal
           const slide = document.createElement('div');
           slide.className = 'swiper-slide bg-white rounded-xl shadow p-4';
           slide.innerHTML = `
-            <div class="space-y-2">
-              <h3 class="text-indigo-700 font-bold text-lg">${item['Nama Ruangan'] || 'Ruang Meeting'}</h3>
-              <p class="text-sm text-gray-600">📅 ${item['Tanggal']} – ⏰ ${item['Waktu Mulai']} s/d ${item['Waktu Selesai']}</p>
-              <p class="text-base font-semibold text-gray-800">${item['Judul Meeting'] || '-'}</p>
-              <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>
-            </div>
-          `;
-          container.appendChild(slide);
+            <h4 class="font-bold text-indigo-600">${item['Nama Ruangan'] || 'Ruang'}</h4>
+            <p>📅 ${item['Tanggal']} – ⏰ ${item['Waktu Mulai']} s/d ${item['Waktu Selesai']}</p>
+            <p class="mt-1 font-semibold">${item['Judul Meeting'] || ''}</p>
+            <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>`;
+          calendarContainer.appendChild(slide);
+
+          // Filter untuk hari ini
+          if (item['Tanggal'] === today) {
+            todayMeetings += `
+              <div class="border-b pb-1">
+                <p class="font-semibold text-indigo-700">${item['Judul Meeting']}</p>
+                <p class="text-sm">⏰ ${item['Waktu Mulai']} - ${item['Waktu Selesai']} | ${item['Nama Ruangan']}</p>
+              </div>`;
+          }
         });
 
+        meetingToday.innerHTML = todayMeetings || '<p class="text-gray-500">Tidak ada meeting hari ini.</p>';
+
+        // Init Swiper
         new Swiper('.mySwiper', {
           slidesPerView: 1,
-          spaceBetween: 15,
+          spaceBetween: 20,
           pagination: { el: '.swiper-pagination', clickable: true },
           navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
           },
-          breakpoints: {
-            640: { slidesPerView: 1 },
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-          },
         });
       }
     });
   });
 </script>
-
-      <script>
-  document.getElementById("btn-open").addEventListener("click", () => {
-    document.getElementById("sidebar").classList.remove("-translate-x-full");
-    document.getElementById("overlay").classList.remove("hidden");
-  });
-
-  document.getElementById("btn-close").addEventListener("click", () => {
-    document.getElementById("sidebar").classList.add("-translate-x-full");
-    document.getElementById("overlay").classList.add("hidden");
-  });
-</script>
-<script>
-  const btnOpen = document.getElementById("btn-open");
-  const btnClose = document.getElementById("btn-close");
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-
-  btnOpen.addEventListener("click", () => {
-    sidebar.classList.remove("translate-x-full");
-    overlay.classList.remove("hidden");
-  });
-
-  btnClose.addEventListener("click", () => {
-    sidebar.classList.add("translate-x-full");
-    overlay.classList.add("hidden");
-  });
-
-  overlay.addEventListener("click", () => {
-    sidebar.classList.add("translate-x-full");
-    overlay.classList.add("hidden");
-  });
-</script>
-
-
 </body>
 </html>
