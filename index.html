@@ -77,22 +77,34 @@
   <!-- ===== OVERLAY ===== -->
   <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside id="sidebar"
-         class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg
-                -translate-x-full lg:translate-x-0 z-50">
+ <!-- ===== SIDEBAR ===== -->
+<aside id="sidebar"
+       class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg
+              -translate-x-full lg:translate-x-0 z-50">
+
+  <!-- HEADER SIDEBAR -->
   <div class="flex items-center justify-between p-4 border-b border-gray-700">
-  <!-- Logo + Judul -->
-  <div class="flex items-center gap-2">
-    <img src="map-log.png" alt="Logo MAP" class="h-10 w-19 rounded shadow" />
+    <!-- Logo & Judul -->
+    <div class="flex items-center gap-2">
+      <img src="map-logo.png" alt="Logo MAP" class="h-10 w-auto rounded shadow" />
+      <span class="font-semibold text-lg">MAP</span>
+    </div>
+
+    <!-- Tombol X (Tutup Menu) -->
+    <button id="btn-close" class="z-50 lg:hidden p-2 rounded hover:bg-gray-800 focus:outline-none">
+      <i data-feather="x" aria-hidden="true"></i>
+      <span class="sr-only">Tutup menu</span>
+    </button>
   </div>
 
-  <!-- Tombol Tutup -->
-  <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
-    <i data-feather="x" aria-hidden="true"></i>
-    <span class="sr-only">Tutup menu</span>
-  </button>
-</div>
+  <!-- MENU NAV -->
+  <nav class="mt-4 space-y-1">
+    <a href="kalender.html" class="block py-2 px-4 hover:bg-indigo-600">Kalendar</a>
+    <a href="list_booking.html" class="block py-2 px-4 hover:bg-indigo-600">List Booking</a>
+  </nav>
+
+</aside>
+
 
       </button>
     </div>
@@ -260,6 +272,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 </script>
+
+      <script>
+  document.getElementById("btn-open").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.remove("-translate-x-full");
+    document.getElementById("overlay").classList.remove("hidden");
+  });
+
+  document.getElementById("btn-close").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.add("-translate-x-full");
+    document.getElementById("overlay").classList.add("hidden");
+  });
+</script>
+
 
 </body>
 </html>
