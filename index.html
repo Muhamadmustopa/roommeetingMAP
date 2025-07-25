@@ -9,6 +9,9 @@
   <!-- Tailwind -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
   <!-- Feather & Chart.js -->
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -85,6 +88,33 @@
     <main class="flex-1 overflow-y-auto p-4 space-y-10">
 
         <div id="cards" class="contents"></div>
+      <!-- SLIDE PEMAKAIAN RUANG MEETING -->
+<section class="space-y-4">
+  <h2 class="text-xl font-bold text-indigo-700">Jadwal Pemakaian Ruangan</h2>
+  
+<!-- Embed Google Sheets Responsif -->
+<div class="w-full h-[75vh] md:h-[85vh] overflow-hidden rounded-xl shadow-md">
+  <iframe
+    class="w-full h-full border-0"
+    src="https://docs.google.com/spreadsheets/d/1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA/preview"
+    allowfullscreen
+    loading="lazy"
+  ></iframe>
+</div>
+
+  <!-- Swiper Container -->
+  <div class="swiper mySwiper">
+    <div class="swiper-wrapper" id="calendarEvents">
+      <!-- Slide dari Google Sheets akan muncul di sini -->
+    </div>
+    <!-- Tombol navigasi -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <!-- Pagination -->
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
       </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -138,6 +168,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
   <!-- SCRIPT -->
   <script src="sidebar.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js"></script> <!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+<!-- Feather Icons -->
+<script>feather.replace()</script>
+
+<!-- Inisialisasi Swiper + Ambil data dari Google Sheets -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    Tabletop.init({
+      key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
+      simpleSheet: true,
+      callback: function (data) {
+        const container = document.getElementById('calendarEvents');
+        container.innerHTML = '';
+
+        data.forEach(item => {
+          const slide = document.createElement('div');
+          slide.className = 'swiper-slide bg-white rounded-xl shadow p-4';
+          slide.innerHTML = `
+            <div class="space-y-2">
+              <h3 class="text-indigo-700 font-bold text-lg">${item['Nama Ruangan'] || 'Ruang Meeting'}</h3>
+              <p class="text-sm text-gray-600">📅 ${item['Tanggal']} – ⏰ ${item['Waktu Mulai']} s/d ${item['Waktu Selesai']}</p>
+              <p class="text-base font-semibold text-gray-800">${item['Judul Meeting'] || '-'}</p>
+              <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>
+            </div>
+          `;
+          container.appendChild(slide);
+        });
+
+        new Swiper('.mySwiper', {
+          slidesPerView: 1,
+          spaceBetween: 15,
+          pagination: { el: '.swiper-pagination', clickable: true },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+          breakpoints: {
+            640: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          },
+        });
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
