@@ -28,6 +28,42 @@
     .no-scrollbar { scrollbar-width: none; }
   </style>
 </head>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    Tabletop.init({
+      key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
+      simpleSheet: true,
+      callback: function (data) {
+        const card = document.getElementById('meetingCard');
+        card.innerHTML = ''; // Kosongkan dulu
+
+        const today = new Date();
+
+        // Filter data yang tanggalnya hari ini atau ke depan
+        const upcoming = data
+          .filter(item => {
+            const tanggal = new Date(item['Tanggal']);
+            return tanggal >= today;
+          })
+          .sort((a, b) => new Date(a['Tanggal']) - new Date(b['Tanggal'])); // Urutkan
+
+        if (upcoming.length > 0) {
+          const next = upcoming[0];
+          card.innerHTML = `
+            <h3 class="font-semibold text-gray-900">${next['Judul Meeting'] || 'Meeting Tanpa Judul'}</h3>
+            <p>📅 <span class="font-medium">${next['Tanggal']}</span></p>
+            <p>⏰ ${next['Waktu Mulai']} – ${next['Waktu Selesai']}</p>
+            <p>🏢 Ruang: ${next['Nama Ruangan']}</p>
+            <p>🙋‍♂️ PIC: ${next['Nama Pemesan'] || '-'}</p>
+          `;
+        } else {
+          card.innerHTML = `<p class="text-sm text-gray-500">Belum ada jadwal meeting berikutnya.</p>`;
+        }
+      }
+    });
+  });
+</script>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
   <!-- ===== BURGER (mobile) ===== -->
@@ -88,6 +124,14 @@
     <main class="flex-1 overflow-y-auto p-4 space-y-10">
 
         <div id="cards" class="contents"></div>
+<!-- Tampilan 1 Baris Meeting Terdekat -->
+<section id="meetingTerdekat" class="bg-white p-5 rounded-xl shadow-md max-w-xl mx-auto">
+  <h2 class="text-lg font-bold text-indigo-600 mb-2">📍 Jadwal Meeting Terdekat</h2>
+  <div id="meetingCard" class="space-y-1 text-gray-700">
+    <p>Loading...</p>
+  </div>
+</section>
+
       <!-- SLIDE PEMAKAIAN RUANG MEETING -->
 <section class="space-y-4">
   <h2 class="text-xl font-bold text-indigo-700">Jadwal Pemakaian Ruangan</h2>
