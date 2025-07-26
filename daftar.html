@@ -3,76 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" href="logo.jpg" type="image/jpg">
-  <title>Form Peminjaman Ruang</title>
-  <script>
-    function submitForm(event) {
-      event.preventDefault();
+  <title>Form Pengajuan Peminjaman Ruang</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Form Pengajuan Peminjaman Ruang</h2>
+    <form id="formPengajuan">
+      <label for="ruangan">Ruangan</label>
+      <select name="ruangan" id="ruangan" required>
+        <option value="">Pilih Ruangan</option>
+        <option value="Gatotkaca">Gatotkaca</option>
+        <option value="MAP">MAP</option>
+        <option value="Srikandi">Srikandi</option>
+      </select>
 
-      const form = event.target;
+      <label for="nama">Nama</label>
+      <input type="text" name="nama" id="nama" required>
+
+      <label for="departemen">Departemen</label>
+      <input type="text" name="departemen" id="departemen" required>
+
+      <label for="agenda">Agenda</label>
+      <textarea name="agenda" id="agenda" rows="3" required></textarea>
+
+      <label for="tanggal">Tanggal</label>
+      <input type="date" name="tanggal" id="tanggal" required>
+
+      <label for="jam_mulai">Jam Mulai</label>
+      <input type="time" name="jam_mulai" id="jam_mulai" required>
+
+      <label for="jam_selesai">Jam Selesai</label>
+      <input type="time" name="jam_selesai" id="jam_selesai" required>
+
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" required>
+
+      <button type="submit">Kirim Pengajuan</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("formPengajuan");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
       const data = {
         ruangan: form.ruangan.value,
         nama: form.nama.value,
         departemen: form.departemen.value,
         agenda: form.agenda.value,
         tanggal: form.tanggal.value,
-        jamMulai: form.jamMulai.value,
-        jamSelesai: form.jamSelesai.value,
+        jam_mulai: form.jam_mulai.value,
+        jam_selesai: form.jam_selesai.value,
         email: form.email.value
       };
 
-     fetch('https://script.google.com/macros/s/AKfycbwGKORm4PxI890qJMnVqv6KHQS2fI4a_YAU5-09KR2medJkrycuP6O7cjBDRWIsTHJv/exec', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data) // data adalah objek dari form
-})
-.then(response => response.text())
-.then(result => {
-  alert(result);
-})
-.catch(error => {
-  alert("❌ Gagal mengirim data: " + error);
-});
-
-    }
+     fetch("https://script.google.com/macros/s/AKfycbwGKORm4PxI890qJMnVqv6KHQS2fI4a_YAU5-09KR2medJkrycuP6O7cjBDRWIsTHJv/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.result === "success") {
+            window.location.href = "terima-kasih.html?nama=" + encodeURIComponent(data.nama);
+          } else {
+            alert("Gagal mengirim data: " + res.error);
+          }
+        })
+        .catch((err) => {
+          alert("Gagal mengirim data: " + err);
+        });
+    });
   </script>
-</head>
-<body style="font-family:sans-serif; max-width:600px; margin:auto; padding:20px;">
-  <h2>Form Peminjaman Ruang Meeting</h2>
-  <form onsubmit="submitForm(event)">
-    <label>Ruangan:</label><br/>
-    <select name="ruangan" required>
-      <option value="">--Pilih Ruangan--</option>
-      <option value="Gatotkaca">Gatotkaca</option>
-      <option value="MAP">Arjuna</option>
-      <option value="Srikandi">Srikandi</option>
-    </select><br/><br/>
-
-    <label>Nama:</label><br/>
-    <input type="text" name="nama" required /><br/><br/>
-
-    <label>Departemen:</label><br/>
-    <input type="text" name="departemen" required /><br/><br/>
-
-    <label>Agenda:</label><br/>
-    <input type="text" name="agenda" required /><br/><br/>
-
-    <label>Tanggal:</label><br/>
-    <input type="date" name="tanggal" required /><br/><br/>
-
-    <label>Jam Mulai:</label><br/>
-    <input type="time" name="jamMulai" required /><br/><br/>
-
-    <label>Jam Selesai:</label><br/>
-    <input type="time" name="jamSelesai" required /><br/><br/>
-
-    <label>Email Pemohon:</label><br/>
-    <input type="email" name="email" required /><br/><br/>
-
-    <button type="submit">Ajukan</button>
-  </form>
 </body>
 </html>
-
