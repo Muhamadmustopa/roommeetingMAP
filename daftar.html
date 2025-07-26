@@ -97,5 +97,17 @@
     </form>
   </div>
 
+  <script>
+    document.getElementById("formPengajuan").addEventListener("submit", function(event) {
+      event.preventDefault(); // Mencegah reload default
+
+      const nama = document.getElementById("namaLengkap").value.trim();
+
+      if (nama !== "") {
+        // Redirect ke halaman terima kasih dengan parameter nama
+        window.location.href = `terima-kasih.html?nama=${encodeURIComponent(nama)}`;
+      }
+    });
+  </script>
 </body>
 </html>
