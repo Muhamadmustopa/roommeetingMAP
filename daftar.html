@@ -3,116 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Form Pengajuan Ruang Meeting</title>
-    <link rel="icon" href="logo.jpg" type="image/jpg">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center p-4">
+  <link rel="icon" href="logo.jpg" type="image/jpg">
+  <title>Form Peminjaman Ruang</title>
+  <script>
+    function submitForm(event) {
+      event.preventDefault();
 
-  <!-- Tombol Kembali -->
-  <div class="w-full max-w-lg">
-    <a href="index.html" class="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full bg-indigo-50 text-indigo-600 font-semibold shadow hover:bg-indigo-100 active:scale-95 transition-all">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-      </svg>
-    </a>
-  </div>
+      const form = event.target;
+      const data = {
+        ruangan: form.ruangan.value,
+        nama: form.nama.value,
+        departemen: form.departemen.value,
+        agenda: form.agenda.value,
+        tanggal: form.tanggal.value,
+        jamMulai: form.jamMulai.value,
+        jamSelesai: form.jamSelesai.value,
+        email: form.email.value
+      };
 
-  <!-- Form Pengajuan -->
-  <form id="formPengajuan" class="w-full max-w-lg bg-white shadow-lg rounded-2xl p-6 space-y-6">
-    <h1 class="text-2xl font-bold text-indigo-600 text-center">Form Pengajuan</h1>
-
-    <!-- Nama Lengkap -->
-    <div>
-      <label for="nama" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-      <input type="text" id="nama" name="nama" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-
-    <!-- Departemen -->
-    <div>
-      <label for="departemen" class="block text-sm font-medium text-gray-700">Departemen</label>
-      <select id="departemen" name="departemen" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        <option value="">Pilih Departemen</option>
-        <option>FA</option>
-        <option>HRGA</option>
-        <option>ITDS</option>
-        <option>MKT</option>
-        <option>SAS-SLS</option>
-      </select>
-    </div>
-
-    <!-- Ruangan -->
-    <div>
-      <label for="ruangan" class="block text-sm font-medium text-gray-700">Ruangan</label>
-      <select id="ruangan" name="ruangan" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-        <option value="">Pilih Ruangan</option>
-        <option>Gatotkaca</option>
-        <option>Arjuna</option>
-        <option>Srikandi</option>
-      </select>
-    </div>
-
-    <!-- Tanggal -->
-    <div>
-      <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal penggunaan</label>
-      <input type="date" id="tanggal" name="tanggal" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-
-    <!-- Jam Mulai -->
-    <div>
-      <label for="jamMulai" class="block text-sm font-medium text-gray-700">Jam Mulai</label>
-      <input type="time" id="jamMulai" name="jamMulai" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-
-    <!-- Jam Selesai -->
-    <div>
-      <label for="jamSelesai" class="block text-sm font-medium text-gray-700">Jam Selesai</label>
-      <input type="time" id="jamSelesai" name="jamSelesai" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-    </div>
-
-    <!-- Agenda -->
-    <div>
-      <label for="agenda" class="block text-sm font-medium text-gray-700">Agenda meeting</label>
-      <textarea id="agenda" name="agenda" rows="3" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-    </div>
-
-    <!-- Tombol Kirim -->
-    <div class="text-center">
-      <button type="submit" class="inline-block w-full px-4 py-2 bg-indigo-600 text-white font-semibold rounded-full shadow hover:bg-indigo-700 active:scale-95 transition-all">
-        Kirim Pengajuan
-      </button>
-    </div>
-  </form>
-<script>
-  document.getElementById("formPengajuan").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const data = {
-      nama: document.getElementById("nama").value,
-      departemen: document.getElementById("departemen").value,
-      ruangan: document.getElementById("ruangan").value,
-      tanggal: document.getElementById("tanggal").value,
-      jamMulai: document.getElementById("jamMulai").value,
-      jamSelesai: document.getElementById("jamSelesai").value,
-      agenda: document.getElementById("agenda").value
-    };
-    fetch("https://script.google.com/macros/s/.../exec", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify(data)
-    })
-    .then(res => res.text())
-    .then(text => {
-      if(text.toLowerCase().includes("sukses")) {
+      fetch("https://script.google.com/macros/s/AKfycbyINW62eLTFt3KHI2ZRdBB2SrI9T5RqMpqc2LxHoqFsSPwzjPLyccAHumZwgtS1ZowV/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => res.text())
+      .then(response => {
+        console.log(response);
+        // Redirect ke halaman terima kasih + bawa nama pemohon
         window.location.href = `terima-kasih.html?nama=${encodeURIComponent(data.nama)}`;
-      } else {
-        alert("Gagal mengirim data. Coba lagi.");
-      }
-    })
-    .catch(_ => alert("Terjadi kesalahan."));
-  });
-</script>
+      })
+      .catch(err => {
+        alert("❌ Gagal mengirim data: " + err);
+      });
+    }
+  </script>
+</head>
+<body style="font-family:sans-serif; max-width:600px; margin:auto; padding:20px;">
+  <h2>Form Peminjaman Ruang Meeting</h2>
+  <form onsubmit="submitForm(event)">
+    <label>Ruangan:</label><br/>
+    <select name="ruangan" required>
+      <option value="">--Pilih Ruangan--</option>
+      <option value="Gatotkaca">Gatotkaca</option>
+      <option value="MAP">Arjuna</option>
+      <option value="Srikandi">Srikandi</option>
+    </select><br/><br/>
 
+    <label>Nama:</label><br/>
+    <input type="text" name="nama" required /><br/><br/>
 
+    <label>Departemen:</label><br/>
+    <input type="text" name="departemen" required /><br/><br/>
 
+    <label>Agenda:</label><br/>
+    <input type="text" name="agenda" required /><br/><br/>
+
+    <label>Tanggal:</label><br/>
+    <input type="date" name="tanggal" required /><br/><br/>
+
+    <label>Jam Mulai:</label><br/>
+    <input type="time" name="jamMulai" required /><br/><br/>
+
+    <label>Jam Selesai:</label><br/>
+    <input type="time" name="jamSelesai" required /><br/><br/>
+
+    <label>Email Pemohon:</label><br/>
+    <input type="email" name="email" required /><br/><br/>
+
+    <button type="submit">Ajukan</button>
+  </form>
 </body>
 </html>
+
