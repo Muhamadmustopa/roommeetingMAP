@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Pengajuan Ruang Meeting</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+
+  <div class="w-full max-w-lg bg-white shadow-lg rounded-2xl p-6 space-y-6">
+    <h1 class="text-2xl font-bold text-indigo-600 text-center">Form Pengajuan</h1>
+
+    <form id="meetingForm" class="space-y-4">
+
+      <!-- Nama Lengkap -->
+      <div>
+        <label for="nama" class="block text-sm font-semibold text-gray-700">Nama Lengkap</label>
+        <input type="text" id="nama" name="nama" required
+               class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:outline-none" />
+      </div>
+
+      <!-- Departemen -->
+      <div>
+        <label for="departemen" class="block text-sm font-semibold text-gray-700">Departemen</label>
+        <select id="departemen" name="departemen" required
+                class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:outline-none">
+          <option value="">-- Pilih Departemen --</option>
+          <option value="FA">FA</option>
+          <option value="HRGA">HRGA</option>
+          <option value="ITDS">ITDS</option>
+          <option value="MKT">MKT</option>
+          <option value="SAS-SLS">SAS-SLS</option>
+        </select>
+      </div>
+
+      <!-- Ruang Meeting -->
+      <div>
+        <label for="ruangan" class="block text-sm font-semibold text-gray-700">Pilih Ruang</label>
+        <select id="ruangan" name="ruangan" required
+                class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:outline-none">
+          <option value="Gatotkaca">Gatotkaca</option>
+          <option value="MAP">MAP</option>
+          <option value="Srikandi">Srikandi</option>
+        </select>
+      </div>
+
+      <!-- Tanggal -->
+      <div>
+        <label for="tanggal" class="block text-sm font-semibold text-gray-700">Tanggal</label>
+        <input type="date" id="tanggal" name="tanggal" required
+               class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:outline-none" />
+      </div>
+
+      <!-- Jam Mulai -->
+      <div>
+        <label for="mulai" class="block text-sm font-semibold text-gray-700">Jam Mulai</label>
+        <input type="time" id="mulai" name="mulai" required
+               class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:outline-none" />
+      </div>
+
+      <!-- Jam Selesai -->
+      <div>
+        <label for="selesai" class="block text-sm font-semibold text-gray-700">Jam Selesai</label>
+        <input type="time" id="selesai" name="selesai" required
+               class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:outline-none" />
+      </div>
+
+      <!-- Tujuan -->
+      <div>
+        <label for="tujuan" class="block text-sm font-semibold text-gray-700">Tujuan Meeting</label>
+        <textarea id="tujuan" name="tujuan" rows="3" required
+                  class="mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:outline-none"></textarea>
+      </div>
+
+      <!-- Tombol Kirim -->
+      <div class="text-center">
+        <button type="submit"
+                class="w-full px-6 py-2 text-white font-semibold bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300">
+          Kirim Pengajuan
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</body>
+</html>
