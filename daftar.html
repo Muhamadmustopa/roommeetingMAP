@@ -21,20 +21,21 @@
         email: form.email.value
       };
 
-      fetch("https://script.google.com/macros/s/AKfycbyINW62eLTFt3KHI2ZRdBB2SrI9T5RqMpqc2LxHoqFsSPwzjPLyccAHumZwgtS1ZowV/exec", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(res => res.text())
-      .then(response => {
-        console.log(response);
-        // Redirect ke halaman terima kasih + bawa nama pemohon
-        window.location.href = `terima-kasih.html?nama=${encodeURIComponent(data.nama)}`;
-      })
-      .catch(err => {
-        alert("❌ Gagal mengirim data: " + err);
-      });
+     fetch('https://script.google.com/macros/s/AKfycbwGKORm4PxI890qJMnVqv6KHQS2fI4a_YAU5-09KR2medJkrycuP6O7cjBDRWIsTHJv/exec', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data) // data adalah objek dari form
+})
+.then(response => response.text())
+.then(result => {
+  alert(result);
+})
+.catch(error => {
+  alert("❌ Gagal mengirim data: " + error);
+});
+
     }
   </script>
 </head>
