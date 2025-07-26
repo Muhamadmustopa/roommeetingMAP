@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terima Kasih</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md text-center space-y-6">
+    <h1 class="text-2xl font-bold text-indigo-600" id="greeting">Halo!</h1>
+    <p class="text-gray-700">Terima kasih telah mengisi permohonan peminjaman ruang meeting.</p>
+    <a href="index.html" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 active:scale-95 transition-all">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Kembali ke Beranda
+    </a>
+  </div>
+
+  <script>
+    // Ambil parameter nama dari URL (contoh: ?nama=Topa)
+    const urlParams = new URLSearchParams(window.location.search);
+    const nama = urlParams.get("nama");
+    if (nama) {
+      document.getElementById("greeting").innerText = `Halo ${nama}!`;
+    }
+  </script>
+</body>
+</html>
