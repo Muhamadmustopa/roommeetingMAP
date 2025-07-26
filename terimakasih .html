@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
   <title>Terima Kasih</title>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-  <div class="text-center px-6">
-    <h1 class="text-3xl font-bold text-indigo-600">Hallo, <span id="namaPemohon"></span></h1>
-    <p class="mt-4 text-lg">
-      Terima kasih telah mengisi permohonan peminjaman ruang meeting.<br/>
-      Silakan kembali ke halaman utama.
-    </p>
-    <a href="index.html" class="mt-6 inline-block px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700">
-      Kembali
-    </a>
-  </div>
+<body>
+  <h2>Terima kasih atas pengajuan Anda, <span id="nama"></span>!</h2>
+  <p>Pengajuan Anda sedang diproses.</p>
+
   <script>
-    const params = new URLSearchParams(window.location.search);
-    document.getElementById("namaPemohon").textContent = params.get("nama") || '';
+    const urlParams = new URLSearchParams(window.location.search);
+    const nama = urlParams.get('nama');
+    document.getElementById("nama").textContent = nama || "User";
   </script>
 </body>
 </html>
+
