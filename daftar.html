@@ -53,7 +53,7 @@
 
     <!-- Tanggal -->
     <div>
-      <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
+      <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal penggunaan</label>
       <input type="date" id="tanggal" name="tanggal" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
     </div>
 
@@ -71,7 +71,7 @@
 
     <!-- Agenda -->
     <div>
-      <label for="agenda" class="block text-sm font-medium text-gray-700">Agenda</label>
+      <label for="agenda" class="block text-sm font-medium text-gray-700">Agenda meeting/label>
       <textarea id="agenda" name="agenda" rows="3" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
     </div>
 
@@ -117,19 +117,6 @@
         console.error("Error:", error);
         alert("Terjadi kesalahan.");
       });
-    });
-  </script>
-
-  <script>
-    document.getElementById("formPengajuan").addEventListener("submit", function(event) {
-      event.preventDefault(); // Mencegah reload default
-
-      const nama = document.getElementById("namaLengkap").value.trim();
-
-      if (nama !== "") {
-        // Redirect ke halaman terima kasih dengan parameter nama
-        window.location.href = `terima-kasih.html?nama=${encodeURIComponent(nama)}`;
-      }
     });
   </script>
 </body>
