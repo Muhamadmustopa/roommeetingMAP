@@ -83,42 +83,36 @@
       </button>
     </div>
   </form>
+<script>
+  document.getElementById("formPengajuan").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const data = {
+      nama: document.getElementById("nama").value,
+      departemen: document.getElementById("departemen").value,
+      ruangan: document.getElementById("ruangan").value,
+      tanggal: document.getElementById("tanggal").value,
+      jamMulai: document.getElementById("jamMulai").value,
+      jamSelesai: document.getElementById("jamSelesai").value,
+      agenda: document.getElementById("agenda").value
+    };
+    fetch("https://script.google.com/macros/s/.../exec", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(data)
+    })
+    .then(res => res.text())
+    .then(text => {
+      if(text.toLowerCase().includes("sukses")) {
+        window.location.href = `terima-kasih.html?nama=${encodeURIComponent(data.nama)}`;
+      } else {
+        alert("Gagal mengirim data. Coba lagi.");
+      }
+    })
+    .catch(_ => alert("Terjadi kesalahan."));
+  });
+</script>
 
-  <script>
-    document.getElementById("formPengajuan").addEventListener("submit", function(e) {
-      e.preventDefault();
 
-      const data = {
-        nama: document.getElementById("nama").value,
-        departemen: document.getElementById("departemen").value,
-        ruangan: document.getElementById("ruangan").value,
-        tanggal: document.getElementById("tanggal").value,
-        jamMulai: document.getElementById("jamMulai").value,
-        jamSelesai: document.getElementById("jamSelesai").value,
-        Agenda: document.getElementById("agenda").value
-      };
 
- fetch("https://script.google.com/macros/s/AKfycbyINW62eLTFt3KHI2ZRdBB2SrI9T5RqMpqc2LxHoqFsSPwzjPLyccAHumZwgtS1ZowV/exec", {
-  method: "POST",
-  body: JSON.stringify(data),
-  headers: {
-    "Content-Type": "application/json"
-  }
-})
-.then(res => res.text())
-.then(response => {
-  if (response.toLowerCase().includes("sukses")) {
-    window.location.href = `terima-kasih.html?nama=${encodeURIComponent(data.nama)}`;
-  } else {
-    alert("Gagal mengirim data. Coba lagi.");
-  }
-})
-.catch(error => {
-  console.error("Error:", error);
-  alert("Terjadi kesalahan.");
-});
-
-    });
-  </script>
 </body>
 </html>
