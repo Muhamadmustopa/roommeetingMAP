@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Pengajuan Meeting</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Peminjaman Ruang Meeting</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
-    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
     label { display: block; margin-top: 15px; }
-    input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
-    button { margin-top: 20px; padding: 10px 15px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #0056b3; }
+    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; }
   </style>
 </head>
 <body>
-  <form id="meetingForm">
-    <h2>Form Pengajuan Ruang Meeting</h2>
+  <h2>Form Peminjaman Ruang Meeting</h2>
+  <form id="form">
+    <label>Nama</label>
+    <input type="text" name="nama" required />
 
-    <label for="nama">Nama</label>
-    <input type="text" id="nama" name="nama" required>
-
-    <label for="departement">Departement</label>
-    <select id="departement" name="departement" required>
+    <label>Departemen</label>
+    <select name="departement" required>
       <option value="">-- Pilih --</option>
       <option value="FA">FA</option>
       <option value="HRGA">HRGA</option>
@@ -30,60 +27,59 @@
       <option value="SAS-SLS">SAS-SLS</option>
     </select>
 
-    <label for="ruangan">Ruangan</label>
-    <select id="ruangan" name="ruangan" required>
+    <label>Ruangan</label>
+    <select name="ruangan" required>
       <option value="">-- Pilih --</option>
       <option value="Gatot Kaca">Gatot Kaca</option>
       <option value="Srikandi">Srikandi</option>
       <option value="Arjuna">Arjuna</option>
     </select>
 
-    <label for="agenda">Agenda Meeting</label>
-    <input type="text" id="agenda" name="agenda" required>
+    <label>Agenda Meeting</label>
+    <textarea name="agenda" required></textarea>
 
-    <label for="tanggal">Tanggal Peminjaman</label>
-    <input type="date" id="tanggal" name="tanggal" required>
+    <label>Tanggal Peminjaman</label>
+    <input type="date" name="tanggal" required />
 
-    <label for="jamMulai">Jam Pemakaian</label>
-    <input type="time" id="jamMulai" name="jamMulai" required>
+    <label>Jam Mulai</label>
+    <input type="time" name="jam_mulai" required />
 
-    <label for="jamSelesai">Jam Selesai</label>
-    <input type="time" id="jamSelesai" name="jamSelesai" required>
+    <label>Jam Selesai</label>
+    <input type="time" name="jam_selesai" required />
 
     <button type="submit">Kirim</button>
   </form>
 
+  <p id="status" style="margin-top: 20px;"></p>
+
   <script>
-    const form = document.getElementById('meetingForm');
-    form.addEventListener('submit', async (e) => {
+    const form = document.getElementById('form');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      const data = {
-        fields: {
-          nama: form.nama.value,
-          departement: form.departement.value,
-          ruangan: form.ruangan.value,
-          agenda_meeting: form.agenda.value,
-          tanggal_peminjaman: form.tanggal.value,
-          jam_pemakaian: form.jamMulai.value,
-          jam_selesai: form.jamSelesai.value
+      const data = new FormData(form);
+      const formDataObj = {};
+      data.forEach((value, key) => (formDataObj[key] = value));
+
+      status.textContent = 'Mengirim data...';
+
+      try {
+        const res = await fetch('https://script.google.com/macros/s/AKfycbwAqDHk_255uvzoKt7CKrXMRW1VIgMtX-kzzo4G2XrO-Xi4c4BnQENdRb_ugnaqgHY/exec', {
+          method: 'POST',
+          body: JSON.stringify(formDataObj),
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          status.textContent = '✅ Data berhasil dikirim!';
+          form.reset();
+        } else {
+          status.textContent = '❌ Gagal mengirim data. Silakan coba lagi.';
         }
-      };
-
-      const response = await fetch("https://airtable.com/appsn3QqX0YTVj1cu/shrNmpONqtMj4tTCA", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer patOuD5fa7aVSbVpm.fde3a63e30645a33969029b642eb9afc9075e666cfdc71290f8dd076495aa3c7"
-        },
-        body: JSON.stringify(data)
-      });
-
-      if (response.ok) {
-        alert("Data berhasil dikirim!");
-        form.reset();
-      } else {
-        alert("Gagal mengirim data.");
+      } catch (err) {
+        status.textContent = '❌ Error koneksi. Pastikan internet & script aktif.';
       }
     });
   </script>
