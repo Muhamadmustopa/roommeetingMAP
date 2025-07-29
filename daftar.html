@@ -1,85 +1,96 @@
+<!-- FILE: pengajuan.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Form Peminjaman Ruang Meeting</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Peminjaman Ruang</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    label { display: block; margin-top: 15px; }
-    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; }
-    button { margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; }
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    label { display: block; margin-top: 1rem; }
+    input, select, textarea { width: 100%; padding: 8px; margin-top: 4px; }
+    button { margin-top: 1.5rem; padding: 10px 20px; background: green; color: white; border: none; }
+    #result { margin-top: 1rem; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h2>Form Peminjaman Ruang Meeting</h2>
+  <h1>Form Peminjaman Ruang Meeting</h1>
   <form id="form">
-    <label>Nama</label>
-    <input type="text" name="nama" required />
+    <label>Nama:
+      <input type="text" name="nama" required>
+    </label>
 
-    <label>Departemen</label>
-    <select name="departement" required>
-      <option value="">-- Pilih --</option>
-      <option value="FA">FA</option>
-      <option value="HRGA">HRGA</option>
-      <option value="ITDS">ITDS</option>
-      <option value="MKT">MKT</option>
-      <option value="SAS-SLS">SAS-SLS</option>
-    </select>
+    <label>Departemen:
+      <select name="departement" required>
+        <option value="">-- Pilih Departemen --</option>
+        <option value="FA">FA</option>
+        <option value="HRGA">HRGA</option>
+        <option value="ITDS">ITDS</option>
+        <option value="MKT">MKT</option>
+        <option value="SAS-SLS">SAS-SLS</option>
+      </select>
+    </label>
 
-    <label>Ruangan</label>
-    <select name="ruangan" required>
-      <option value="">-- Pilih --</option>
-      <option value="Gatot Kaca">Gatot Kaca</option>
-      <option value="Srikandi">Srikandi</option>
-      <option value="Arjuna">Arjuna</option>
-    </select>
+    <label>Ruangan:
+      <select name="ruangan" required>
+        <option value="">-- Pilih Ruangan --</option>
+        <option value="Gatot Kaca">Gatot Kaca</option>
+        <option value="Srikandi">Srikandi</option>
+        <option value="Arjuna">Arjuna</option>
+      </select>
+    </label>
 
-    <label>Agenda Meeting</label>
-    <textarea name="agenda" required></textarea>
+    <label>Agenda Meeting:
+      <textarea name="agenda_meeting" required></textarea>
+    </label>
 
-    <label>Tanggal Peminjaman</label>
-    <input type="date" name="tanggal" required />
+    <label>Tanggal Peminjaman:
+      <input type="date" name="tanggal_peminjaman" required>
+    </label>
 
-    <label>Jam Mulai</label>
-    <input type="time" name="jam_mulai" required />
+    <label>Jam Pemakaian:
+      <input type="time" name="jam_pemakaian" required>
+    </label>
 
-    <label>Jam Selesai</label>
-    <input type="time" name="jam_selesai" required />
+    <label>Jam Selesai:
+      <input type="time" name="jam_selesai" required>
+    </label>
 
     <button type="submit">Kirim</button>
+    <div id="result"></div>
   </form>
-
-  <p id="status" style="margin-top: 20px;"></p>
 
   <script>
     const form = document.getElementById('form');
-    const status = document.getElementById('status');
+    const result = document.getElementById('result');
 
-    form.addEventListener('submit', async function(e) {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      result.textContent = 'Mengirim...';
 
-      const data = new FormData(form);
-      const formDataObj = {};
-      data.forEach((value, key) => (formDataObj[key] = value));
-
-      status.textContent = 'Mengirim data...';
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
 
       try {
-        const res = await fetch('https://script.google.com/macros/s/AKfycbwAqDHk_255uvzoKt7CKrXMRW1VIgMtX-kzzo4G2XrO-Xi4c4BnQENdRb_ugnaqgHY/exec', {
-          method: 'POST',
-          body: JSON.stringify(formDataObj),
-        });
+        const res = await fetch(
+          'https://script.google.com/macros/s/AKfycbwAqDHk_255uvzoKt7CKrXMRW1VIgMtX-kzzo4G2XrO-Xi4c4BnQENdRb_ugnaqgHY/exec',
+          {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
 
-        const result = await res.json();
-        if (result.success) {
-          status.textContent = '✅ Data berhasil dikirim!';
+        const responseText = await res.text();
+        if (res.ok && responseText.includes("success")) {
+          result.textContent = '✅ Data berhasil dikirim!';
           form.reset();
         } else {
-          status.textContent = '❌ Gagal mengirim data. Silakan coba lagi.';
+          result.textContent = '❌ Gagal mengirim data. Silakan coba lagi.';
         }
-      } catch (err) {
-        status.textContent = '❌ Error koneksi. Pastikan internet & script aktif.';
+      } catch (error) {
+        console.error(error);
+        result.textContent = '❌ Terjadi kesalahan. Cek koneksi atau Web App.';
       }
     });
   </script>
