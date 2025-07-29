@@ -12,7 +12,10 @@
   <!-- Swiper.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-
+  <!-- Swiper.js CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <!-- Swiper.js JS -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
   <!-- Feather Icons & Tabletop -->
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
@@ -116,55 +119,63 @@
       <div class="swiper-button-prev"></div>
     </div>
 
-    <!-- MEETING TERDEKAT (HARI INI) -->
-    <section id="meetingTerdekat" class="bg-white p-5 rounded-xl shadow-md max-w-xl mx-auto">
-      <h2 class="text-lg font-bold text-indigo-600 mb-2">📍 Jadwal Meeting Hari ini</h2>
-      <div id="meetingCard" class="space-y-1 text-gray-700">
-        <p>belum ada jadwal</p>
-      </div>
-    </section>
 
    <body>
   <h1>Jadwal Peminjaman Ruang</h1>
   <div id="jadwal-container">Memuat data...</div>
+<div class="swiper mySwiper">
+  <div class="swiper-wrapper" id="slide-container">
+    <!-- Slides akan dimuat dari JavaScript -->
+  </div>
+  <div class="swiper-pagination"></div>
+</div>
+ <script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-  <script>
-    const SUPABASE_URL = "https://mypiqbkyiwcxhznclbcl.supabase.co";
-    const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8";
+  const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh...'; // ← Ganti dengan public anon key Anda
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-    fetch(`${SUPABASE_URL}/rest/v1/peminjaman?select=*`, {
-      headers: {
-        apikey: SUPABASE_API_KEY,
-        Authorization: `Bearer ${SUPABASE_API_KEY}`
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      const container = document.getElementById("jadwal-container");
-      container.innerHTML = ""; // kosongkan dulu
+  async function loadData() {
+    const { data, error } = await supabase
+      .from('peminjaman')
+      .select('*')
+      .order('tanggal', { ascending: true });
 
-      if (data.length === 0) {
-        container.textContent = "Belum ada data peminjaman.";
-        return;
-      }
+    if (error) {
+      console.error('Gagal mengambil data:', error.message);
+      return;
+    }
 
-      data.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "jadwal";
-        div.innerHTML = `
-          <div class="judul">${item.nama} - ${item.ruangan}</div>
-          <div>Agenda: ${item.agenda}</div>
-          <div>Tanggal: ${item.tanggal}</div>
-          <div>Jam: ${item.jam_mulai} - ${item.jam_selesai}</div>
-        `;
-        container.appendChild(div);
-      });
-    })
-    .catch(error => {
-      document.getElementById("jadwal-container").textContent = "Gagal memuat data.";
-      console.error("Gagal memuat data:", error);
+    const container = document.getElementById('slide-container');
+    container.innerHTML = '';
+
+    data.forEach(item => {
+      const slide = document.createElement('div');
+      slide.className = 'swiper-slide';
+      slide.innerHTML = `
+        <div style="padding: 20px; border-radius: 10px; background: #f0f0f0;">
+          <h2>${item.tanggal}</h2>
+          <p><strong>Nama:</strong> ${item.nama}</p>
+          <p><strong>Departemen:</strong> ${item.departemen}</p>
+          <p><strong>Ruangan:</strong> ${item.ruangan}</p>
+          <p><strong>Agenda:</strong> ${item.agenda}</p>
+          <p><strong>Waktu:</strong> ${item.jam_mulai} – ${item.jam_selesai}</p>
+        </div>
+      `;
+      container.appendChild(slide);
     });
-  </script>
+
+    // Inisialisasi Swiper
+    new Swiper(".mySwiper", {
+      pagination: { el: ".swiper-pagination", clickable: true },
+      spaceBetween: 30,
+      loop: true,
+    });
+  }
+  loadData();
+</script>
+
 </body>
 
   </main>
