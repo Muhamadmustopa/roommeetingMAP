@@ -10,12 +10,9 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
   <!-- Swiper.js -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-  <!-- Swiper.js CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-  <!-- Swiper.js JS -->
-  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
   <!-- Feather Icons & Tabletop -->
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
@@ -36,69 +33,24 @@
 <!-- OVERLAY -->
 <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
 
-<!-- Tombol Toggle Sidebar (hanya muncul di mobile) -->
-<button id="btn-open" class="lg:hidden fixed top-4 left-4 z-50 bg-indigo-600 text-white p-2 rounded shadow">
-  <i data-feather="menu"></i>
-</button>
-<script>
-  // Tutup sidebar saat klik luar sidebar
-  document.addEventListener("click", function (e) {
-    const sidebar = document.getElementById("sidebar");
-    const btnOpen = document.getElementById("btn-open");
-    const btnClose = document.getElementById("btn-close");
-
-    // Cek jika sidebar sedang terbuka di layar kecil
-    const sidebarOpened = !sidebar.classList.contains("-translate-x-full");
-
-    // Jika sedang terbuka dan klik bukan di sidebar atau tombol buka/tutup
-    if (
-      sidebarOpened &&
-      !sidebar.contains(e.target) &&
-      e.target !== btnOpen &&
-      e.target !== btnClose
-    ) {
-      sidebar.classList.add("-translate-x-full");
-    }
-  });
-
-  // Tutup sidebar saat klik menu di dalam sidebar (mobile)
-  document.querySelectorAll("#sidebar nav a").forEach(link => {
-    link.addEventListener("click", () => {
-      if (window.innerWidth < 1024) {
-        document.getElementById("sidebar").classList.add("-translate-x-full");
-      }
-    });
-  });
-</script>
-
 <!-- Sidebar -->
 <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
-  <!-- Header Sidebar -->
   <div class="flex items-center justify-between p-4 border-b border-gray-700">
     <div class="flex items-center gap-2">
       <img src="map-log.png" alt="Logo MAP" class="h-10 w-auto rounded shadow" />
-      <span class="font-semibold text-lg"></span>
     </div>
-    <!-- Tombol X -->
     <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
-      <i data-feather="x" aria-hidden="true"></i>
-      <span class="sr-only">Tutup menu</span>
+      <i data-feather="x"></i>
     </button>
   </div>
-
-  <!-- Menu Navigasi -->
   <nav class="mt-4 space-y-1 px-4">
     <a href="kalender.html" class="block py-2 px-4 rounded hover:bg-indigo-600 transition">🗓️ Kalendar</a>
     <a href="list_booking.html" class="block py-2 px-4 rounded hover:bg-indigo-600 transition">📄 List Booking</a>
-    <a href="daftar.html" class="block py-2 px-4 rounded hover:bg-indigo-600 transition">📄 Ajukan </a>
+    <a href="daftar.html" class="block py-2 px-4 rounded hover:bg-indigo-600 transition">📄 Ajukan</a>
   </nav>
 </aside>
 
-
-<!-- KONTEN UTAMA -->
 <div class="flex-1 flex flex-col lg:ml-64">
-
-  <!-- HEADER -->
   <header class="bg-indigo-700 text-white shadow sticky top-0 z-40">
     <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
       <img src="logo.jpg" class="h-9 w-auto rounded shadow" />
@@ -108,95 +60,28 @@
   </header>
 
   <main class="p-4 space-y-6">
-
-    <!-- SLIDE JADWAL HARIAN -->
+    <!-- SLIDE JADWAL SUPABASE -->
     <div class="swiper mySwiper">
-      <div class="swiper-wrapper" id="calendarEvents">
-        <!-- Konten dari Google Sheets dimuat di sini -->
+      <div class="swiper-wrapper" id="slide-container">
+        <!-- Slides akan dimuat dari JavaScript -->
       </div>
       <div class="swiper-pagination"></div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
     </div>
-
-
-   <body>
-  <h1>Jadwal Peminjaman Ruang</h1>
-  <div id="jadwal-container">Memuat data...</div>
-<div class="swiper mySwiper">
-  <div class="swiper-wrapper" id="slide-container">
-    <!-- Slides akan dimuat dari JavaScript -->
-  </div>
-  <div class="swiper-pagination"></div>
-</div>
- <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-  const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh...'; // ← Ganti dengan public anon key Anda
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  async function loadData() {
-    const { data, error } = await supabase
-      .from('peminjaman')
-      .select('*')
-      .order('tanggal', { ascending: true });
-
-    if (error) {
-      console.error('Gagal mengambil data:', error.message);
-      return;
-    }
-
-    const container = document.getElementById('slide-container');
-    container.innerHTML = '';
-
-    data.forEach(item => {
-      const slide = document.createElement('div');
-      slide.className = 'swiper-slide';
-      slide.innerHTML = `
-        <div style="padding: 20px; border-radius: 10px; background: #f0f0f0;">
-          <h2>${item.tanggal}</h2>
-          <p><strong>Nama:</strong> ${item.nama}</p>
-          <p><strong>Departemen:</strong> ${item.departemen}</p>
-          <p><strong>Ruangan:</strong> ${item.ruangan}</p>
-          <p><strong>Agenda:</strong> ${item.agenda}</p>
-          <p><strong>Waktu:</strong> ${item.jam_mulai} – ${item.jam_selesai}</p>
-        </div>
-      `;
-      container.appendChild(slide);
-    });
-
-    // Inisialisasi Swiper
-    new Swiper(".mySwiper", {
-      pagination: { el: ".swiper-pagination", clickable: true },
-      spaceBetween: 30,
-      loop: true,
-    });
-  }
-  loadData();
-</script>
-
-</body>
-
   </main>
-<!-- Tombol Ajukan Peminjaman -->
-<div class="fixed bottom-24 right-4 sm:static sm:mb-4 sm:mr-4 sm:flex sm:justify-end z-40">
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=sharing&ouid=101264464207911273124"
-     target="_blank" rel="noopener"
-     class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2 rounded-full
-            bg-indigo-500 hover:bg-indigo-500 active:scale-95
-            text-white text-sm sm:text-base font-semibold shadow-lg transition-transform">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none"
-         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M12 4v16m8-8H4"/>
-    </svg>
-    <span class="hidden sm:inline">Ajukan Peminjaman</span>
-    <span class="sm:hidden">Ajukan</span>
-  </a>
-</div>
 
-  <!-- FOOTER -->
+  <div class="fixed bottom-24 right-4 sm:static sm:mb-4 sm:mr-4 sm:flex sm:justify-end z-40">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=sharing&ouid=101264464207911273124"
+       target="_blank" rel="noopener"
+       class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-indigo-500 hover:bg-indigo-500 active:scale-95 text-white text-sm sm:text-base font-semibold shadow-lg transition-transform">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span class="hidden sm:inline">Ajukan Peminjaman</span>
+      <span class="sm:hidden">Ajukan</span>
+    </a>
+  </div>
+
   <footer class="mt-auto">
     <div class="bg-indigo-600 text-white py-4 text-center text-sm">
       <i data-feather="shield" class="inline-block w-4 h-4 mr-1"></i>
@@ -209,7 +94,6 @@
 <script>
   feather.replace();
 
-  // Sidebar Toggle
   document.getElementById("btn-open").onclick = () => {
     document.getElementById("sidebar").classList.remove("-translate-x-full");
     document.getElementById("overlay").classList.remove("hidden");
@@ -218,54 +102,61 @@
     document.getElementById("sidebar").classList.add("-translate-x-full");
     document.getElementById("overlay").classList.add("hidden");
   };
-
-  // Fetch data dari Google Sheets
-  document.addEventListener('DOMContentLoaded', function () {
-    Tabletop.init({
-      key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
-      simpleSheet: true,
-      callback: function (data) {
-        const calendarContainer = document.getElementById('calendarEvents');
-        const meetingToday = document.getElementById('meetingCard');
-        const today = new Date().toISOString().split('T')[0];
-        let todayMeetings = '';
-
-        data.forEach(item => {
-          // Slider Semua Jadwal
-          const slide = document.createElement('div');
-          slide.className = 'swiper-slide bg-white rounded-xl shadow p-4';
-          slide.innerHTML = `
-            <h4 class="font-bold text-indigo-600">${item['Nama Ruangan'] || 'Ruang'}</h4>
-            <p>📅 ${item['Tanggal']} – ⏰ ${item['Waktu Mulai']} s/d ${item['Waktu Selesai']}</p>
-            <p class="mt-1 font-semibold">${item['Judul Meeting'] || ''}</p>
-            <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>`;
-          calendarContainer.appendChild(slide);
-
-          // Filter untuk hari ini
-          if (item['Tanggal'] === today) {
-            todayMeetings += `
-              <div class="border-b pb-1">
-                <p class="font-semibold text-indigo-700">${item['Judul Meeting']}</p>
-                <p class="text-sm">⏰ ${item['Waktu Mulai']} - ${item['Waktu Selesai']} | ${item['Nama Ruangan']}</p>
-              </div>`;
-          }
-        });
-
-        meetingToday.innerHTML = todayMeetings || '<p class="text-gray-500">Tidak ada meeting hari ini.</p>';
-
-        // Init Swiper
-        new Swiper('.mySwiper', {
-          slidesPerView: 1,
-          spaceBetween: 20,
-          pagination: { el: '.swiper-pagination', clickable: true },
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          },
-        });
-      }
-    });
-  });
 </script>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  const today = new Date();
+  const tanggalList = [-1, 0, 1, 2].map(offset => {
+    const d = new Date(today);
+    d.setDate(today.getDate() + offset);
+    return d.toISOString().split('T')[0];
+  });
+
+  async function fetchData() {
+    let { data, error } = await supabase
+      .from("peminjaman")
+      .select("*")
+      .in("tanggal_peminjaman", tanggalList)
+      .order("tanggal_peminjaman", { ascending: true });
+
+    if (error) {
+      console.error("Gagal ambil data:", error);
+      return;
+    }
+
+    const wrapper = document.getElementById("slide-container");
+    tanggalList.forEach(tgl => {
+      const jadwal = data.filter(d => d.tanggal_peminjaman === tgl);
+      const tglFormat = new Date(tgl).toLocaleDateString("id-ID", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const html = `
+        <div class="swiper-slide bg-white rounded-xl shadow p-4">
+          <div class="text-lg font-bold text-indigo-700 mb-2">${tglFormat}</div>
+          ${jadwal.length === 0 ? `<p class="text-gray-500">Tidak ada jadwal</p>` : jadwal.map(j => `
+            <div class="mb-3">
+              <p class="font-semibold">${j.agenda_meeting}</p>
+              <p class="text-sm text-gray-600">${j.jam_pemakaian} - ${j.jam_selesai} | ${j.ruangan}</p>
+            </div>
+          `).join("")}
+        </div>`;
+      wrapper.innerHTML += html;
+    });
+
+    new Swiper('.mySwiper', {
+      loop: false,
+      slidesPerView: 1,
+      spaceBetween: 20,
+      pagination: { el: '.swiper-pagination', clickable: true },
+    });
+  }
+
+  fetchData();
+</script>
+
 </body>
 </html>
