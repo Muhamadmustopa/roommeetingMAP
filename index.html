@@ -124,15 +124,48 @@
       </div>
     </section>
 
-    <!-- (OPSIONAL) GOOGLE SHEETS EMBED -->
-    <div class="w-full h-[75vh] md:h-[85vh] overflow-hidden rounded-xl shadow-md">
-      <iframe
-        class="w-full h-full border-0"
-        src="https://docs.google.com/spreadsheets/d/1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA/preview"
-        allowfullscreen
-        loading="lazy"
-      ></iframe>
-    </div>
+   <body>
+  <h1>Jadwal Peminjaman Ruang</h1>
+  <div id="jadwal-container">Memuat data...</div>
+
+  <script>
+    const SUPABASE_URL = "https://mypiqbkyiwcxhznclbcl.supabase.co";
+    const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8";
+
+    fetch(`${SUPABASE_URL}/rest/v1/peminjaman?select=*`, {
+      headers: {
+        apikey: SUPABASE_API_KEY,
+        Authorization: `Bearer ${SUPABASE_API_KEY}`
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById("jadwal-container");
+      container.innerHTML = ""; // kosongkan dulu
+
+      if (data.length === 0) {
+        container.textContent = "Belum ada data peminjaman.";
+        return;
+      }
+
+      data.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "jadwal";
+        div.innerHTML = `
+          <div class="judul">${item.nama} - ${item.ruangan}</div>
+          <div>Agenda: ${item.agenda}</div>
+          <div>Tanggal: ${item.tanggal}</div>
+          <div>Jam: ${item.jam_mulai} - ${item.jam_selesai}</div>
+        `;
+        container.appendChild(div);
+      });
+    })
+    .catch(error => {
+      document.getElementById("jadwal-container").textContent = "Gagal memuat data.";
+      console.error("Gagal memuat data:", error);
+    });
+  </script>
+</body>
 
   </main>
 <!-- Tombol Ajukan Peminjaman -->
