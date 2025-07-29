@@ -1,97 +1,120 @@
-<!-- FILE: pengajuan.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="logo.jpg" type="image/jpg">
-  <title>Form Peminjaman Ruang</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Peminjaman Ruangan</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; }
-    label { display: block; margin-top: 1rem; }
-    input, select, textarea { width: 100%; padding: 8px; margin-top: 4px; }
-    button { margin-top: 1.5rem; padding: 10px 20px; background: green; color: white; border: none; }
-    #result { margin-top: 1rem; font-weight: bold; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      background: #f3f3f3;
+    }
+    h2 {
+      text-align: center;
+    }
+    form {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      background: #007bff;
+      color: white;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
   </style>
 </head>
 <body>
-  <h1>Form Peminjaman Ruang Meeting</h1>
-  <form id="form">
-    <label>Nama:
-      <input type="text" name="nama" required>
-    </label>
+  <h2>Form Peminjaman Ruangan</h2>
+  <form id="ruanganForm">
+    <label for="nama">Nama</label>
+    <input type="text" id="nama" required />
 
-    <label>Departemen:
-      <select name="departement" required>
-        <option value="">-- Pilih Departemen --</option>
-        <option value="FA">FA</option>
-        <option value="HRGA">HRGA</option>
-        <option value="ITDS">ITDS</option>
-        <option value="MKT">MKT</option>
-        <option value="SAS-SLS">SAS-SLS</option>
-      </select>
-    </label>
+    <label for="departemen">Departemen</label>
+    <select id="departemen" required>
+      <option value="">-- Pilih Departemen --</option>
+      <option value="FA">FA</option>
+      <option value="HRGA">HRGA</option>
+      <option value="ITDS">ITDS</option>
+      <option value="MKT">MKT</option>
+      <option value="SAS-SLS">SAS-SLS</option>
+    </select>
 
-    <label>Ruangan:
-      <select name="ruangan" required>
-        <option value="">-- Pilih Ruangan --</option>
-        <option value="Gatot Kaca">Gatot Kaca</option>
-        <option value="Srikandi">Srikandi</option>
-        <option value="Arjuna">Arjuna</option>
-      </select>
-    </label>
+    <label for="ruangan">Ruangan</label>
+    <select id="ruangan" required>
+      <option value="">-- Pilih Ruangan --</option>
+      <option value="Gatot Kaca">Gatot Kaca</option>
+      <option value="Srikandi">Srikandi</option>
+      <option value="Arjuna">Arjuna</option>
+    </select>
 
-    <label>Agenda Meeting:
-      <textarea name="agenda_meeting" required></textarea>
-    </label>
+    <label for="agenda">Agenda Meeting</label>
+    <textarea id="agenda" rows="3" required></textarea>
 
-    <label>Tanggal Peminjaman:
-      <input type="date" name="tanggal_peminjaman" required>
-    </label>
+    <label for="tanggal">Tanggal</label>
+    <input type="date" id="tanggal" required />
 
-    <label>Jam Pemakaian:
-      <input type="time" name="jam_pemakaian" required>
-    </label>
+    <label for="jam_mulai">Jam Mulai</label>
+    <input type="time" id="jam_mulai" required />
 
-    <label>Jam Selesai:
-      <input type="time" name="jam_selesai" required>
-    </label>
+    <label for="jam_selesai">Jam Selesai</label>
+    <input type="time" id="jam_selesai" required />
 
-    <button type="submit">Kirim</button>
-    <div id="result"></div>
+    <button type="submit">Kirim Pengajuan</button>
   </form>
 
   <script>
-    const form = document.getElementById('form');
-    const result = document.getElementById('result');
+    const form = document.getElementById("ruanganForm");
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
-      result.textContent = 'Mengirim...';
 
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+      const data = {
+        nama: document.getElementById("nama").value,
+        departemen: document.getElementById("departemen").value,
+        ruangan: document.getElementById("ruangan").value,
+        agenda: document.getElementById("agenda").value,
+        tanggal: document.getElementById("tanggal").value,
+        jam_mulai: document.getElementById("jam_mulai").value,
+        jam_selesai: document.getElementById("jam_selesai").value,
+      };
 
       try {
-        const res = await fetch(
-          'https://script.google.com/macros/s/AKfycbwAqDHk_255uvzoKt7CKrXMRW1VIgMtX-kzzo4G2XrO-Xi4c4BnQENdRb_ugnaqgHY/exec',
-          {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: { 'Content-Type': 'application/json' }
-          }
-        );
+        const response = await fetch("https://script.google.com/macros/s/AKfycbxO4G6m6DF2_nIabW450bN7zSZC5ujlXK0XyC9qJ-OYDRq-qO1k5xHKC9adutQ__0/exec", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-        const responseText = await res.text();
-        if (res.ok && responseText.includes("success")) {
-          result.textContent = '✅ Data berhasil dikirim!';
-          form.reset();
-        } else {
-          result.textContent = '❌ Gagal mengirim data. Silakan coba lagi.';
-        }
+        const result = await response.json();
+        alert(result.pesan); // e.g. "Data berhasil dikirim"
+        form.reset();
       } catch (error) {
+        alert("Gagal mengirim data. Silakan coba lagi.");
         console.error(error);
-        result.textContent = '❌ Terjadi kesalahan. Cek koneksi atau Web App.';
       }
     });
   </script>
