@@ -3,66 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/jpg" sizes="32x32" href="logo.jpg">
-  <title>List Booking Ruang Meeting</title>
-
-  <!-- Tailwind & tema kustom -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <title>Daftar Booking Ruang</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 min-h-screen flex flex-col items-center p-4">
+<body class="bg-gray-100 min-h-screen p-4">
 
-<!-- Kartu Putih Utama -->
-<div class="w-full max-w-7xl bg-white rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 mx-auto">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-indigo-700">List Daftar Booking Ruangan</h1>
+      <a href="pengajuan.html" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition">
+        + Booking Baru
+      </a>
+    </div>
 
-  <!-- Tombol Kiri & Kanan -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-    <!-- Ajukan Peminjaman -->
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMzBvHqAMErUPQnioIor1XRQlB4JfdhK5O-nrLuXg2fE1Hkg/viewform?usp=sharing&ouid=101264464207911273124"
-       target="_blank" rel="noopener"
-       class="inline-flex items-center gap-2 px-4 py-2 rounded-full
-              bg-indigo-600 hover:bg-indigo-700 active:scale-95
-              text-white font-semibold text-sm sm:text-base shadow-lg transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none"
-           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M12 4v16m8-8H4"/>
-      </svg>
-      <span class="hidden sm:inline">Ajukan Peminjaman</span>
-      <span class="sm:hidden">Ajukan</span>
-    </a>
-
-    <!-- Kembali ke Dashboard -->
-    <a href="index.html"
-       class="inline-flex items-center gap-2 px-4 py-2 rounded-full
-              bg-indigo-50 text-indigo-600 font-semibold text-sm sm:text-base shadow
-              hover:bg-indigo-100 active:scale-95 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none"
-           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-      </svg>
-      Kembali ke Dashboard
-    </a>
+    <div id="booking-list" class="grid gap-4 md:grid-cols-2">
+      <!-- Data akan ditampilkan di sini -->
+    </div>
   </div>
 
-  <!-- Judul -->
-  <h1 class="text-2xl sm:text-4xl font-extrabold text-center text-indigo-720 drop-shadow">
-    List Booking               Ruang Meeting
-  </h1>
+  <script>
+    const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
 
-  <!-- Embed Google Sheets Responsif -->
- <div class="overflow-hidden rounded-xl shadow-md">
-  <iframe
-    src="https://docs.google.com/spreadsheets/d/1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA/preview"
-    width="100%" height="600"
-    frameborder="0"
-    allowfullscreen
-  ></iframe>
-</div>
-</div>
+    async function getBookings() {
+      const res = await fetch(`${supabaseUrl}/rest/v1/peminjaman?select=*&order=tanggal_peminjaman.desc`, {
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`
+        }
+      });
 
-  <!-- Feather (jika ingin icon Feather lain) -->
-  <script src="https://unpkg.com/feather-icons"></script>
-  <script>feather.replace()</script>
+      const data = await res.json();
+      const list = document.getElementById('booking-list');
+      list.innerHTML = '';
+
+      if (data.length === 0) {
+        list.innerHTML = '<p class="text-center text-gray-500 col-span-2">Belum ada data peminjaman.</p>';
+        return;
+      }
+
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'bg-white shadow rounded-lg p-4 hover:shadow-md transition';
+        card.innerHTML = `
+          <h3 class="text-lg font-semibold text-indigo-600">${item.agenda_meeting}</h3>
+          <p class="text-sm text-gray-600 mt-1">${item.nama} - ${item.departemen}</p>
+          <p class="text-sm text-gray-500">Ruang: ${item.ruangan}</p>
+          <p class="text-sm text-gray-500">Tanggal: ${item.tanggal_peminjaman}</p>
+          <p class="text-sm text-gray-500">Jam: ${item.jam_pemakaian} - ${item.jam_selesai}</p>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    getBookings();
+  </script>
 </body>
 </html>
