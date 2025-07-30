@@ -29,7 +29,7 @@
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     async function fetchBooking() {
-      const container = document.getElementById('booking-list');
+      const container = document.getElementById('list_booking');
       const { data, error } = await supabase
         .from('peminjaman')
         .select('*')
