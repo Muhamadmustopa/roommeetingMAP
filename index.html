@@ -126,71 +126,97 @@
 
 
   <body>
-<div class="swiper mySwiper">
-  <div class="swiper-wrapper" id="list_booking">
-    <div class="swiper-slide">🔄 Mengambil data...</div>
+<!-- Container Slider Jadwal -->
+<section class="py-6 px-4" id="jadwal-booking">
+  <h2 class="text-xl font-bold mb-4">📅 Jadwal Booking Ruangan</h2>
+  <div class="swiper mySwiper">
+    <div class="swiper-wrapper" id="booking-slides">
+      <!-- Slide akan diisi otomatis -->
+    </div>
+    <!-- Navigasi -->
+    <div class="swiper-pagination"></div>
   </div>
-</div>
+</section>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<!-- Script ambil data dari Supabase dan tampilkan per hari -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
   const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const bookingList = document.getElementById("list_booking");
+  const bookingContainer = document.getElementById('booking-slides');
 
-  async function fetchTodayBooking() {
-    const today = new Date().toISOString().split("T")[0];
+  const getFormattedDate = (offset) => {
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    return d.toISOString().split('T')[0];
+  };
 
-    const { data, error } = await supabase
-      .from("tbl_peminjaman")
-      .select("*")
-      .eq("tanggal", today)
-      .order("jam_pemakaian", { ascending: true });
+  const labels = ['Kemarin', 'Hari Ini', 'Besok', 'Lusa'];
 
-    if (error) {
-      bookingList.innerHTML = `<div class="swiper-slide">❌ Gagal mengambil data.</div>`;
-      console.error(error);
-      return;
-    }
+  const loadBookings = async () => {
+    for (let i = -1; i <= 2; i++) {
+      const tanggal = getFormattedDate(i);
+      const { data, error } = await supabase
+        .from('tbl_peminjaman')
+        .select('*')
+        .eq('tanggal', tanggal)
+        .order('jam_pemakaian', { ascending: true });
 
-    if (data.length === 0) {
-      bookingList.innerHTML = `<div class="swiper-slide no-data">Belum ada data peminjaman hari ini.</div>`;
-      return;
-    }
+      const label = labels[i + 1]; // geser index dari -1 ke 0
 
-    bookingList.innerHTML = "";
+      let isi = '';
+      if (data && data.length > 0) {
+        data.forEach(row => {
+          isi += `
+            <div class="mb-2">
+              <div class="font-semibold">${row.agenda}</div>
+              <div class="text-sm text-gray-600">${row.nama} - ${row.ruangan}</div>
+              <div class="text-sm text-gray-500">${row.jam_pemakaian} - ${row.jam_selesai}</div>
+            </div>
+          `;
+        });
+      } else {
+        isi = `<p class="text-sm text-gray-500 italic">Tidak ada booking</p>`;
+      }
 
-    data.forEach((item) => {
-      const slide = document.createElement("div");
-      slide.className = "swiper-slide";
-      slide.innerHTML = `
-        <div><span class="info-label">Nama:</span> ${item.nama}</div>
-        <div><span class="info-label">Departemen:</span> ${item.departement}</div>
-        <div><span class="info-label">Ruangan:</span> ${item.ruangan}</div>
-        <div><span class="info-label">Agenda:</span> ${item.agenda}</div>
-        <div><span class="info-label">Jam:</span> ${item.jam_pemakaian} - ${item.jam_selesai}</div>
+      bookingContainer.innerHTML += `
+        <div class="swiper-slide p-4 bg-white rounded-2xl shadow-md">
+          <h3 class="text-lg font-bold mb-2">${label} (${tanggal})</h3>
+          ${isi}
+        </div>
       `;
-      bookingList.appendChild(slide);
-    });
+    }
 
     new Swiper(".mySwiper", {
-      slidesPerView: 1,
-      spaceBetween: 20,
-      centeredSlides: true,
-      loop: false,
+      slidesPerView: 1.2,
+      spaceBetween: 16,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
       breakpoints: {
-        640: { slidesPerView: 1 },
-        768: { slidesPerView: 2 },
-        1024: { slidesPerView: 3 },
+        640: {
+          slidesPerView: 2.5,
+        },
+        1024: {
+          slidesPerView: 3.5,
+        },
       },
     });
-  }
+  };
 
-  fetchTodayBooking();
+  loadBookings();
 </script>
+
 
 </body>
 
