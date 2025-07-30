@@ -4,70 +4,66 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>📋 List Booking Ruangan</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start py-6 px-4">
-  
-  <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg p-6">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">📋 List Booking Ruangan</h1>
-      <a href="pengajuan.html" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
-        + Ajukan
-      </a>
-    </div>
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    <div id="booking-list" class="space-y-4 text-sm text-gray-700">
-      <p>🔄 Mengambil data peminjaman...</p>
-    </div>
-  </div>
-
-  <script>
-    // Ganti dengan info Supabase milikmu
     const supabaseUrl = "https://mypiqbkyiwcxhznclbcl.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8";
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     async function loadData() {
-      const listContainer = document.getElementById("booking-list");
-      listContainer.innerHTML = `<p>🔄 Mengambil data peminjaman...</p>`;
+      const container = document.getElementById("data-container");
+      container.innerHTML = `<p class="text-gray-500 animate-pulse">🔄 Mengambil data peminjaman...</p>`;
 
       const { data, error } = await supabase
         .from("peminjaman")
         .select("*")
-        .order("tanggal_peminjaman", { ascending: false });
+        .order("tanggal_peminjaman", { ascending: true });
+
+      container.innerHTML = "";
 
       if (error) {
-        listContainer.innerHTML = `<p class="text-red-500">❌ Gagal mengambil data: ${error.message}</p>`;
+        container.innerHTML = `<p class="text-red-500">❌ Gagal mengambil data.</p>`;
+        console.error(error);
         return;
       }
 
       if (!data || data.length === 0) {
-        listContainer.innerHTML = `<p>😕 Belum ada data peminjaman.</p>`;
+        container.innerHTML = `<p class="text-gray-500">📭 Belum ada data peminjaman.</p>`;
         return;
       }
 
-      // Tampilkan data
-      listContainer.innerHTML = "";
       data.forEach(item => {
-        const bookingCard = document.createElement("div");
-        bookingCard.className = "bg-gray-50 rounded-lg border p-4 shadow-sm";
-
-        bookingCard.innerHTML = `
-          <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-indigo-700">${item.agenda_meeting}</h2>
-            <span class="text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded">${item.ruangan}</span>
-          </div>
-          <p class="mt-1"><strong>Nama:</strong> ${item.nama}</p>
-          <p><strong>Departemen:</strong> ${item.departement}</p>
-          <p><strong>Tanggal:</strong> ${item.tanggal_peminjaman}</p>
-          <p><strong>Jam:</strong> ${item.jam_pemakaian} - ${item.jam_selesai}</p>
+        const card = document.createElement("div");
+        card.className = "p-4 bg-white rounded-xl shadow mb-4 border-l-4 border-blue-500";
+        card.innerHTML = `
+          <h3 class="text-lg font-bold text-blue-800 mb-1">${item.nama} – ${item.ruangan}</h3>
+          <p class="text-sm text-gray-700">📆 ${item.tanggal_peminjaman}</p>
+          <p class="text-sm text-gray-700">⏰ ${item.jam_pemakaian} – ${item.jam_selesai}</p>
+          <p class="text-sm text-gray-700">📌 ${item.agenda}</p>
         `;
-        listContainer.appendChild(bookingCard);
+        container.appendChild(card);
       });
     }
 
     loadData();
   </script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+  <div class="w-full max-w-xl">
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-2xl font-bold text-gray-800">📋 List Booking Ruangan</h1>
+      <a href="index.html" class="text-sm text-blue-600 hover:underline"> < </a>
+    </div>
+
+    <div id="data-container" class="space-y-4"></div>
+
+    <div class="mt-6 text-center">
+      <a href="pengajuan.html" class="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+        + Ajukan
+      </a>
+    </div>
+  </div>
 </body>
 </html>
