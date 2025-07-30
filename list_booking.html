@@ -7,22 +7,25 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
-<!-- Tombol kembali -->
-  <a href="index.html" class="flex items-center gap-2 text-sm text-gray-700 bg-gray-200 px-3 py-1.5 rounded-md hover:bg-gray-300 transition">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-    </svg>
-  </a>
   <div class="max-w-4xl mx-auto">
+    <!-- Header dan Tombol Kembali -->
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-indigo-700">List Daftar Booking Ruangan</h1>
-      <a href="pengajuan.html" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </a>
+        <h1 class="text-xl sm:text-2xl font-bold text-indigo-700">List Booking Ruangan Meeting</h1>
+      </div>
+      <a href="daftar.html" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition text-sm sm:text-base">
         + Booking Baru
       </a>
     </div>
 
+    <!-- Konten List Booking -->
     <div id="booking-list" class="grid gap-4 md:grid-cols-2">
-      <!-- Data akan ditampilkan di sini -->
+      <!-- Data dari Supabase akan ditampilkan di sini -->
     </div>
   </div>
 
@@ -31,34 +34,38 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
 
     async function getBookings() {
-      const res = await fetch(`${supabaseUrl}/rest/v1/peminjaman?select=*&order=tanggal_peminjaman.desc`, {
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`
+      try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/peminjaman?select=*&order=tanggal_peminjaman.desc`, {
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`
+          }
+        });
+
+        const data = await res.json();
+        const list = document.getElementById('booking-list');
+        list.innerHTML = '';
+
+        if (!Array.isArray(data) || data.length === 0) {
+          list.innerHTML = '<p class="text-center text-gray-500 col-span-2">Belum ada data peminjaman.</p>';
+          return;
         }
-      });
 
-      const data = await res.json();
-      const list = document.getElementById('booking-list');
-      list.innerHTML = '';
-
-      if (data.length === 0) {
-        list.innerHTML = '<p class="text-center text-gray-500 col-span-2">Belum ada data peminjaman.</p>';
-        return;
+        data.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'bg-white shadow rounded-lg p-4 hover:shadow-md transition';
+          card.innerHTML = `
+            <h3 class="text-lg font-semibold text-indigo-600">${item.agenda_meeting || 'Tanpa Judul'}</h3>
+            <p class="text-sm text-gray-600 mt-1">${item.nama || '-'} - ${item.departemen || '-'}</p>
+            <p class="text-sm text-gray-500">Ruang: ${item.ruangan || '-'}</p>
+            <p class="text-sm text-gray-500">Tanggal: ${item.tanggal_peminjaman || '-'}</p>
+            <p class="text-sm text-gray-500">Jam: ${item.jam_pemakaian || '-'} - ${item.jam_selesai || '-'}</p>
+          `;
+          list.appendChild(card);
+        });
+      } catch (err) {
+        console.error('Gagal fetch data:', err);
       }
-
-      data.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'bg-white shadow rounded-lg p-4 hover:shadow-md transition';
-        card.innerHTML = `
-          <h3 class="text-lg font-semibold text-indigo-600">${item.agenda_meeting}</h3>
-          <p class="text-sm text-gray-600 mt-1">${item.nama} - ${item.departemen}</p>
-          <p class="text-sm text-gray-500">Ruang: ${item.ruangan}</p>
-          <p class="text-sm text-gray-500">Tanggal: ${item.tanggal_peminjaman}</p>
-          <p class="text-sm text-gray-500">Jam: ${item.jam_pemakaian} - ${item.jam_selesai}</p>
-        `;
-        list.appendChild(card);
-      });
     }
 
     getBookings();
