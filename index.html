@@ -14,8 +14,6 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
   <!-- Swiper.js CSS -->
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-  <!-- Swiper.js JS -->
-  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
   <!-- Feather Icons & Tabletop -->
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
@@ -126,30 +124,13 @@
 
 
   <body>
-<!-- Container Slider Jadwal -->
-<section class="py-6 px-4" id="jadwal-booking">
-  <h2 class="text-xl font-bold mb-4">📅 Jadwal Booking Ruangan</h2>
-  <div class="swiper mySwiper">
-    <div class="swiper-wrapper" id="booking-slides">
-      <!-- Slide akan diisi otomatis -->
-    </div>
-    <!-- Navigasi -->
-    <div class="swiper-pagination"></div>
-  </div>
-</section>
+<!-- ... HTML sebelum ini tetap -->
 
-<!-- Swiper CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
-
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
-<!-- Script ambil data dari Supabase dan tampilkan per hari -->
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
   const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // API key kamu
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   const bookingContainer = document.getElementById('booking-slides');
@@ -157,43 +138,56 @@
   const getFormattedDate = (offset) => {
     const d = new Date();
     d.setDate(d.getDate() + offset);
-    return d.toISOString().split('T')[0];
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const labels = ['Kemarin', 'Hari Ini', 'Besok', 'Lusa'];
 
   const loadBookings = async () => {
+    bookingContainer.innerHTML = ''; // kosongkan dulu slide
+
     for (let i = -1; i <= 2; i++) {
       const tanggal = getFormattedDate(i);
-      const { data, error } = await supabase
-        .from('tbl_peminjaman')
-        .select('*')
-        .eq('tanggal', tanggal)
-        .order('jam_pemakaian', { ascending: true });
+      const label = labels[i + 1]; // index shift -1 => 0
 
-      const label = labels[i + 1]; // geser index dari -1 ke 0
+      try {
+        const { data, error } = await supabase
+          .from('tbl_peminjaman')
+          .select('*')
+          .eq('tanggal', tanggal)
+          .order('jam_pemakaian', { ascending: true });
 
-      let isi = '';
-      if (data && data.length > 0) {
-        data.forEach(row => {
-          isi += `
-            <div class="mb-2">
-              <div class="font-semibold">${row.agenda}</div>
-              <div class="text-sm text-gray-600">${row.nama} - ${row.ruangan}</div>
-              <div class="text-sm text-gray-500">${row.jam_pemakaian} - ${row.jam_selesai}</div>
-            </div>
-          `;
-        });
-      } else {
-        isi = `<p class="text-sm text-gray-500 italic">Tidak ada booking</p>`;
+        let isi = '';
+
+        if (error) {
+          isi = `<p class="text-red-500">Error: ${error.message}</p>`;
+        } else if (data && data.length > 0) {
+          data.forEach(row => {
+            isi += `
+              <div class="mb-3 border-b pb-2">
+                <div class="font-semibold">${row.agenda}</div>
+                <div class="text-sm text-gray-600">${row.nama} - ${row.ruangan}</div>
+                <div class="text-sm text-gray-500">${row.jam_pemakaian} - ${row.jam_selesai}</div>
+              </div>
+            `;
+          });
+        } else {
+          isi = `<p class="text-sm text-gray-500 italic">Tidak ada booking</p>`;
+        }
+
+        bookingContainer.innerHTML += `
+          <div class="swiper-slide p-4 bg-white rounded-2xl shadow-md">
+            <h3 class="text-lg font-bold mb-2">${label} (${tanggal})</h3>
+            ${isi}
+          </div>
+        `;
+
+      } catch (err) {
+        console.error('Gagal mengambil data:', err);
       }
-
-      bookingContainer.innerHTML += `
-        <div class="swiper-slide p-4 bg-white rounded-2xl shadow-md">
-          <h3 class="text-lg font-bold mb-2">${label} (${tanggal})</h3>
-          ${isi}
-        </div>
-      `;
     }
 
     new Swiper(".mySwiper", {
@@ -204,12 +198,8 @@
         clickable: true,
       },
       breakpoints: {
-        640: {
-          slidesPerView: 2.5,
-        },
-        1024: {
-          slidesPerView: 3.5,
-        },
+        640: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
       },
     });
   };
