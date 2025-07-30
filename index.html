@@ -166,8 +166,8 @@
       const { data, error } = await supabase
         .from('tbl_peminjaman')
         .select('*')
-        .eq('tanggal', tanggal)
-        .order('jam_pemakaian', { ascending: true });
+        .eq('tanggal', today)
+        .order('jam_mulai', { ascending: true });
 
       const label = labels[i + 1]; // geser index dari -1 ke 0
 
