@@ -3,70 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>List Booking Ruangan</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>📋 List Booking Ruangan</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"/>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+<body class="bg-gray-100 p-4">
 
-  <h1 class="text-2xl font-bold mb-4">📋 List Pemakaian Ruangan</h1>
+  <div class="max-w-3xl mx-auto bg-white p-4 rounded shadow">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-xl font-bold">📋 List Booking Ruangan</h1>
+      <button onclick="window.history.back()" class="text-blue-500 hover:underline">&lt; Kembali</button>
+    </div>
 
-  <div id="booking-list" class="w-full max-w-2xl space-y-4">
-    <!-- Booking list will be injected here -->
+    <div id="list_booking" class="space-y-4 text-sm text-gray-700">🔄 Mengambil data peminjaman...</div>
+
+    <div class="mt-6 text-center">
+      <a href="daftar.html" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Ajukan</a>
+    </div>
   </div>
 
-  <div id="loading" class="text-gray-600 mt-6">🔄 Mengambil data...</div>
-  <div id="error" class="text-red-600 mt-6 hidden">❌ Gagal mengambil data.</div>
-
-  <div class="flex justify-between gap-4 mt-8">
-    <a href="pengajuan.html" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500">+ Ajukan</a>
-    <a href="index.html" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500">← Kembali</a>
-  </div>
-
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
+    // Inisialisasi Supabase
     const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function loadBooking() {
+    async function fetchBooking() {
+      const container = document.getElementById('booking-list');
       const { data, error } = await supabase
         .from('peminjaman')
         .select('*')
-        .order('tanggal', { ascending: true });
-
-      document.getElementById('loading').style.display = 'none';
+        .order('tanggal', { ascending: false });
 
       if (error) {
+        container.innerHTML = `❌ Gagal mengambil data.<br><code>${error.message}</code>`;
         console.error(error);
-        document.getElementById('error').classList.remove('hidden');
         return;
       }
 
-      const container = document.getElementById('booking-list');
-      if (data.length === 0) {
-        container.innerHTML = `<div class="text-gray-600 text-center">📭 Belum ada booking.</div>`;
+      if (!data || data.length === 0) {
+        container.innerHTML = '📭 Belum ada data peminjaman.';
         return;
       }
 
-      // Tampilkan setiap data booking
+      container.innerHTML = '';
       data.forEach(item => {
         const el = document.createElement('div');
-        el.className = 'bg-white shadow rounded p-4 border';
-
+        el.className = 'border p-3 rounded bg-gray-50';
         el.innerHTML = `
-          <h2 class="text-xl font-semibold mb-1">${item.nama}</h2>
-          <p><strong>Departemen:</strong> ${item.departement}</p>
-          <p><strong>Ruangan:</strong> ${item.ruangan}</p>
-          <p><strong>Agenda:</strong> ${item.agenda}</p>
-          <p><strong>Tanggal:</strong> ${item.tanggal}</p>
-          <p><strong>Jam:</strong> ${item.jam_mulai} - ${item.jam_selesai}</p>
+          <div><strong>${item.nama}</strong> meminjam <strong>${item.ruangan}</strong></div>
+          <div>🗓 ${item.tanggal} | ⏰ ${item.jam_mulai} - ${item.jam_selesai}</div>
+          <div class="text-sm text-gray-500">${item.agenda}</div>
         `;
         container.appendChild(el);
       });
     }
 
-    loadBooking();
+    fetchBooking();
   </script>
 </body>
 </html>
