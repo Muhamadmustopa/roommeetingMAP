@@ -174,24 +174,24 @@
       let isi = '';
       if (data && data.length > 0) {
         data.forEach(row => {
-          isi += 
+          isi += `
             <div class="mb-2">
               <div class="font-semibold">${row.agenda}</div>
               <div class="text-sm text-gray-600">${row.nama} - ${row.ruangan}</div>
               <div class="text-sm text-gray-500">${row.jam_pemakaian} - ${row.jam_selesai}</div>
             </div>
-          ;
+          `;
         });
       } else {
-        isi = <p class="text-sm text-gray-500 italic">Tidak ada booking</p>;
+        isi = `<p class="text-sm text-gray-500 italic">Tidak ada booking</p>`;
       }
 
-      bookingContainer.innerHTML += 
+      bookingContainer.innerHTML += `
         <div class="swiper-slide p-4 bg-white rounded-2xl shadow-md">
           <h3 class="text-lg font-bold mb-2">${label} (${tanggal})</h3>
           ${isi}
         </div>
-      ;
+      `;
     }
 
     new Swiper(".mySwiper", {
@@ -213,6 +213,7 @@
   };
 
   loadBookings();
+</script>
 </body>
 
   </main>
