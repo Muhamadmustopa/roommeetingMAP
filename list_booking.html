@@ -6,8 +6,28 @@
   <title>📋 List Booking Ruangan</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"/>
+   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .content {
+      position: relative;
+      z-index: 10;
+    }
+  </style>
 </head>
-<body class="p-4 min-h-screen animate-gradient bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-600 text-dark">
+<body class="p-4 min-h-screen bg-gray-100 text-dark overflow-hidden">
+
+  <!-- Background Bola-bola -->
+  <canvas id="bgCanvas" class="w-full h-full"></canvas>
 
   <div class="max-w-3xl mx-auto bg-white p-4 rounded shadow">
     <div class="flex justify-between items-center mb-4">
@@ -69,6 +89,54 @@
     }
 
     fetchBooking();
+  </script>
+  
+  <!-- Script animasi background bola -->
+  <script>
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let balls = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function createBalls(count) {
+      balls = [];
+      for (let i = 0; i < count; i++) {
+        balls.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 1.2,
+          vy: (Math.random() - 0.5) * 1.2,
+          radius: Math.random() * 6 + 3,
+          color: `rgba(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 255)}, 0.4)`
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let ball of balls) {
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        if (ball.x < 0 || ball.x > canvas.width) ball.vx *= -1;
+        if (ball.y < 0 || ball.y > canvas.height) ball.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fillStyle = ball.color;
+        ctx.fill();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    createBalls(60);
+    animate();
   </script>
 </body>
 </html>
