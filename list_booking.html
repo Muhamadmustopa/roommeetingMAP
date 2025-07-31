@@ -22,6 +22,16 @@
       position: relative;
       z-index: 10;
     }
+     <style>
+  #bgCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1; /* canvas berada di belakang konten */
+    pointer-events: none; /* biar gak menghalangi klik */
+  }
+</style>
+
   </style>
 </head>
 <body class="p-4 min-h-screen bg-gray-100 text-dark overflow-hidden">
@@ -33,7 +43,8 @@
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-xl font-bold">📋 List Booking Ruangan Meeting</h1>
       <div class="flex justify-end">
-      <a href="index.html"class="inline-flex items-center gap-2 px-4 py-2 rounded-full
+      <a href="index.html" role="button" 
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-full
                 bg-indigo-50 text-indigo-600 font-semibold shadow
                 hover:bg-indigo-100 active:scale-95 transition-all">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
@@ -47,7 +58,8 @@
     <div id="list_booking" class="space-y-4 text-sm text-gray-700">🔄 Mengambil data peminjaman...</div>
 
     <div class="mt-6 text-center">
-      <a href="daftar.html" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Ajukan</a>
+      <a href="daftar.html" role="button"
+        class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Ajukan</a>
     </div>
   </div>
 
