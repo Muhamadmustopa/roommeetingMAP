@@ -4,35 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Form Peminjaman Ruang Meeting</title>
-    <link rel="icon" href="map-log.png" type="image/png">
+  <link rel="icon" href="map-log.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-   <script src="https://cdn.tailwindcss.com"></script>
-</head>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Hilangkan scroll horizontal akibat canvas */
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
       overflow-x: hidden;
     }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen relative flex items-center justify-center">
+<body class="bg-gray-100 min-h-screen relative flex items-center justify-center p-4">
 
-  <!-- BACKGROUND CANVAS BOLA-BOLA -->
+  <!-- BACKGROUND ANIMASI -->
   <canvas id="backgroundCanvas" class="fixed top-0 left-0 w-full h-full z-0"></canvas>
 
-    <!-- Tombol kembali -->
-  <a href="index.html" class="flex items-center gap-2 text-sm text-gray-700 bg-gray-200 px-3 py-1.5 rounded-md hover:bg-gray-300 transition">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-    </svg>
-  </a>
-      <h2 class="text-2xl font-bold text-indigo-600 text-center flex-1 ml-[-2.5rem]">
-        Form Peminjaman Ruangan
-      </h2>
-    </div>
-    
+  <!-- FORM CARD -->
+  <div class="relative z-10 w-full max-w-md bg-white shadow-2xl rounded-xl p-6 space-y-4">
+    <!-- Tombol Kembali -->
+    <a href="index.html" class="inline-flex items-center gap-2 text-sm text-gray-700 bg-gray-200 px-3 py-1.5 rounded-md hover:bg-gray-300 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Kembali
+    </a>
+
+    <h2 class="text-xl font-bold text-indigo-600 text-center">
+      Form Peminjaman Ruangan
+    </h2>
+
     <form id="peminjaman-form" class="space-y-4">
       <div>
         <label class="block text-sm font-semibold text-gray-700">Nama</label>
@@ -46,7 +47,7 @@
           <option value="HRGA">HRGA</option>
           <option value="FA">FA</option>
           <option value="ITDS">ITDS</option>
-          <option value="MKT">MKT</option>
+          <option value="MKT">MKT/PRD</option>
           <option value="SAS-SLS">SAS-SLS</option>
         </select>
       </div>
@@ -82,26 +83,25 @@
         </div>
       </div>
 
-      <button type="submit" class="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold transition duration-200">
+      <button type="submit" class="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold transition">
         Kirim
       </button>
     </form>
   </div>
 
+  <!-- SCRIPT KIRIM DATA -->
   <script>
     const form = document.getElementById('peminjaman-form');
-
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const data = Object.fromEntries(new FormData(form).entries());
 
       const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminjaman', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8'
+          'apikey': 'YOUR_API_KEY',
+          'Authorization': 'Bearer YOUR_API_KEY'
         },
         body: JSON.stringify(data)
       });
@@ -115,7 +115,8 @@
       }
     });
   </script>
-    <!-- SCRIPT BACKGROUND ANIMASI -->
+
+  <!-- BACKGROUND ANIMASI BOLA -->
   <script>
     const canvas = document.getElementById('backgroundCanvas');
     const ctx = canvas.getContext('2d');
@@ -138,7 +139,7 @@
           vx: (Math.random() - 0.5) * 1.2,
           vy: (Math.random() - 0.5) * 1.2,
           radius: Math.random() * 6 + 3,
-          color: `rgba(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 255)}, 0.6)`
+          color: `rgba(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 255)}, 0.5)`
         });
       }
     }
@@ -160,8 +161,9 @@
       requestAnimationFrame(animate);
     }
 
-    createBalls(50);
+    createBalls(40);
     animate();
   </script>
+
 </body>
 </html>
