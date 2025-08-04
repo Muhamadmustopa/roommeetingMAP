@@ -25,6 +25,23 @@
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
+  <!-- Lonceng Notifikasi -->
+<div class="fixed top-4 right-4 z-50 text-sm">
+  <button id="notif-btn" class="relative bg-white p-3 rounded-full shadow hover:bg-gray-100 transition focus:outline-none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405C18.21 14.79 18 14.378 18 14V11c0-3.314-2.686-6-6-6S6 7.686 6 11v3c0 .378-.21.79-.595 1.595L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9" />
+    </svg>
+    <span id="notif-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full hidden">0</span>
+  </button>
+
+  <!-- Drop-down Notifikasi -->
+  <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
+    <div class="p-3 font-semibold border-b">📬 Pengajuan Baru</div>
+    <ul id="notif-list" class="max-h-60 overflow-y-auto divide-y"></ul>
+    <div class="text-center py-2 text-xs text-gray-500 bg-gray-50">Klik untuk tutup</div>
+  </div>
+</div>
+
 <!-- BURGER BUTTON -->
 <button id="btn-open" class="lg:hidden fixed top-4 left-4 z-50 p-3 bg-gray-600 text-white rounded-full hover:bg-gray-500">
   <i data-feather="menu"></i>
@@ -312,5 +329,67 @@
     });
   });
 </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8'; 
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  const notifBtn = document.getElementById('notif-btn');
+  const notifBadge = document.getElementById('notif-count');
+  const notifList = document.getElementById('notif-list');
+  const notifDropdown = document.getElementById('notif-dropdown');
+
+  let notifData = [];
+
+  function updateBadge() {
+    if (notifData.length > 0) {
+      notifBadge.textContent = notifData.length;
+      notifBadge.classList.remove("hidden");
+    } else {
+      notifBadge.classList.add("hidden");
+    }
+  }
+
+  function updateDropdown() {
+    notifList.innerHTML = "";
+    if (notifData.length === 0) {
+      notifList.innerHTML = `<li class="p-3 text-gray-500 text-sm">Tidak ada pengajuan baru</li>`;
+      return;
+    }
+
+    notifData.slice(-3).reverse().forEach(item => {
+      const li = document.createElement("li");
+      li.className = "p-3 text-gray-700 text-sm";
+      li.innerHTML = `<strong>${item.nama}</strong> meminjam <strong>${item.ruangan}</strong><br><span class="text-xs text-gray-500">${item.jam_mulai} - ${item.jam_selesai}</span>`;
+      notifList.appendChild(li);
+    });
+  }
+
+  // Toggle dropdown
+  notifBtn.addEventListener("click", () => {
+    notifDropdown.classList.toggle("hidden");
+    notifData = []; // reset
+    updateBadge();
+    updateDropdown();
+  });
+
+  // Listener realtime dari Supabase
+  supabase
+    .channel('notif-peminjaman')
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'peminjaman',
+    }, payload => {
+      const row = payload.new;
+      notifData.push(row);
+      updateBadge();
+      updateDropdown();
+      console.log("🔔 New submission:", row);
+    })
+    .subscribe();
+</script>
+
 </body>
 </html>
