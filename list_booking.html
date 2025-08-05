@@ -50,12 +50,13 @@
         .from('peminjaman')
         .select('*')
         .order('tanggal', { ascending: false });
-
+      
       if (error) {
-        container.innerHTML = ❌ Gagal mengambil data.<br><code>${error.message}</code>;
-        console.error(error);
-        return;
+  container.innerHTML = `❌ Gagal mengambil data.<br><code>${error.message}</code>`;
+  console.error(error);
+  return;
       }
+
 
       if (!data || data.length === 0) {
         container.innerHTML = '📭 Belum ada data peminjaman.';
