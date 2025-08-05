@@ -289,27 +289,25 @@
           // Slider Semua Jadwal
           const slide = document.createElement('div');
           slide.className = 'swiper-slide bg-white rounded-xl shadow p-4';
-          slide.innerHTML = slide.innerHTML = `
-  <div class="text-center">
-    <div class="text-xl font-bold text-gray-800">${item.tanggal}</div>
-    <div class="mt-2 text-lg text-gray-600">${item.agenda}</div>
-    <div class="mt-1 text-sm text-gray-500">${item.jam_mulai} - ${item.jam_selesai}</div>
-    <div class="mt-1 text-sm text-gray-500">Ruangan: ${item.ruangan}</div>
-    <div class="mt-1 text-sm text-gray-500">PIC: ${item.nama} (${item.departemen})</div>
-  </div>
-            <h4 class="font-bold text-indigo-600">${item['Nama Ruangan'] || 'Ruang'}</h4>
-            <p>📅 ${item['Tanggal']} – ⏰ ${item['Waktu Mulai']} s/d ${item['Waktu Selesai']}</p>
-            <p class="mt-1 font-semibold">${item['Judul Meeting'] || ''}</p>
-            <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>;
+          slide.innerHTML = `
+            <div class="text-center">
+              <div class="text-xl font-bold text-gray-800">${item.tanggal}</div>
+              <div class="mt-2 text-lg text-gray-600">${item.agenda}</div>
+              <div class="mt-1 text-sm text-gray-500">${item.jam_mulai} - ${item.jam_selesai}</div>
+              <div class="mt-1 text-sm text-gray-500">Ruangan: ${item.ruangan}</div>
+              <div class="mt-1 text-sm text-gray-500">PIC: ${item.nama} (${item.departemen})</div>
+            </div>
+          `;
           calendarContainer.appendChild(slide);
 
           // Filter untuk hari ini
           if (item['Tanggal'] === today) {
-            todayMeetings += 
+            todayMeetings += `
               <div class="border-b pb-1">
                 <p class="font-semibold text-indigo-700">${item['Judul Meeting']}</p>
                 <p class="text-sm">⏰ ${item['Waktu Mulai']} - ${item['Waktu Selesai']} | ${item['Nama Ruangan']}</p>
-              </div>;
+              </div>
+            `;
           }
         });
 
@@ -329,10 +327,12 @@
     });
   });
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
   const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8'; 
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
   const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
   const notifBtn = document.getElementById('notif-btn');
@@ -366,7 +366,6 @@
     });
   }
 
-  // Toggle dropdown
   notifBtn.addEventListener("click", () => {
     notifDropdown.classList.toggle("hidden");
     notifData = []; // reset
@@ -374,7 +373,7 @@
     updateDropdown();
   });
 
-  // Listener realtime dari Supabase
+  // Realtime Listener Supabase
   supabase
     .channel('notif-peminjaman')
     .on('postgres_changes', {
@@ -390,6 +389,3 @@
     })
     .subscribe();
 </script>
-
-</body>
-</html>
