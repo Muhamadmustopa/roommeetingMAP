@@ -93,28 +93,25 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
-
-const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co', {
+  const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminjaman', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
     'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8',
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8'
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8',
+    'Prefer': 'return=representation'  // Tambahan opsional untuk mendapatkan respon data
   },
   body: JSON.stringify(data)
 });
 
-
 if (res.ok) {
   form.reset();
   window.location.href = `makasih.html?nama=${encodeURIComponent(data.nama)}`;
+} else {
+  const err = await res.text();
+  alert('❌ Gagal mengirim data: ' + err);
 }
-      } else {
-        const err = await res.text();
-        alert('❌ Gagal mengirim data: ' + err);
-      }
-    });
-  </script>
+
 
   <!-- BACKGROUND ANIMASI BOLA -->
   <script>
