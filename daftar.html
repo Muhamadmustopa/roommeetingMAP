@@ -107,7 +107,7 @@ const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminj
 
       if (res.ok) {
         form.reset();
-        window.location.href = `makasih.html?nama=${encodeURIComponent(data.nama)}`;
+        window.location.href =`makasih.html?nama=${encodeURIComponent(data.nama)}`;
       } else {
         const err = await res.text();
         alert('❌ Gagal mengirim data: ' + err);
