@@ -105,9 +105,9 @@ const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co', {
 });
 
 
-      if (res.ok) {
-        alert('✅ Data berhasil dikirim!');
-        form.reset();
+   if (res.ok) {
+  form.reset();
+  window.location.href = `terimakasih .html?nama=${encodeURIComponent(data.nama)}`;
       } else {
         const err = await res.text();
         alert('❌ Gagal mengirim data: ' + err);
