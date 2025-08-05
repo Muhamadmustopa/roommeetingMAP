@@ -39,42 +39,42 @@
   </footer>
 </div>
   <script>
-    // Inisialisasi Supabase
-    const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+   // Inisialisasi Supabase
+const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function fetchBooking() {
-      const container = document.getElementById('list_booking');
-      const { data, error } = await supabase
-        .from('peminjaman')
-        .select('*')
-        .order('tanggal', { ascending: false });
-      
-      if (error) {
-  container.innerHTML = `❌ Gagal mengambil data.<br><code>${error.message}</code>`;
-  console.error(error);
-  return;
-      }
+async function fetchBooking() {
+  const container = document.getElementById('list_booking');
+  
+  const { data, error } = await supabase
+    .from('peminjaman')
+    .select('*')
+    .order('tanggal', { ascending: false });
 
+  if (error) {
+    container.innerHTML = `❌ Gagal mengambil data.<br><code>${error.message}</code>`;
+    console.error(error);
+    return;
+  }
 
-      if (!data || data.length === 0) {
-        container.innerHTML = '📭 Belum ada data peminjaman.';
-        return;
-      }
+  if (!data || data.length === 0) {
+    container.innerHTML = '📭 Belum ada data peminjaman.';
+    return;
+  }
 
-      container.innerHTML = '';
-      data.forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'border p-3 rounded bg-gray-50';
-        el.innerHTML = 
-          <div><strong>${item.nama}</strong> meminjam <strong>${item.ruangan}</strong></div>
-          <div>🗓 ${item.tanggal} | ⏰ ${item.jam_mulai} - ${item.jam_selesai}</div>
-          <div class="text-sm text-gray-500">${item.agenda}</div>
-        ;
-        container.appendChild(el);
-      });
-    }
+  container.innerHTML = '';
+  data.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'border p-3 rounded bg-gray-50';
+    el.innerHTML = `
+      <div><strong>${item.nama}</strong> meminjam <strong>${item.ruangan}</strong></div>
+      <div>🗓 ${item.tanggal} | ⏰ ${item.jam_mulai} - ${item.jam_selesai}</div>
+      <div class="text-sm text-gray-500">${item.agenda}</div>
+    `;
+    container.appendChild(el);
+  });
+}
 
     fetchBooking();
   </script>
