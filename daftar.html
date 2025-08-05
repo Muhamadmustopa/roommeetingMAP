@@ -94,15 +94,16 @@
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
 
-      const res = await fetch('https://https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminjaman', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': 'YOUR_API_KEY',
-          'Authorization': 'Bearer YOUR_API_KEY'
-        },
-        body: JSON.stringify(data)
-      });
+     const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminjaman', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'apikey': 'ISI_APIKEY_KAMU',
+    'Authorization': 'Bearer ISI_APIKEY_KAMU'
+  },
+  body: JSON.stringify(data)
+});
+
 
       if (res.ok) {
         alert('✅ Data berhasil dikirim!');
