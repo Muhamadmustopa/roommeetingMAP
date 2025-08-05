@@ -93,7 +93,7 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
-  const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminjaman', {
+const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminjaman', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -111,7 +111,6 @@ if (res.ok) {
   const err = await res.text();
   alert('❌ Gagal mengirim data: ' + err);
 }
-
 
   <!-- BACKGROUND ANIMASI BOLA -->
   <script>
