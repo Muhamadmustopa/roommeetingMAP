@@ -104,14 +104,15 @@ const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminj
   body: JSON.stringify(data)
 });
 
-if (res.ok) {
-  form.reset();
-  window.location.href = `makasih.html?nama=${encodeURIComponent(data.nama)}`;
-} else {
-  const err = await res.text();
-  alert('❌ Gagal mengirim data: ' + err);
-}
 
+      if (res.ok) {
+        form.reset();
+        window.location.href = `makasih.html?nama=${encodeURIComponent(data.nama)}`;
+      } else {
+        const err = await res.text();
+        alert('❌ Gagal mengirim data: ' + err);
+      }
+    });
   <!-- BACKGROUND ANIMASI BOLA -->
   <script>
     const canvas = document.getElementById('backgroundCanvas');
