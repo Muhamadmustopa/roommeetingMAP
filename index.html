@@ -128,126 +128,80 @@
   </header>
 
   <main class="p-4 space-y-6">
-<style>
-    body {
-      font-family: sans-serif;
-      background: #f9fafb;
-      padding: 20px;
-    }
-    .swiper-container {
-      width: 100%;
-      max-width: 800px;
-      margin: auto;
-    }
-    .swiper-slide {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .title {
-      text-align: center;
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    .item {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-    }
-    .item:last-child {
-      border-bottom: none;
-    }
-  </style>
-</head>
-<body>
-  <h1 class="title">Agenda Meeting</h1>
-  <div class="swiper-container">
+ <h1 class="text-3xl font-bold mb-6 text-center">Agenda Peminjaman Ruangan</h1>
+
+  <!-- Swiper Container -->
+  <div class="swiper mySwiper max-w-4xl mx-auto">
     <div class="swiper-wrapper">
-      <div class="swiper-slide" id="kemarin">
-        <h2>Kemarin</h2>
-        <div class="content"></div>
-      </div>
-      <div class="swiper-slide" id="hariini">
-        <h2>Hari Ini</h2>
-        <div class="content"></div>
-      </div>
-      <div class="swiper-slide" id="besok">
-        <h2>Besok</h2>
-        <div class="content"></div>
-      </div>
-      <div class="swiper-slide" id="lusa">
-        <h2>Lusa</h2>
-        <div class="content"></div>
-      </div>
+
+      <!-- Slide Template (akan diisi JS) -->
+      <div class="swiper-slide" id="slide-kemarin"></div>
+      <div class="swiper-slide" id="slide-hari-ini"></div>
+      <div class="swiper-slide" id="slide-besok"></div>
+      <div class="swiper-slide" id="slide-lusa"></div>
+
     </div>
     <div class="swiper-pagination"></div>
   </div>
 
   <script>
-    const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = supabase.createClient(
+      'https://mypiqbkyiwcxhznclbcl.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8'
+    );
 
-    const today = new Date();
-    const dates = {
-      kemarin: new Date(today),
-      hariini: new Date(today),
-      besok: new Date(today),
-      lusa: new Date(today),
-    };
-    dates.kemarin.setDate(today.getDate() - 1);
-    dates.besok.setDate(today.getDate() + 1);
-    dates.lusa.setDate(today.getDate() + 2);
+    const dayLabels = ['Kemarin', 'Hari Ini', 'Besok', 'Lusa'];
+    const slideIds = ['kemarin', 'hari-ini', 'besok', 'lusa'];
 
-    const formatDate = (date) => date.toISOString().split('T')[0];
+    async function loadData() {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
 
-    async function fetchAgenda(label, tanggal) {
-      const { data, error } = await supabase
-        .from('peminjaman')
-        .select('*')
-        .eq('tanggal', tanggal)
-        .order('jam_mulai', { ascending: true });
+      for (let i = -1; i <= 2; i++) {
+        const day = new Date(now);
+        day.setDate(now.getDate() + i);
 
-      const container = document.querySelector(`#${label} .content`);
-      container.innerHTML = '';
-      if (error) {
-        container.innerHTML = `<p style="color:red">Gagal memuat data</p>`;
-        return;
-      }
+        const dateStr = day.toISOString().split('T')[0];
 
-      if (data.length === 0) {
-        container.innerHTML = '<p>Tidak ada agenda</p>';
-        return;
-      }
+        const { data, error } = await supabase
+          .from('peminjaman')
+          .select('*')
+          .eq('tanggal', dateStr)
+          .order('jam_mulai');
 
-      data.forEach(item => {
-        container.innerHTML += `
-          <div class="item">
-            <strong>${item.nama}</strong> (${item.departemen})<br>
-            ${item.ruangan} - ${item.agenda}<br>
-            ${item.jam_mulai} - ${item.jam_selesai}
+        const index = i + 1; // -1 jadi 0 (kemarin), 0 jadi 1 (hari ini), dst
+        const container = document.getElementById(`slide-${slideIds[index]}`);
+
+        container.innerHTML = `
+          <div class="p-6 bg-white rounded-xl shadow-lg min-h-[300px]">
+            <h2 class="text-xl font-semibold mb-4">${dayLabels[index]}</h2>
+            ${data && data.length > 0 ? data.map(item => `
+              <div class="border-l-4 border-blue-500 pl-4 mb-3">
+                <p class="font-bold">${item.agenda}</p>
+                <p>${item.nama} (${item.departemen})</p>
+                <p class="text-sm text-gray-500">${item.ruangan} — ${item.jam_mulai} s/d ${item.jam_selesai}</p>
+              </div>
+            `).join('') : '<p class="text-gray-500">Tidak ada agenda.</p>'}
           </div>
         `;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadData();
+
+      new Swiper(".mySwiper", {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        loop: true,
       });
-    }
-
-    for (const [key, date] of Object.entries(dates)) {
-      fetchAgenda(key, formatDate(date));
-    }
-
-    new Swiper('.swiper-container', {
-      slidesPerView: 1,
-      spaceBetween: 20,
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
     });
   </script>
-</body>
 
-  </main>
 <!-- Tombol Ajukan Peminjaman -->
 <div class="fixed bottom-24 right-4 sm:static sm:mb-4 sm:mr-4 sm:flex sm:justify-end z-40">
   <a href="daftar.html"target="_blank" rel="noopener"
