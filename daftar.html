@@ -87,80 +87,81 @@
     </form>
   </div>
 
-  <!-- SCRIPT KIRIM DATA -->
-  <script>
-    const form = document.getElementById('peminjaman-form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(form).entries());
-const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminjaman', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8',
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8',
-    'Prefer': 'return=representation'  // Tambahan opsional untuk mendapatkan respon data
-  },
-  body: JSON.stringify(data)
-});
+ <!-- SCRIPT KIRIM DATA -->
+<script>
+  const form = document.getElementById('peminjaman-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
 
-
-      if (res.ok) {
-        form.reset();
-        window.location.href =`makasih.html?nama=${encodeURIComponent(data.nama)}`;
-      } else {
-        const err = await res.text();
-        alert('❌ Gagal mengirim data: ' + err);
-      }
+    const res = await fetch('https://mypiqbkyiwcxhznclbcl.supabase.co/rest/v1/peminjaman', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(data)
     });
-  <!-- BACKGROUND ANIMASI BOLA -->
-  <script>
-    const canvas = document.getElementById('backgroundCanvas');
-    const ctx = canvas.getContext('2d');
-    let balls = [];
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    if (res.ok) {
+      form.reset();
+      window.location.href = `makasih.html?nama=${encodeURIComponent(data.nama)}`;
+    } else {
+      const err = await res.text();
+      alert('❌ Gagal mengirim data: ' + err);
     }
+  });
+</script>
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+<!-- BACKGROUND ANIMASI BOLA -->
+<script>
+  const canvas = document.getElementById('backgroundCanvas');
+  const ctx = canvas.getContext('2d');
+  let balls = [];
 
-    function createBalls(count) {
-      balls = [];
-      for (let i = 0; i < count; i++) {
-        balls.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 1.2,
-          vy: (Math.random() - 0.5) * 1.2,
-          radius: Math.random() * 6 + 3,
-          color: `rgba(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 255)}, 0.5)`
-        });
-      }
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function createBalls(count) {
+    balls = [];
+    for (let i = 0; i < count; i++) {
+      balls.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 1.2,
+        vy: (Math.random() - 0.5) * 1.2,
+        radius: Math.random() * 6 + 3,
+        color: `rgba(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 255)}, 0.5)`
+      });
     }
+  }
 
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let ball of balls) {
-        ball.x += ball.vx;
-        ball.y += ball.vy;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let ball of balls) {
+      ball.x += ball.vx;
+      ball.y += ball.vy;
 
-        if (ball.x < 0 || ball.x > canvas.width) ball.vx *= -1;
-        if (ball.y < 0 || ball.y > canvas.height) ball.vy *= -1;
+      if (ball.x < 0 || ball.x > canvas.width) ball.vx *= -1;
+      if (ball.y < 0 || ball.y > canvas.height) ball.vy *= -1;
 
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-        ctx.fillStyle = ball.color;
-        ctx.fill();
-      }
-      requestAnimationFrame(animate);
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = ball.color;
+      ctx.fill();
     }
+    requestAnimationFrame(animate);
+  }
 
-    createBalls(40);
-    animate();
-  </script>
-
+  createBalls(40);
+  animate();
+</script>
 </body>
 </html>
