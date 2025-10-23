@@ -17,6 +17,7 @@
       animation: fadeIn 0.8s ease;
     }
 
+    /* ===== NAVBAR ===== */
     .navbar {
       width: 100%;
       background: #f0f0f0;
@@ -38,7 +39,11 @@
       border-radius: 50%;
       object-fit: cover;
     }
-    .navbar-left h3 { margin: 0; font-weight: 600; font-size: 18px; }
+    .navbar-left h3 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 18px;
+    }
     .navbar-links {
       display: flex;
       gap: 18px;
@@ -51,18 +56,22 @@
       transition: 0.3s;
     }
     .navbar-links a:hover { color: #0072ff; }
-    .navbar button {
+
+    /* Tombol logout */
+    .logout-btn {
       background: #f44336;
       border: none;
       color: white;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 6px;
       cursor: pointer;
-      transition: 0.3s;
       font-size: 14px;
+      transition: 0.3s;
+      text-decoration: none;
     }
-    .navbar button:hover { background: #d32f2f; }
+    .logout-btn:hover { background: #d32f2f; }
 
+    /* ===== MENU AREA ===== */
     .menu-area {
       flex-grow: 1;
       padding: 40px 20px;
@@ -98,6 +107,7 @@
       font-size: 18px;
     }
 
+    /* ===== FOOTER ===== */
     footer {
       width: 100%;
       background: #f0f0f0;
@@ -108,6 +118,7 @@
       box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
     }
 
+    /* WARNA CARD */
     .blue { background: #3498db; }
     .green { background: #2ecc71; }
     .orange { background: #f39c12; }
@@ -121,6 +132,8 @@
   </style>
 </head>
 <body>
+
+  <!-- ===== NAVBAR ===== -->
   <div class="navbar">
     <div class="navbar-left">
       <img src="logo-map.jpg" alt="Logo MAP">
@@ -130,32 +143,25 @@
     <div class="navbar-links">
       <a href="kalender.html">Kalendar</a>
       <a href="about.html">About GA</a>
-      <a href="index.html" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition">
-  Logout
-</a>
+      <a href="index.html" class="logout-btn">Logout</a>
+    </div>
+  </div>
 
-
-<script>
-function logout() {
-  // logika hapus data login misalnya
-  window.location.href = "index.html"; // setelah itu arahkan
-}
-</script>
-
-
+  <!-- ===== MENU AREA ===== -->
   <div class="menu-area">
     <div class="menu-container" id="menuContainer"></div>
   </div>
 
+  <!-- ===== FOOTER ===== -->
   <footer>© 2025 PT Mitra Asa Pratama – General Affairs</footer>
 
   <script>
-    // Cek apakah sudah login
+    // Cek apakah sudah login (opsional, aktifkan kalau pakai sistem login)
     if (sessionStorage.getItem("loggedIn") !== "true") {
-      window.location.href = "login.html";
+      // window.location.href = "login.html";
     }
 
-    // Daftar Google Sheets
+    // Daftar link Google Sheet
     const gsheetLinks = [
       { title: "Dashboard Tasks GA", icon: "📊", color: "blue", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
       { title: "Checklist Monitoring CCTV", icon: "📷", color: "orange", url: "https://docs.google.com/spreadsheets/d/1zojEgfOMGMFcHCcmIJuVdIHoJAgVzh5u/edit?gid=755317208#gid=755317208" },
@@ -163,8 +169,8 @@ function logout() {
       { title: "Rekapitulasi ATK", icon: "📦", color: "purple", url: "https://docs.google.com/spreadsheets/d/1-STRMvWmcc8Bw-UuZmp1WjZ8d9OiLwB_/edit?gid=2111416520#gid=2111416520" }
     ];
 
+    // Tampilkan card menu otomatis
     const menuContainer = document.getElementById("menuContainer");
-
     gsheetLinks.forEach(sheet => {
       const div = document.createElement("div");
       div.classList.add("menu-card", sheet.color);
@@ -172,11 +178,6 @@ function logout() {
       div.onclick = () => window.open(sheet.url, "_blank");
       menuContainer.appendChild(div);
     });
-
-    function logout() {
-      sessionStorage.removeItem("loggedIn");
-      window.location.href = "login.html";
-    }
   </script>
 </body>
 </html>
