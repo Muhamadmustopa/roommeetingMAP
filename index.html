@@ -35,12 +35,17 @@
     }
 
     .logo {
-      width: 90px;
-      height: 90px;
+      width: 70px;
+      height: 70px;
       margin-bottom: 15px;
       border-radius: 50%;
       object-fit: cover;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 10px;
     }
 
     h2 {
@@ -98,34 +103,55 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 30px;
+      padding: 10px 25px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .navbar h3 {
-      margin: 0;
-      font-weight: 600;
-      font-size: 20px;
+    .navbar-left {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .navbar img {
-      width: 35px;
-      height: 35px;
+    .navbar-left img {
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
       object-fit: cover;
+    }
+
+    .navbar-left h3 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .navbar-links a {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .navbar-links a:hover {
+      color: #0072ff;
     }
 
     .navbar button {
       background: #f44336;
       border: none;
       color: white;
-      padding: 8px 16px;
+      padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
       transition: 0.3s;
+      font-size: 14px;
     }
 
     .navbar button:hover {
@@ -141,8 +167,8 @@
     }
 
     .menu-container {
-      width: 100%;
-      max-width: 1000px;
+      width: 90%;
+      max-width: 900px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 25px;
@@ -201,27 +227,32 @@
 <body>
   <!-- LOGIN PAGE -->
   <div class="login-container" id="loginPage">
-    <!-- Ganti URL logo di sini -->
-    <img src="logo-map.jpg" class="logo" />
+    <img src="logo-map.jpg" class="logo" alt="Logo MAP" />
     <h1>Dashboard General Affair MAP</h1>
-    <h2>Login </h2>
+    <h2>Sign up</h2>
     <input type="text" id="username" placeholder="Username" />
     <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Masuk</button>
+    <button onclick="login()">Login</button>
     <p class="error" id="errorMsg"></p>
   </div>
 
   <!-- DASHBOARD -->
   <div class="dashboard" id="dashboardPage">
     <div class="navbar">
-      <h3><img src="logo-map.jpg" alt="Logo MAP"> Dashboard GA</h3>
-      <button onclick="logout()">Kembali</button>
+      <div class="navbar-left">
+        <img src="logo-map.jpg" alt="Logo MAP">
+        <h3>Dashboard GA</h3>
+      </div>
+
+      <div class="navbar-links">
+        <a href="kalender.html">Kalendar</a>
+        <a href="daftar.html">Laporan</a>
+        <button onclick="logout()">Logout</button>
+      </div>
     </div>
 
     <div class="menu-area">
-      <div class="menu-container" id="menuContainer">
-        <!-- Card otomatis dari JS -->
-      </div>
+      <div class="menu-container" id="menuContainer"></div>
     </div>
 
     <footer>© 2025 PT Mitra Asa Pratama – General Affairs</footer>
@@ -247,7 +278,7 @@
       div.classList.add("menu-card", sheet.color);
       div.innerHTML = `
         <i>${sheet.icon}</i>
-        <h4>${sheet.title}</h4>
+        <h3>${sheet.title}</h3>
         <p>Klik untuk membuka</p>
       `;
       div.onclick = () => window.open(sheet.url, "_blank");
