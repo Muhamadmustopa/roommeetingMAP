@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard GA</title>
+  <style>
+    * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #0072ff, #00c6ff);
+      color: white;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .navbar {
+      width: 100%;
+      background: #f0f0f0;
+      color: #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 25px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .navbar-left img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .navbar-left h3 { margin: 0; font-weight: 600; font-size: 18px; }
+    .navbar-links {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+    .navbar-links a {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .navbar-links a:hover { color: #0072ff; }
+    .navbar button {
+      background: #f44336;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+    .navbar button:hover { background: #d32f2f; }
+
+    .menu-area {
+      flex-grow: 1;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .menu-container {
+      width: 90%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+    .menu-card {
+      border-radius: 15px;
+      padding: 25px 20px;
+      text-align: center;
+      cursor: pointer;
+      color: white;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .menu-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    .menu-card i {
+      font-size: 40px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .menu-card h3 {
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+
+    footer {
+      width: 100%;
+      background: #f0f0f0;
+      color: #333;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .blue { background: #3498db; }
+    .green { background: #2ecc71; }
+    .orange { background: #f39c12; }
+    .purple { background: #9b59b6; }
+    .red { background: #e74c3c; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="logo-map.jpg" alt="Logo MAP">
+      <h3>Dashboard GA</h3>
+    </div>
+
+    <div class="navbar-links">
+      <a href="kalender.html">Kalendar</a>
+      <a href="about.html">About GA</a>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="menu-area">
+    <div class="menu-container" id="menuContainer"></div>
+  </div>
+
+  <footer>© 2025 PT Mitra Asa Pratama – General Affairs</footer>
+
+  <script>
+    // Cek apakah sudah login
+    if (sessionStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+
+    // Daftar Google Sheets
+    const gsheetLinks = [
+      { title: "Dashboard Tasks GA", icon: "📊", color: "blue", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
+      { title: "Checklist Monitoring CCTV", icon: "📷", color: "orange", url: "https://docs.google.com/spreadsheets/d/1zojEgfOMGMFcHCcmIJuVdIHoJAgVzh5u/edit?gid=755317208#gid=755317208" },
+      { title: "Pemakaian Kendaraan", icon: "🚗", color: "green", url: "https://docs.google.com/spreadsheets/d/1-aMiDuKCoG6bZNV5_Rggn3Ec5rVoDqkB/edit?gid=471085140#gid=471085140" },
+      { title: "Rekapitulasi ATK", icon: "📦", color: "purple", url: "https://docs.google.com/spreadsheets/d/1-STRMvWmcc8Bw-UuZmp1WjZ8d9OiLwB_/edit?gid=2111416520#gid=2111416520" }
+    ];
+
+    const menuContainer = document.getElementById("menuContainer");
+
+    gsheetLinks.forEach(sheet => {
+      const div = document.createElement("div");
+      div.classList.add("menu-card", sheet.color);
+      div.innerHTML = `<i>${sheet.icon}</i><h3>${sheet.title}</h3><p>Klik untuk membuka</p>`;
+      div.onclick = () => window.open(sheet.url, "_blank");
+      menuContainer.appendChild(div);
+    });
+
+    function logout() {
+      sessionStorage.removeItem("loggedIn");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
