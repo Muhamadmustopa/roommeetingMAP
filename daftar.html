@@ -6,92 +6,114 @@
   <title>Departemen GA - PT Mitra Asa Pratama</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/scrollreveal"></script>
+  <style>
+    .jumbotron-bg {
+      background-image: url('https://images.unsplash.com/photo-1605902711622-cfb43c4437d9?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      filter: blur(4px) brightness(0.8);
+      transform: scale(1.1);
+    }
+    .card-hover:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #2563eb, #1e3a8a);
+    }
+  </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
   <!-- NAVBAR -->
-  <nav class="bg-white shadow-md fixed w-full top-0 left-0 z-50">
+  <nav class="bg-white/90 backdrop-blur-md shadow-md fixed w-full top-0 left-0 z-50 transition">
     <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-blue-700">Departemen GA</h1>
-      <a href="index.html" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-800 transition">Back To Dashboard</a>
+      <div class="flex items-center space-x-3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_Teamwork.svg" alt="Logo" class="w-10 h-10">
+        <h1 class="text-2xl font-bold text-blue-700">Departement General Affair </h1>
+      </div>
+      <a href="index.html" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition">← Back to Dashboard</a>
     </div>
   </nav>
 
   <!-- JUMBOTRON -->
-  <section class="relative bg-cover bg-center h-96 mt-16" style="background-image: url('https://images.unsplash.com/photo-1605902711622-cfb43c4437d9?auto=format&fit=crop&w=1400&q=80');">
-    <div class="absolute inset-0 bg-blue-900 bg-opacity-60 flex flex-col justify-center items-center text-center text-white">
-      <h1 class="text-4xl md:text-5xl font-bold mb-4">General Affairs (GA)</h1>
-      <p class="text-lg md:text-xl max-w-2xl">Maintaining the efficiency, comfortable, and productivity work environment of the entire Mitra Asa Pratama.</p>
+  <section class="relative h-[400px] mt-16 overflow-hidden">
+    <div class="absolute inset-0 jumbotron-bg"></div>
+    <div class="absolute inset-0 flex flex-col justify-center items-center text-center text-white gradient-bg bg-opacity-70">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">General Affairs (GA)</h1>
+      <p class="text-lg md:text-xl max-w-2xl drop-shadow-md">Maintaining efficiency, comfort, and productivity in every corner of PT Mitra Asa Pratama.</p>
     </div>
   </section>
 
   <!-- KILAS PENGERTIAN -->
-  <section class="py-16 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
+  <section class="py-20 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
     <div data-sr>
-      <h2 class="text-3xl font-bold text-blue-700 mb-4">About Departemen GA</h2>
-      <p class="text-gray-700 leading-relaxed">The General Affairs Department is responsible for ensuring that all non-productive operational activities run smoothly, including the management of office facilities, assets, security, cleanliness, and department relations.</p>
+      <h2 class="text-3xl font-bold text-blue-800 mb-4">About Departement GA</h2>
+      <p class="text-gray-700 leading-relaxed">The General Affairs Department is tasked with ensuring that all non-productive operational activities run smoothly — from managing office facilities, operational vehicles, to procuring work needs..</p>
       <p class="text-gray-700 mt-4">We are committed to creating a comfortable, efficient and productive work environment for all employees at PT Mitra Asa Pratama..</p>
     </div>
-    <img data-sr src="https://images.unsplash.com/photo-1605902711622-cfb43c4437d9?auto=format&fit=crop&w=800&q=80" alt="GA Office" class="rounded-2xl shadow-lg">
+    <img data-sr src="spv.png" alt="GA Office" class="rounded-2xl shadow-2xl hover:scale-105 transform transition duration-500">
   </section>
 
   <!-- STRUKTUR ORGANISASI -->
-  <section class="bg-white py-16">
+  <section class="bg-gradient-to-r from-blue-700 to-indigo-800 py-20 text-white">
     <div class="max-w-5xl mx-auto text-center">
-      <h2 class="text-3xl font-bold text-blue-700 mb-8">Structure Organisasi General affair</h2>
-      <img data-sr src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Organizational_chart_example.svg/1200px-Organizational_chart_example.svg.png" alt="Bagan Struktur GA" class="mx-auto rounded-lg shadow-lg">
+      <h2 class="text-3xl font-bold mb-8">Structure Organization General Affairs</h2>
+      <img data-sr src="struktur.jpg" alt="Bagan Struktur GA" class="mx-auto rounded-lg shadow-2xl bg-white p-4">
     </div>
   </section>
 
   <!-- HISTORY & PROFIL ORANG -->
-  <section class="py-16 max-w-6xl mx-auto px-6">
-    <h2 class="text-3xl font-bold text-center text-blue-700 mb-10">Profil & Perjalanan Tim</h2>
-    <div class="grid md:grid-cols-2 gap-10 items-center">
-      <img data-sr src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80" alt="Tim GA" class="rounded-2xl shadow-lg">
+  <section class="py-20 max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl font-bold text-center text-blue-800 mb-12">Profile and Journey Team GA</h2>
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <img data-sr src="https://images.unsplash.com/photo-1598257006466-8b1a1b2e72a6?auto=format&fit=crop&w=900&q=80" alt="Tim GA" class="rounded-3xl shadow-2xl hover:scale-105 transition duration-500">
       <div data-sr>
-        <h3 class="text-2xl font-semibold mb-4">GA</h3>
-        <p class="text-gray-700">Tim GA telah menjadi tulang punggung dalam mendukung kelancaran operasional perusahaan sejak berdirinya PT Mitra Asa Pratama. Berawal dari tim kecil, kini GA berkembang menjadi unit strategis yang memegang peran penting dalam manajemen fasilitas dan pelayanan internal.</p>
+        <h3 class="text-2xl font-semibold mb-4">General Affairs Journey</h3>
+        <p class="text-gray-700 leading-relaxed">GA is the backbone of the company's operational success. Starting as a small team, it has now grown into a strategic unit with significant responsibility for maintaining a conducive work environment.</p>
       </div>
     </div>
   </section>
 
   <!-- TIM GA -->
-  <section class="bg-gray-100 py-16">
+  <section class="bg-gray-100 py-20">
     <div class="max-w-6xl mx-auto text-center">
-      <h2 class="text-3xl font-bold text-blue-700 mb-10">Team General Affairs</h2>
-      <div class="grid md:grid-cols-4 gap-8">
-        <div data-sr class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-24 h-24 mx-auto rounded-full mb-4" alt="">
+      <h2 class="text-3xl font-bold text-blue-800 mb-12">Team General Affairs</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <!-- Template card anggota -->
+        <div data-sr class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <img src="topa.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
           <h3 class="font-semibold text-lg">Muhamad Mustopa</h3>
           <p class="text-gray-500 text-sm">Staff General Affair</p>
         </div>
-        <div data-sr class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <img src="https://randomuser.me/api/portraits/women/45.jpg" class="w-24 h-24 mx-auto rounded-full mb-4" alt="">
+        <div data-sr class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <img src="anni.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
           <h3 class="font-semibold text-lg">Anni Sumartiani</h3>
           <p class="text-gray-500 text-sm">Supervisor GA</p>
         </div>
-        <div data-sr class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <img src="https://randomuser.me/api/portraits/men/64.jpg" class="w-24 h-24 mx-auto rounded-full mb-4" alt="">
+        <div data-sr class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <img src="apso.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
           <h3 class="font-semibold text-lg">Abdul Apso</h3>
           <p class="text-gray-500 text-sm">General Service</p>
         </div>
-        <div data-sr class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <img src="https://randomuser.me/api/portraits/men/77.jpg" class="w-24 h-24 mx-auto rounded-full mb-4" alt="">
+        <div data-sr class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <img src="irfan.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
           <h3 class="font-semibold text-lg">Irfan Affandi</h3>
           <p class="text-gray-500 text-sm">Cleaner</p>
         </div>
-         <div data-sr class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <img src="https://randomuser.me/api/portraits/men/77.jpg" class="w-24 h-24 mx-auto rounded-full mb-4" alt="">
+        <div data-sr class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <img src="evi.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
           <h3 class="font-semibold text-lg">Evillia Agustin</h3>
           <p class="text-gray-500 text-sm">Cleaner</p>
         </div>
-         <div data-sr class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <img src="https://randomuser.me/api/portraits/men/77.jpg" class="w-24 h-24 mx-auto rounded-full mb-4" alt="">
+        <div data-sr class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <img src="yani.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
           <h3 class="font-semibold text-lg">Ahmad Yani</h3>
           <p class="text-gray-500 text-sm">Driver Operasional</p>
         </div>
-         <div data-sr class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-          <img src="https://randomuser.me/api/portraits/men/77.jpg" class="w-24 h-24 mx-auto rounded-full mb-4" alt="">
+        <div data-sr class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <img src="sandi.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
           <h3 class="font-semibold text-lg">Sandi Suhendra</h3>
           <p class="text-gray-500 text-sm">Driver Specialist</p>
         </div>
@@ -100,34 +122,34 @@
   </section>
 
   <!-- PROJECT GA -->
-  <section class="py-16 max-w-6xl mx-auto px-6">
-    <h2 class="text-3xl font-bold text-center text-blue-700 mb-10">Project GA</h2>
+  <section class="py-20 max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl font-bold text-center text-blue-800 mb-12">Project General Affair</h2>
     <div class="grid md:grid-cols-3 gap-8">
-      <div data-sr class="bg-white rounded-xl shadow p-6 hover:shadow-xl transition">
-        <img src="https://images.unsplash.com/photo-1581092334391-87fba4cba3b4?auto=format&fit=crop&w=800&q=80" alt="Project 1" class="rounded-lg mb-4">
-        <h3 class="font-semibold text-lg mb-2">Digitalisasi Form Peminjaman Ruang</h3>
-        <p class="text-gray-600 text-sm">Meningkatkan efisiensi peminjaman ruang meeting dengan sistem berbasis web.</p>
+      <div data-sr class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+        <img src="ga request.JPG" alt="Project 1" class="rounded-lg mb-4">
+        <h3 class="font-semibold text-lg mb-2">Digitalization Monitoring stationery office</h3>
+        <p class="text-gray-600 text-sm">Increase the efficiency of office stationery requests in an accountable and real time systematic  manner based on ERP process and web based.</p>
       </div>
-      <div data-sr class="bg-white rounded-xl shadow p-6 hover:shadow-xl transition">
-        <img src="https://images.unsplash.com/photo-1573497161161-cbc37f8e0df2?auto=format&fit=crop&w=800&q=80" alt="Project 2" class="rounded-lg mb-4">
-        <h3 class="font-semibold text-lg mb-2">Optimasi Pengadaan ATK</h3>
-        <p class="text-gray-600 text-sm">Sistem pemantauan stok dan pengajuan ATK secara real-time.</p>
+      <div data-sr class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+        <img src="aset.JPG" alt="Project 2" class="rounded-lg mb-4">
+        <h3 class="font-semibold text-lg mb-2">optimization of company asset data collection through the ERP system </h3>
+        <p class="text-gray-600 text-sm">demonstrates the ability to systematically control assets and integrate recording, mutation history, and deletion in real time</p>
       </div>
-      <div data-sr class="bg-white rounded-xl shadow p-6 hover:shadow-xl transition">
+      <div data-sr class="bg-white rounded-2xl shadow-xl p-6 card-hover">
         <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80" alt="Project 3" class="rounded-lg mb-4">
-        <h3 class="font-semibold text-lg mb-2">Manajemen Kendaraan Operasional</h3>
-        <p class="text-gray-600 text-sm">Pemantauan jadwal servis dan penggunaan kendaraan dinas secara digital.</p>
+        <h3 class="font-semibold text-lg mb-2">Demonstrate understanding in implementing K3 in the workstation.</h3>
+        <p class="text-gray-600 text-sm">monitoring and inspection in preventing potential K3.</p>
       </div>
     </div>
   </section>
 
   <!-- KONTAK -->
-  <section class="bg-blue-700 text-white py-16">
+  <section class="gradient-bg text-white py-20">
     <div class="max-w-5xl mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-4">Hubungi Kami</h2>
+      <h2 class="text-3xl font-bold mb-4">Contact Us</h2>
       <p class="mb-6">Departemen General Affairs - PT Mitra Asa Pratama</p>
-      <p>Email: <a href="mailto:ga@mitraasa.com" class="underline">ga@mitraasa.com</a></p>
-      <p>Telepon: (021) 555-1234</p>
+      <p>Email: <a href="mailto:ga@mitraasa.co.id" class="underline hover:text-gray-200">ga@mitraasa.co.id</a></p>
+      <p>Telepon Ext : 120 </p>
     </div>
   </section>
 
@@ -137,13 +159,12 @@
   </footer>
 
   <script>
-    // ScrollReveal Animations
     ScrollReveal().reveal('[data-sr]', {
       distance: '40px',
       duration: 1000,
       easing: 'ease-out',
       origin: 'bottom',
-      interval: 200
+      interval: 150
     });
   </script>
 
