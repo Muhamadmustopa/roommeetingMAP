@@ -3,359 +3,183 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Peminjaman Ruang Meeting – MAP</title>
-  <link rel="icon" href="map-log.png" type="image/png">
-
-  <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-
-  <!-- Swiper.js -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-  <!-- Swiper.js CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-  <!-- Feather Icons & Tabletop -->
-  <script src="https://unpkg.com/feather-icons"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tabletop@1.5.1/tabletop.min.js"></script>
-
+  <title>Dashboard GA</title>
   <style>
-    .sidebar { transition: transform 0.3s ease; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { scrollbar-width: none; }
+    * {
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: all 0.3s ease;
+    }
+
+    .login-container, .dashboard {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #4caf50;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .error {
+      color: #ffb3b3;
+      margin-top: 10px;
+    }
+
+    .dashboard {
+      display: none;
+      width: 90%;
+      max-width: 800px;
+    }
+
+    .menu-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .menu-card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s ease, background 0.3s ease;
+      cursor: pointer;
+    }
+
+    .menu-card:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-5px);
+    }
+
+    .menu-card h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .back-btn {
+      margin-top: 30px;
+      padding: 10px 20px;
+      background: #f44336;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background: #d32f2f;
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-  <!-- Lonceng Notifikasi -->
-<div class="fixed top-4 right-4 z-50 text-sm">
-  <button id="notif-btn" class="relative bg-white p-3 rounded-full shadow hover:bg-gray-100 transition focus:outline-none">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405C18.21 14.79 18 14.378 18 14V11c0-3.314-2.686-6-6-6S6 7.686 6 11v3c0 .378-.21.79-.595 1.595L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9" />
-    </svg>
-    <span id="notif-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full hidden">0</span>
-  </button>
-
-  <!-- Drop-down Notifikasi -->
-  <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
-    <div class="p-3 font-semibold border-b">📬 Pengajuan Baru</div>
-    <ul id="notif-list" class="max-h-60 overflow-y-auto divide-y"></ul>
-    <div class="text-center py-2 text-xs text-gray-500 bg-gray-50">Klik untuk tutup</div>
-  </div>
-</div>
-
-<!-- BURGER BUTTON -->
-<button id="btn-open" class="lg:hidden fixed top-4 left-4 z-50 p-3 bg-gray-600 text-white rounded-full hover:bg-gray-500">
-  <i data-feather="menu"></i>
-</button>
-
-<!-- OVERLAY -->
-<div id="overlay" class="fixed inset-0 bg-black/40 hidden z-40 lg:hidden"></div>
-
-<!-- SIDEBAR -->
-<aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
-  <!-- HEADER -->
-  <div class="flex items-center justify-between p-4 border-b border-gray-700">
-    <div class="flex items-center gap-2">
-      <img src="map-log.png" alt="Logo MAP" class="h-10 w-auto rounded shadow" />
-      <span class="font-semibold text-lg"></span>
-    </div>
-    <!-- BUTTON CLOSE -->
-    <button id="btn-close" class="lg:hidden p-2 rounded hover:bg-gray-800">
-      <i data-feather="x"></i>
-      <span class="sr-only">Tutup menu</span>
-    </button>
+<body>
+  <!-- Halaman Login -->
+  <div class="login-container" id="loginPage">
+    <h2>Login GA</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Masuk</button>
+    <p class="error" id="errorMsg"></p>
   </div>
 
-  <!-- MENU -->
-  <nav class="mt-4 space-y-1 px-4">
-    <a href="kalender.html" class="block py-2 px-4 rounded hover:bg-indigo-600 transition">🗓️ Kalendar</a>
-    <a href="list_booking.html" class="block py-2 px-4 rounded hover:bg-indigo-600 transition">📄 List Booking</a>
-    <a href="daftar.html" class="block py-2 px-4 rounded hover:bg-indigo-600 transition">📄 Ajukan</a>
-  </nav>
-</aside>
-
-<!-- SCRIPT -->
-<script>
-  const btnOpen = document.getElementById("btn-open");
-  const btnClose = document.getElementById("btn-close");
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-
-  // Buka sidebar
-  btnOpen.addEventListener("click", () => {
-    sidebar.classList.remove("-translate-x-full");
-    overlay.classList.remove("hidden");
-  });
-
-  // Tutup sidebar
-  btnClose.addEventListener("click", () => {
-    sidebar.classList.add("-translate-x-full");
-    overlay.classList.add("hidden");
-  });
-
-  // Klik di luar sidebar (overlay)
-  overlay.addEventListener("click", () => {
-    sidebar.classList.add("-translate-x-full");
-    overlay.classList.add("hidden");
-  });
-
-  // Tutup sidebar saat klik menu di dalam sidebar (khusus mobile)
-  document.querySelectorAll("#sidebar nav a").forEach(link => {
-    link.addEventListener("click", () => {
-      if (window.innerWidth < 1024) {
-        sidebar.classList.add("-translate-x-full");
-        overlay.classList.add("hidden");
-      }
-    });
-  });
-</script>
-
-<!-- Feather Icons Init -->
-<script>
-  feather.replace();
-</script>
-
-
-<!-- KONTEN UTAMA -->
-<div class="flex-1 flex flex-col lg:ml-64">
-
-  <!-- HEADER -->
-  <header class="bg-indigo-700 text-white shadow sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-      <img src="logo.jpg" class="h-9 w-auto rounded shadow" />
-      <h1 class="text-xl font-bold text-center flex-1">Peminjaman Ruang Meeting</h1>
-      <div class="w-9"></div>
+  <!-- Halaman Dashboard -->
+  <div class="dashboard" id="dashboardPage">
+    <h2>Dashboard GA</h2>
+    <div class="menu-container" id="menuContainer">
+      <!-- Menu akan diisi otomatis dari JS -->
     </div>
-  </header>
-
-  <main class="p-4 space-y-6">
- <h1 class="text-3xl font-bold mb-6 text-center">Agenda Peminjaman Ruangan</h1>
-
-  <!-- Swiper Container -->
-  <div class="swiper mySwiper max-w-4xl mx-auto">
-    <div class="swiper-wrapper">
-
-      <!-- Slide Template (akan diisi JS) -->
-      <div class="swiper-slide" id="slide-kemarin"></div>
-      <div class="swiper-slide" id="slide-hari-ini"></div>
-      <div class="swiper-slide" id="slide-besok"></div>
-      <div class="swiper-slide" id="slide-lusa"></div>
-
-    </div>
-    <div class="swiper-pagination"></div>
+    <button class="back-btn" onclick="logout()">Kembali</button>
   </div>
 
   <script>
-    const supabase = supabase.createClient(
-      'https://mypiqbkyiwcxhznclbcl.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8'
-    );
+    // --- Daftar Google Sheet (bisa kamu ubah sendiri) ---
+    const gsheetLinks = [
+      { title: "Dashboard Tasks GA", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
+      { title: "Checklist Monitoring CCTV", url: "https://docs.google.com/spreadsheets/d/1zojEgfOMGMFcHCcmIJuVdIHoJAgVzh5u/edit?gid=755317208#gid=755317208" },
+      { title: "Pemakaian kendaraan", url: "https://docs.google.com/spreadsheets/d/1-aMiDuKCoG6bZNV5_Rggn3Ec5rVoDqkB/edit?gid=471085140#gid=471085140" },
+      { title: "Inventaris Barang", url: "https://docs.google.com/spreadsheets/d/aaaa" }
+    ];
 
-    const dayLabels = ['Kemarin', 'Hari Ini', 'Besok', 'Lusa'];
-    const slideIds = ['kemarin', 'hari-ini', 'besok', 'lusa'];
+    const loginPage = document.getElementById("loginPage");
+    const dashboardPage = document.getElementById("dashboardPage");
+    const errorMsg = document.getElementById("errorMsg");
+    const menuContainer = document.getElementById("menuContainer");
 
-    async function loadData() {
-      const now = new Date();
-      now.setHours(0, 0, 0, 0);
+    // Buat menu-card dinamis dari daftar gsheetLinks
+    gsheetLinks.forEach(sheet => {
+      const div = document.createElement("div");
+      div.classList.add("menu-card");
+      div.innerHTML = `<h3>${sheet.title}</h3><p>Klik untuk membuka</p>`;
+      div.onclick = () => window.open(sheet.url, "_blank");
+      menuContainer.appendChild(div);
+    });
 
-      for (let i = -1; i <= 2; i++) {
-        const day = new Date(now);
-        day.setDate(now.getDate() + i);
+    // Fungsi login
+    function login() {
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
 
-        const dateStr = day.toISOString().split('T')[0];
-
-        const { data, error } = await supabase
-          .from('peminjaman')
-          .select('*')
-          .eq('tanggal', dateStr)
-          .order('jam_mulai');
-
-        const index = i + 1; // -1 jadi 0 (kemarin), 0 jadi 1 (hari ini), dst
-        const container = document.getElementById(`slide-${slideIds[index]}`);
-
-        container.innerHTML = `
-          <div class="p-6 bg-white rounded-xl shadow-lg min-h-[300px]">
-            <h2 class="text-xl font-semibold mb-4">${dayLabels[index]}</h2>
-            ${data && data.length > 0 ? data.map(item => `
-              <div class="border-l-4 border-blue-500 pl-4 mb-3">
-                <p class="font-bold">${item.agenda}</p>
-                <p>${item.nama} (${item.departemen})</p>
-                <p class="text-sm text-gray-500">${item.ruangan} — ${item.jam_mulai} s/d ${item.jam_selesai}</p>
-              </div>
-            `).join('') : '<p class="text-gray-500">Tidak ada agenda.</p>'}
-          </div>
-        `;
+      if (user === "GA" && pass === "GA") {
+        loginPage.style.display = "none";
+        dashboardPage.style.display = "block";
+        document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+      } else {
+        errorMsg.textContent = "Username atau password salah!";
       }
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      await loadData();
-
-      new Swiper(".mySwiper", {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        loop: true,
-      });
-    });
+    // Fungsi logout
+    function logout() {
+      dashboardPage.style.display = "none";
+      loginPage.style.display = "block";
+      document.body.style.background = "linear-gradient(135deg, #1e3c72, #2a5298)";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      errorMsg.textContent = "";
+    }
   </script>
-
-<!-- Tombol Ajukan Peminjaman -->
-<div class="fixed bottom-24 right-4 sm:static sm:mb-4 sm:mr-4 sm:flex sm:justify-end z-40">
-  <a href="daftar.html"target="_blank" rel="noopener"
-     class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2 rounded-full
-            bg-indigo-500 hover:bg-indigo-500 active:scale-95
-            text-white text-sm sm:text-base font-semibold shadow-lg transition-transform">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none"
-         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M12 4v16m8-8H4"/>
-    </svg>
-    <span class="hidden sm:inline">Ajukan Peminjaman</span>
-    <span class="sm:hidden">Ajukan</span>
-  </a>
-</div>
-
-  <!-- FOOTER -->
-  <footer class="mt-auto">
-    <div class="bg-indigo-600 text-white py-4 text-center text-sm">
-      <i data-feather="shield" class="inline-block w-4 h-4 mr-1"></i>
-      © 2025 Mitra Asa Pratama
-    </div>
-  </footer>
-</div>
-<!-- SCRIPT UTAMA -->
-<script>
-  feather.replace();
-
-  // Sidebar Toggle
-  document.getElementById("btn-open").onclick = () => {
-    document.getElementById("sidebar").classList.remove("-translate-x-full");
-    document.getElementById("overlay").classList.remove("hidden");
-  };
-  document.getElementById("btn-close").onclick = () => {
-    document.getElementById("sidebar").classList.add("-translate-x-full");
-    document.getElementById("overlay").classList.add("hidden");
-  };
-
-  // Fetch data dari Google Sheets
-  document.addEventListener('DOMContentLoaded', function () {
-    Tabletop.init({
-      key: '1aRLwWmM0UR8RM2xhsFFafBSHIoBWddyvNtdoMnuQijA',
-      simpleSheet: true,
-      callback: function (data) {
-        const calendarContainer = document.getElementById('calendarEvents');
-        const meetingToday = document.getElementById('meetingCard');
-        const today = new Date().toISOString().split('T')[0];
-        let todayMeetings = '';
-
-        data.forEach(item => {
-          // Slider Semua Jadwal
-          const slide = document.createElement('div');
-          slide.className = 'swiper-slide bg-white rounded-xl shadow p-4';
-          slide.innerHTML = slide.innerHTML = 
-  <div class="text-center">
-    <div class="text-xl font-bold text-gray-800">${item.tanggal}</div>
-    <div class="mt-2 text-lg text-gray-600">${item.agenda}</div>
-    <div class="mt-1 text-sm text-gray-500">${item.jam_mulai} - ${item.jam_selesai}</div>
-    <div class="mt-1 text-sm text-gray-500">Ruangan: ${item.ruangan}</div>
-    <div class="mt-1 text-sm text-gray-500">PIC: ${item.nama} (${item.departemen})</div>
-  </div>
-            <h4 class="font-bold text-indigo-600">${item['Nama Ruangan'] || 'Ruang'}</h4>
-            <p>📅 ${item['Tanggal']} – ⏰ ${item['Waktu Mulai']} s/d ${item['Waktu Selesai']}</p>
-            <p class="mt-1 font-semibold">${item['Judul Meeting'] || ''}</p>
-            <p class="text-sm text-gray-500">PIC: ${item['Nama Pemesan'] || '-'}</p>;
-          calendarContainer.appendChild(slide);
-
-          // Filter untuk hari ini
-          if (item['Tanggal'] === today) {
-            todayMeetings += 
-              <div class="border-b pb-1">
-                <p class="font-semibold text-indigo-700">${item['Judul Meeting']}</p>
-                <p class="text-sm">⏰ ${item['Waktu Mulai']} - ${item['Waktu Selesai']} | ${item['Nama Ruangan']}</p>
-              </div>;
-          }
-        });
-
-        meetingToday.innerHTML = todayMeetings || '<p class="text-gray-500">Tidak ada meeting hari ini.</p>';
-
-        // Init Swiper
-        new Swiper('.mySwiper', {
-          slidesPerView: 1,
-          spaceBetween: 20,
-          pagination: { el: '.swiper-pagination', clickable: true },
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          },
-        });
-      });
-    });
-  });
-</script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  const supabaseUrl = 'https://mypiqbkyiwcxhznclbcl.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cGlxYmt5aXdjeGh6bmNsYmNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3Njg5ODQsImV4cCI6MjA2OTM0NDk4NH0.qz7vdrG9IqQXgxFqPw16_P5JUrNlqqN_BsgA66s-yv8'; 
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-  const notifBtn = document.getElementById('notif-btn');
-  const notifBadge = document.getElementById('notif-count');
-  const notifList = document.getElementById('notif-list');
-  const notifDropdown = document.getElementById('notif-dropdown');
-
-  let notifData = [];
-
-  function updateBadge() {
-    if (notifData.length > 0) {
-      notifBadge.textContent = notifData.length;
-      notifBadge.classList.remove("hidden");
-    } else {
-      notifBadge.classList.add("hidden");
-    }
-  }
-
-  function updateDropdown() {
-    notifList.innerHTML = "";
-    if (notifData.length === 0) {
-      notifList.innerHTML = <li class="p-3 text-gray-500 text-sm">Tidak ada pengajuan baru</li>;
-      return;
-    }
-
-    notifData.slice(-3).reverse().forEach(item => {
-      const li = document.createElement("li");
-      li.className = "p-3 text-gray-700 text-sm";
-      li.innerHTML = <strong>${item.nama}</strong> meminjam <strong>${item.ruangan}</strong><br><span class="text-xs text-gray-500">${item.jam_mulai} - ${item.jam_selesai}</span>;
-      notifList.appendChild(li);
-    });
-  }
-
-  // Toggle dropdown
-  notifBtn.addEventListener("click", () => {
-    notifDropdown.classList.toggle("hidden");
-    notifData = []; // reset
-    updateBadge();
-    updateDropdown();
-  });
-
-  // Listener realtime dari Supabase
-  supabase
-    .channel('notif-peminjaman')
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'peminjaman',
-    }, payload => {
-      const row = payload.new;
-      notifData.push(row);
-      updateBadge();
-      updateDropdown();
-      console.log("🔔 New submission:", row);
-    })
-    .subscribe();
-</script>
-
 </body>
 </html>
