@@ -130,9 +130,18 @@
     <div class="navbar-links">
       <a href="kalender.html">Kalendar</a>
       <a href="about.html">About GA</a>
-      <button onclick="logout()">Logout</button>
-    </div>
-  </div>
+      <button onclick="logout()" 
+  class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition">
+  Logout
+</button>
+
+<script>
+function logout() {
+  // logika hapus data login misalnya
+  window.location.href = "index.html"; // setelah itu arahkan
+}
+</script>
+
 
   <div class="menu-area">
     <div class="menu-container" id="menuContainer"></div>
