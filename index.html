@@ -3,25 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard GA</title>
+  <title>Login - Dashboard GA</title>
   <style>
     * {
       box-sizing: border-box;
       font-family: "Poppins", sans-serif;
     }
-
     body {
       margin: 0;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      color: white;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      transition: all 0.4s ease;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
     }
-
-    /* LOGIN PAGE */
     .login-container {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
@@ -33,7 +29,6 @@
       text-align: center;
       animation: fadeIn 0.8s ease;
     }
-
     .logo {
       width: 70px;
       height: 70px;
@@ -42,17 +37,14 @@
       object-fit: cover;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
     }
-
     h1 {
       font-size: 20px;
       margin-bottom: 10px;
     }
-
     h2 {
       margin-bottom: 20px;
       font-weight: 600;
     }
-
     input {
       width: 100%;
       padding: 10px;
@@ -62,7 +54,6 @@
       outline: none;
       font-size: 16px;
     }
-
     button {
       width: 100%;
       padding: 10px;
@@ -74,150 +65,13 @@
       cursor: pointer;
       transition: 0.3s;
     }
-
     button:hover {
       background: #45a049;
     }
-
     .error {
       color: #ffb3b3;
       margin-top: 10px;
     }
-
-    /* DASHBOARD */
-    .dashboard {
-      display: none;
-      width: 100%;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0072ff, #00c6ff);
-      flex-direction: column;
-      justify-content: space-between;
-      animation: fadeIn 0.8s ease;
-    }
-
-    /* NAVBAR */
-    .navbar {
-      width: 100%;
-      background: #f0f0f0;
-      color: #333;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 25px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .navbar-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .navbar-left img {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .navbar-left h3 {
-      margin: 0;
-      font-weight: 600;
-      font-size: 18px;
-    }
-
-    .navbar-links {
-      display: flex;
-      gap: 18px;
-      align-items: center;
-    }
-
-    .navbar-links a {
-      color: #333;
-      text-decoration: none;
-      font-weight: 500;
-      transition: 0.3s;
-    }
-
-    .navbar-links a:hover {
-      color: #0072ff;
-    }
-
-    .navbar button {
-      background: #f44336;
-      border: none;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.3s;
-      font-size: 14px;
-    }
-
-    .navbar button:hover {
-      background: #d32f2f;
-    }
-
-    /* MENU AREA */
-    .menu-area {
-      flex-grow: 1;
-      padding: 40px 20px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .menu-container {
-      width: 90%;
-      max-width: 900px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 25px;
-    }
-
-    .menu-card {
-      border-radius: 15px;
-      padding: 25px 20px;
-      text-align: center;
-      cursor: pointer;
-      color: white;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .menu-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .menu-card i {
-      font-size: 40px;
-      margin-bottom: 10px;
-      display: block;
-    }
-
-    .menu-card h3 {
-      margin-bottom: 5px;
-      font-size: 18px;
-    }
-
-    /* FOOTER */
-    footer {
-      width: 100%;
-      background: #f0f0f0;
-      color: #333;
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    /* CARD COLORS */
-    .blue { background: #3498db; }
-    .green { background: #2ecc71; }
-    .orange { background: #f39c12; }
-    .purple { background: #9b59b6; }
-    .red { background: #e74c3c; }
-
-    /* ANIMATION */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
@@ -225,88 +79,29 @@
   </style>
 </head>
 <body>
-  <!-- LOGIN PAGE -->
-  <div class="login-container" id="loginPage">
+  <div class="login-container">
     <img src="logo-map.jpg" class="logo" alt="Logo MAP" />
     <h1>Dashboard General Affair MAP</h1>
-    <h2>Sign up</h2>
+    <h3>Sign up</h3>
     <input type="text" id="username" placeholder="Username" />
     <input type="password" id="password" placeholder="Password" />
     <button onclick="login()">Login</button>
     <p class="error" id="errorMsg"></p>
   </div>
 
-  <!-- DASHBOARD -->
-  <div class="dashboard" id="dashboardPage">
-    <div class="navbar">
-      <div class="navbar-left">
-        <img src="logo-map.jpg" alt="Logo MAP">
-        <h3>Dashboard GA</h3>
-      </div>
-
-      <div class="navbar-links">
-        <a href="kalender.html">Kalendar</a>
-        <a href="about.html">About GA</a>
-        <button onclick="logout()">Logout</button>
-      </div>
-    </div>
-
-    <div class="menu-area">
-      <div class="menu-container" id="menuContainer"></div>
-    </div>
-
-    <footer>© 2025 PT Mitra Asa Pratama – General Affairs</footer>
-  </div>
-
   <script>
-    // Daftar Google Sheets + ikon + warna
-    const gsheetLinks = [
-      { title: "Dashboard Tasks GA", icon: "📊", color: "blue", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
-      { title: "Checklist Monitoring CCTV", icon: "📷", color: "orange", url: "https://docs.google.com/spreadsheets/d/1zojEgfOMGMFcHCcmIJuVdIHoJAgVzh5u/edit?gid=755317208#gid=755317208" },
-      { title: "Pemakaian Kendaraan", icon: "🚗", color: "green", url: "https://docs.google.com/spreadsheets/d/1-aMiDuKCoG6bZNV5_Rggn3Ec5rVoDqkB/edit?gid=471085140#gid=471085140" },
-      { title: "Rekapitulasi ATK", icon: "📦", color: "purple", url: "https://docs.google.com/spreadsheets/d/1-STRMvWmcc8Bw-UuZmp1WjZ8d9OiLwB_/edit?gid=2111416520#gid=2111416520" }
-    ];
-
-    const loginPage = document.getElementById("loginPage");
-    const dashboardPage = document.getElementById("dashboardPage");
-    const errorMsg = document.getElementById("errorMsg");
-    const menuContainer = document.getElementById("menuContainer");
-
-    // Buat card menu otomatis
-    gsheetLinks.forEach(sheet => {
-      const div = document.createElement("div");
-      div.classList.add("menu-card", sheet.color);
-      div.innerHTML = `
-        <i>${sheet.icon}</i>
-        <h3>${sheet.title}</h3>
-        <p>Klik untuk membuka</p>
-      `;
-      div.onclick = () => window.open(sheet.url, "_blank");
-      menuContainer.appendChild(div);
-    });
-
-    // Login function
     function login() {
       const user = document.getElementById("username").value.trim();
       const pass = document.getElementById("password").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
 
       if (user === "GA" && pass === "GA") {
-        loginPage.style.display = "none";
-        dashboardPage.style.display = "flex";
-        document.body.style.background = "linear-gradient(135deg, #0072ff, #00c6ff)";
+        // Simpan status login di sessionStorage
+        sessionStorage.setItem("loggedIn", "true");
+        window.location.href = "dashboard.html";
       } else {
         errorMsg.textContent = "Username atau password salah!";
       }
-    }
-
-    // Logout function
-    function logout() {
-      dashboardPage.style.display = "none";
-      loginPage.style.display = "block";
-      document.body.style.background = "linear-gradient(135deg, #1e3c72, #2a5298)";
-      document.getElementById("username").value = "";
-      document.getElementById("password").value = "";
-      errorMsg.textContent = "";
     }
   </script>
 </body>
