@@ -27,6 +27,9 @@
       align-items: center;
       padding: 10px 25px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     .navbar-left {
       display: flex;
@@ -77,14 +80,20 @@
       padding: 40px 20px;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 30px;
+      position: relative;
     }
+
     .menu-container {
-      width: 90%;
-      max-width: 900px;
+      flex: 1 1 550px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 25px;
+      z-index: 2;
     }
+
     .menu-card {
       border-radius: 15px;
       padding: 25px 20px;
@@ -94,7 +103,7 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .menu-card:hover {
-      transform: translateY(-8px);
+      transform: translateY(-8px) scale(1.02);
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     }
     .menu-card i {
@@ -105,6 +114,25 @@
     .menu-card h3 {
       margin-bottom: 5px;
       font-size: 18px;
+    }
+
+    /* ===== GAMBAR HIASAN ===== */
+    .side-image {
+      flex: 0 1 350px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      animation: float 4s ease-in-out infinite;
+    }
+    .side-image img {
+      max-width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      transition: transform 0.4s ease;
+    }
+    .side-image img:hover {
+      transform: scale(1.05);
     }
 
     /* ===== FOOTER ===== */
@@ -125,9 +153,30 @@
     .purple { background: #9b59b6; }
     .red { background: #e74c3c; }
 
+    /* ===== ANIMASI ===== */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .menu-area {
+        flex-direction: column;
+        align-items: center;
+      }
+      .side-image {
+        order: -1;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .side-image img {
+        width: 90%;
+      }
     }
   </style>
 </head>
@@ -149,6 +198,12 @@
 
   <!-- ===== MENU AREA ===== -->
   <div class="menu-area">
+    <!-- Gambar Hiasan -->
+    <div class="side-image">
+      <img src="dashboarde.png" alt="Office Decoration">
+    </div>
+
+    <!-- Daftar Menu -->
     <div class="menu-container" id="menuContainer"></div>
   </div>
 
@@ -156,11 +211,6 @@
   <footer>© 2025 PT Mitra Asa Pratama – General Affairs</footer>
 
   <script>
-    // Cek apakah sudah login (opsional, aktifkan kalau pakai sistem login)
-    if (sessionStorage.getItem("loggedIn") !== "true") {
-      // window.location.href = "login.html";
-    }
-
     // Daftar link Google Sheet
     const gsheetLinks = [
       { title: "Dashboard Tasks GA", icon: "📊", color: "blue", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
@@ -169,7 +219,6 @@
       { title: "Rekapitulasi ATK", icon: "📦", color: "purple", url: "https://docs.google.com/spreadsheets/d/1-STRMvWmcc8Bw-UuZmp1WjZ8d9OiLwB_/edit?gid=2111416520#gid=2111416520" }
     ];
 
-    // Tampilkan card menu otomatis
     const menuContainer = document.getElementById("menuContainer");
     gsheetLinks.forEach(sheet => {
       const div = document.createElement("div");
