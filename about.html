@@ -40,7 +40,7 @@
 
     <!-- Tombol kembali -->
     <a href="dashboard.html" 
-       class="bg-blue-700 text-white px-5 py-2 rounded-lg text-sm md:text-base hover:bg-blue-900 transition">
+       class="bg-blue-500 text-white px-3 py-2 rounded-lg text-sm md:text-base hover:bg-blue-600 transition">
        Back to Dashboard
     </a>
   </div>
@@ -51,13 +51,28 @@
 
 
   <!-- JUMBOTRON -->
-  <section class="relative h-[400px] mt-16 overflow">
-    <div class="absolute inset-0 jumbotron-bg"></div>
-    <div class="absolute inset-0 flex flex-col justify-center items-center text-center text-white gradient-bg bg-opacity-70">
-      <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">General Affairs (GA)</h1>
-      <p class="text-lg md:text-xl max-w-2xl drop-shadow-md">Maintaining efficiency, comfort, and productivity in every corner of PT Mitra Asa Pratama.</p>
-    </div>
-  </section>
+<!-- JUMBOTRON SECTION -->
+<section class="relative h-[400px] md:h-[500px] mt-16 overflow-hidden">
+  <!-- Gambar latar -->
+  <div class="absolute inset-0">
+    <img src="blur spv.png" alt="General Affairs Background"
+         class="w-full h-full object-cover brightness-75">
+  </div>
+
+  <!-- Overlay gradient agar teks tetap terbaca -->
+  <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-transparent"></div>
+
+  <!-- Konten teks -->
+  <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6">
+    <h1 class="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-3">
+      General Affairs (GA)
+    </h1>
+    <p class="text-base md:text-xl text-gray-200 max-w-2xl leading-relaxed drop-shadow-md">
+      Maintaining efficiency, comfort, and productivity in every corner of 
+      <span class="font-semibold text-blue-300">PT Mitra Asa Pratama</span>.
+    </p>
+  </div>
+</section>
 
   <!-- KILAS PENGERTIAN -->
   <section class="py-20 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
