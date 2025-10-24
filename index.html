@@ -9,69 +9,127 @@
       box-sizing: border-box;
       font-family: "Poppins", sans-serif;
     }
+
     body {
       margin: 0;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      background: linear-gradient(135deg, rgba(30, 60, 114, 0.75), rgba(42, 82, 152, 0.75)),
+        url('logine.JPG') no-repeat center center/cover;
+      /* Ganti 'office-bg.jpg' dengan gambar kamu */
       color: white;
+      overflow: hidden;
     }
+
     .login-container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(15px);
       border-radius: 20px;
-      padding: 40px;
+      padding: 50px 40px;
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
       text-align: center;
-      animation: fadeIn 0.8s ease;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.9s ease;
+      transition: all 0.3s ease;
     }
+
     .logo {
-      width: 70px;
-      height: 70px;
-      margin-bottom: 15px;
+      width: 85px;
+      height: 85px;
+      margin-bottom: 20px;
       border-radius: 50%;
       object-fit: cover;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+      transition: transform 0.5s ease;
     }
+    .logo:hover {
+      transform: scale(1.08) rotate(3deg);
+    }
+
     h1 {
-      font-size: 20px;
+      font-size: 22px;
       margin-bottom: 10px;
-    }
-    h2 {
-      margin-bottom: 20px;
       font-weight: 600;
     }
+
+    h3 {
+      margin-bottom: 25px;
+      font-weight: 500;
+      opacity: 0.9;
+      letter-spacing: 0.5px;
+    }
+
     input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin: 10px 0;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       outline: none;
       font-size: 16px;
+      color: #333;
+      transition: all 0.3s;
     }
+    input:focus {
+      box-shadow: 0 0 0 2px #4caf50 inset;
+    }
+
     button {
-      width: 100%;
-      padding: 10px;
+      width: 85%;
+      margin-top: 20px;
+      padding: 12px;
       background: #4caf50;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       color: white;
-      font-size: 16px;
+      font-size: 17px;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.3s;
+      transition: all 0.3s;
     }
     button:hover {
-      background: #45a049;
+      background: #43a047;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
+    button:active {
+      transform: scale(0.98);
+    }
+
     .error {
       color: #ffb3b3;
-      margin-top: 10px;
+      margin-top: 15px;
+      font-size: 14px;
+      min-height: 18px;
     }
+
+    /* Responsif untuk layar kecil */
+    @media (max-width: 480px) {
+      body {
+        background-position: center;
+        background-size: cover;
+        padding: 20px;
+      }
+      .login-container {
+        padding: 35px 25px;
+        width: 100%;
+        border-radius: 15px;
+      }
+      .logo {
+        width: 70px;
+        height: 70px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      button {
+        width: 100%;
+      }
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
@@ -81,8 +139,8 @@
 <body>
   <div class="login-container">
     <img src="logo-map.jpg" class="logo" alt="Logo MAP" />
-    <h1>Dashboard General Affair MAP</h1>
-    <h3>Sign up</h3>
+    <h2>Dashboard General Affairs</h2>
+    <h3>Sign In</h3>
     <input type="text" id="username" placeholder="Username" />
     <input type="password" id="password" placeholder="Password" />
     <button onclick="login()">Login</button>
@@ -96,11 +154,10 @@
       const errorMsg = document.getElementById("errorMsg");
 
       if (user === "GA" && pass === "GA") {
-        // Simpan status login di sessionStorage
         sessionStorage.setItem("loggedIn", "true");
         window.location.href = "dashboard.html";
       } else {
-        errorMsg.textContent = "Username atau password salah!";
+        errorMsg.textContent = "❌ Username atau password salah!";
       }
     }
   </script>
