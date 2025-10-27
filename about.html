@@ -104,101 +104,116 @@
     </div>
   </section>
 
- <section class="bg-gray-100 py-20">
+  <!-- GA Team -->
+<section class="bg-gray-100 py-20">
   <div class="max-w-6xl mx-auto text-center">
     <h2 class="text-3xl font-bold text-blue-800 mb-12">Team General Affairs</h2>
 
-    <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 text-left">
 
-      <!-- Template card anggota -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 card-hover transition">
-        <img src="topa.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
-        <h3 class="font-semibold text-lg">Muhamad Mustopa</h3>
-        <p class="text-gray-500 text-sm">Staff General Affair</p>
-        <button class="text-blue-600 mt-2 text-sm" onclick="toggleDetail(this)">Lihat Detail ⬇️</button>
-        <div class="hidden mt-4 text-left detail">
-          <img src="topa.jpeg" class="w-30 h-35 rounded-full mb-2 mx-auto">
-          <p><strong>Kelahiran:</strong> Bogor , 22 April 1996</p>
-          <p><strong>Lulusan:</strong> S1 Teknik Informatika Universitas Ibn Khaldun Bogor </p>
-          <p><strong>Pengalaman:</strong> 5 tahun di bidang General Affair di PT Perma Plasindo,Tbk </p>
+      <!-- TEMPLATE ANGGOTA -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 transition duration-300 hover:shadow-2xl">
+        <div class="cursor-pointer" onclick="toggleDropdown('topa')">
+          <img src="topa.jpeg" class="w-full rounded-lg mb-4 object-cover">
+          <h3 class="font-semibold text-lg text-center">Muhamad Mustopa</h3>
+          <p class="text-gray-500 text-sm text-center">Staff General Affair</p>
+        </div>
+        <div id="topa" class="dropdown-content mt-4 overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+          <img src="topabg.jpeg" class="w-full rounded-lg mb-3 object-cover">
+          <p><strong>Nama:</strong> Muhamad Mustopa</p>
+          <p><strong>Tempat, Tanggal Lahir: Bogor, 22 April 1998</strong> …</p>
+          <p><strong>Pendidikan:S1 Teknik Informatika Universitas Ibn Khaldun Bogor </strong> …</p>
+          <p><strong>Pengalaman Kerja: Sebagai General Affair </strong> …</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-lg p-6 card-hover transition">
-        <img src="anni.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
-        <h3 class="font-semibold text-lg">Anni Sumartiani</h3>
-        <p class="text-gray-500 text-sm">Supervisor GA</p>
-        <button class="text-blue-600 mt-2 text-sm" onclick="toggleDetail(this)">Lihat Detail ⬇️</button>
-        <div class="hidden mt-4 text-left detail">
-          <img src="anni.jpeg" class="w-30 h-35 rounded-full mb-2 mx-auto">
-          <p><strong>Kelahiran:</strong> Jakarta, 1988</p>
-          <p><strong>Lulusan:</strong> S1 Administrasi Perkantoran, Universitas Negeri Jakarta</p>
-          <p><strong>Pengalaman:</strong> 10 tahun di bidang GA dan operasional</p>
+      <div class="bg-white rounded-2xl shadow-lg p-6 transition duration-300 hover:shadow-2xl">
+        <div class="cursor-pointer" onclick="toggleDropdown('anni')">
+          <img src="anni.jpeg" class="w-full rounded-lg mb-4 object-cover">
+          <h3 class="font-semibold text-lg text-center">Anni Sumartiani</h3>
+          <p class="text-gray-500 text-sm text-center">Supervisor GA</p>
+        </div>
+        <div id="anni" class="dropdown-content mt-4 overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+          <img src="anni.jpeg" class="w-full rounded-lg mb-3 object-cover">
+          <p><strong>Nama:</strong> Anni Sumartiani</p>
+          <p><strong>Tempat, Tanggal Lahir:</strong> …</p>
+          <p><strong>Pendidikan:</strong> …</p>
+          <p><strong>Pengalaman Kerja:</strong> …</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-lg p-6 card-hover transition">
-        <img src="apso.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
-        <h3 class="font-semibold text-lg">Abdul Apso</h3>
-        <p class="text-gray-500 text-sm">General Service</p>
-        <button class="text-blue-600 mt-2 text-sm" onclick="toggleDetail(this)">Lihat Detail ⬇️</button>
-        <div class="hidden mt-4 text-left detail">
-          <img src="apso.jpeg" class="w-20 h-20 rounded-full mb-2 mx-auto">
-          <p><strong>Kelahiran:</strong> Cirebon, 1993</p>
-          <p><strong>Lulusan:</strong> SMK Teknik Listrik</p>
-          <p><strong>Pengalaman:</strong> 7 tahun sebagai teknisi fasilitas</p>
+      <div class="bg-white rounded-2xl shadow-lg p-6 transition duration-300 hover:shadow-2xl">
+        <div class="cursor-pointer" onclick="toggleDropdown('apso')">
+          <img src="apso.jpeg" class="w-full rounded-lg mb-4 object-cover">
+          <h3 class="font-semibold text-lg text-center">Abdul Apso</h3>
+          <p class="text-gray-500 text-sm text-center">General Service</p>
+        </div>
+        <div id="apso" class="dropdown-content mt-4 overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+          <img src="apso.jpeg" class="w-full rounded-lg mb-3 object-cover">
+          <p><strong>Nama:</strong> Abdul Apso</p>
+          <p><strong>Tempat, Tanggal Lahir:</strong> …</p>
+          <p><strong>Pendidikan:</strong> …</p>
+          <p><strong>Pengalaman Kerja:</strong> …</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-lg p-6 card-hover transition">
-        <img src="irfan.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
-        <h3 class="font-semibold text-lg">Irfan Affandi</h3>
-        <p class="text-gray-500 text-sm">Cleaner</p>
-        <button class="text-blue-600 mt-2 text-sm" onclick="toggleDetail(this)">Lihat Detail ⬇️</button>
-        <div class="hidden mt-4 text-left detail">
-          <img src="irfan.jpeg" class="w-20 h-20 rounded-full mb-2 mx-auto">
-          <p><strong>Kelahiran:</strong> Bekasi, 1998</p>
-          <p><strong>Lulusan:</strong> SMA</p>
-          <p><strong>Pengalaman:</strong> 3 tahun di bidang housekeeping & maintenance</p>
+      <div class="bg-white rounded-2xl shadow-lg p-6 transition duration-300 hover:shadow-2xl">
+        <div class="cursor-pointer" onclick="toggleDropdown('irfan')">
+          <img src="irfan.jpeg" class="w-full rounded-lg mb-4 object-cover">
+          <h3 class="font-semibold text-lg text-center">Irfan Affandi</h3>
+          <p class="text-gray-500 text-sm text-center">Cleaner</p>
+        </div>
+        <div id="irfan" class="dropdown-content mt-4 overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+          <img src="irfan.jpeg" class="w-full rounded-lg mb-3 object-cover">
+          <p><strong>Nama:</strong> Irfan Affandi</p>
+          <p><strong>Tempat, Tanggal Lahir:</strong> …</p>
+          <p><strong>Pendidikan:</strong> …</p>
+          <p><strong>Pengalaman Kerja:</strong> …</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-lg p-6 card-hover transition">
-        <img src="evi.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
-        <h3 class="font-semibold text-lg">Evillia Agustin</h3>
-        <p class="text-gray-500 text-sm">Cleaner</p>
-        <button class="text-blue-600 mt-2 text-sm" onclick="toggleDetail(this)">Lihat Detail ⬇️</button>
-        <div class="hidden mt-4 text-left detail">
-          <img src="evi.jpeg" class="w-20 h-20 rounded-full mb-2 mx-auto">
-          <p><strong>Kelahiran:</strong> Jakarta, 1995</p>
-          <p><strong>Lulusan:</strong> SMA</p>
-          <p><strong>Pengalaman:</strong> 4 tahun di bagian kebersihan kantor</p>
+      <div class="bg-white rounded-2xl shadow-lg p-6 transition duration-300 hover:shadow-2xl">
+        <div class="cursor-pointer" onclick="toggleDropdown('evi')">
+          <img src="evi.jpeg" class="w-full rounded-lg mb-4 object-cover">
+          <h3 class="font-semibold text-lg text-center">Evillia Agustin</h3>
+          <p class="text-gray-500 text-sm text-center">Cleaner</p>
+        </div>
+        <div id="evi" class="dropdown-content mt-4 overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+          <img src="evi.jpeg" class="w-full rounded-lg mb-3 object-cover">
+          <p><strong>Nama:</strong> Evillia Agustin</p>
+          <p><strong>Tempat, Tanggal Lahir:</strong> …</p>
+          <p><strong>Pendidikan:</strong> …</p>
+          <p><strong>Pengalaman Kerja:</strong> …</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-lg p-6 card-hover transition">
-        <img src="yani.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
-        <h3 class="font-semibold text-lg">Ahmad Yani</h3>
-        <p class="text-gray-500 text-sm">Driver Operasional</p>
-        <button class="text-blue-600 mt-2 text-sm" onclick="toggleDetail(this)">Lihat Detail ⬇️</button>
-        <div class="hidden mt-4 text-left detail">
-          <img src="yani.jpeg" class="w-20 h-20 rounded-full mb-2 mx-auto">
-          <p><strong>Kelahiran:</strong> Depok, 1987</p>
-          <p><strong>Lulusan:</strong> SMK Otomotif</p>
-          <p><strong>Pengalaman:</strong> 8 tahun driver perusahaan</p>
+      <div class="bg-white rounded-2xl shadow-lg p-6 transition duration-300 hover:shadow-2xl">
+        <div class="cursor-pointer" onclick="toggleDropdown('yani')">
+          <img src="yani.jpeg" class="w-full rounded-lg mb-4 object-cover">
+          <h3 class="font-semibold text-lg text-center">Ahmad Yani</h3>
+          <p class="text-gray-500 text-sm text-center">Driver Operasional</p>
+        </div>
+        <div id="yani" class="dropdown-content mt-4 overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+          <img src="yani.jpeg" class="w-full rounded-lg mb-3 object-cover">
+          <p><strong>Nama:</strong> Ahmad Yani</p>
+          <p><strong>Tempat, Tanggal Lahir:</strong> …</p>
+          <p><strong>Pendidikan:</strong> …</p>
+          <p><strong>Pengalaman Kerja:</strong> …</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-lg p-6 card-hover transition">
-        <img src="sandi.jpeg" class="w-24 h-24 mx-auto rounded-full mb-4">
-        <h3 class="font-semibold text-lg">Sandi Suhendra</h3>
-        <p class="text-gray-500 text-sm">Driver Specialist</p>
-        <button class="text-blue-600 mt-2 text-sm" onclick="toggleDetail(this)">Lihat Detail ⬇️</button>
-        <div class="hidden mt-4 text-left detail">
-          <img src="sandi.jpeg" class="w-20 h-20 rounded-full mb-2 mx-auto">
-          <p><strong>Kelahiran:</strong> Bandung, 1989</p>
-          <p><strong>Lulusan:</strong> SMK Transportasi</p>
-          <p><strong>Pengalaman:</strong> 10 tahun di bidang driver operasional dan pengantaran</p>
+      <div class="bg-white rounded-2xl shadow-lg p-6 transition duration-300 hover:shadow-2xl">
+        <div class="cursor-pointer" onclick="toggleDropdown('sandi')">
+          <img src="sandi.jpeg" class="w-full rounded-lg mb-4 object-cover">
+          <h3 class="font-semibold text-lg text-center">Sandi Suhendra</h3>
+          <p class="text-gray-500 text-sm text-center">Driver Specialist</p>
+        </div>
+        <div id="sandi" class="dropdown-content mt-4 overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+          <img src="sandi.jpeg" class="w-full rounded-lg mb-3 object-cover">
+          <p><strong>Nama:</strong> Sandi Suhendra</p>
+          <p><strong>Tempat, Tanggal Lahir:</strong> …</p>
+          <p><strong>Pendidikan:</strong> …</p>
+          <p><strong>Pengalaman Kerja:</strong> …</p>
         </div>
       </div>
 
@@ -207,31 +222,29 @@
 </section>
 
 <script>
-function toggleDetail(btn) {
-  const detail = btn.nextElementSibling;
-  const isHidden = detail.classList.contains('hidden');
-  document.querySelectorAll('.detail').forEach(d => d.classList.add('hidden'));
-  document.querySelectorAll('.text-blue-600').forEach(b => b.textContent = 'Lihat Detail ⬇️');
-  if (isHidden) {
-    detail.classList.remove('hidden');
-    btn.textContent = 'Tutup Detail ⬆️';
+  function toggleDropdown(id) {
+    const content = document.getElementById(id);
+    const isOpen = content.classList.contains('max-h-[1000px]');
+
+    // Tutup semua dropdown lain
+    document.querySelectorAll('.dropdown-content').forEach(el => {
+      el.style.maxHeight = '0';
+      el.style.opacity = '0';
+    });
+
+    // Jika belum terbuka, buka yang diklik
+    if (!isOpen) {
+      content.style.maxHeight = content.scrollHeight + "px";
+      content.style.opacity = '1';
+    }
   }
-}
 </script>
 
 <style>
-.card-hover:hover {
-  transform: translateY(-5px);
-  transition: 0.3s ease;
-}
-.detail {
-  background-color: #f9fafb;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-}
+  .dropdown-content {
+    opacity: 0;
+  }
 </style>
-
 
   <!-- PROJECT GA -->
   <section class="py-20 max-w-6xl mx-auto px-6">
