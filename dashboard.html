@@ -60,7 +60,6 @@
     }
     .navbar-links a:hover { color: #0072ff; }
 
-    /* Tombol logout */
     .logout-btn {
       background: #f44336;
       border: none;
@@ -111,7 +110,7 @@
       margin-bottom: 10px;
       display: block;
     }
-    .menu-card h3 {
+    .menu-card h4 {
       margin-bottom: 5px;
       font-size: 18px;
     }
@@ -131,9 +130,7 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       transition: transform 0.4s ease;
     }
-    .side-image img:hover {
-      transform: scale(1.05);
-    }
+    .side-image img:hover { transform: scale(1.05); }
 
     /* ===== FOOTER ===== */
     footer {
@@ -146,12 +143,13 @@
       box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    /* WARNA CARD */
-    .blue { background: #3498db; }
-    .green { background: #2ecc71; }
-    .orange { background: #f39c12; }
-    .purple { background: #9b59b6; }
+    /* ===== WARNA CARD ===== */
     .red { background: #e74c3c; }
+    .orange { background: #f39c12; }
+    .green { background: #2ecc71; }
+    .purple { background: #9b59b6; }
+    .yellow { background: #FFD700; color: #333; font-weight: 600; }
+    .gold { background: #8B4513; }
 
     /* ===== ANIMASI ===== */
     @keyframes fadeIn {
@@ -165,18 +163,9 @@
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-      .menu-area {
-        flex-direction: column;
-        align-items: center;
-      }
-      .side-image {
-        order: -1;
-        width: 100%;
-        margin-bottom: 20px;
-      }
-      .side-image img {
-        width: 90%;
-      }
+      .menu-area { flex-direction: column; align-items: center; }
+      .side-image { order: -1; width: 100%; margin-bottom: 20px; }
+      .side-image img { width: 90%; }
     }
   </style>
 </head>
@@ -198,31 +187,36 @@
 
   <!-- ===== MENU AREA ===== -->
   <div class="menu-area">
-    <!-- Gambar Hiasan -->
     <div class="side-image">
       <img src="dashboarde.png" alt="Office Decoration">
     </div>
 
-    <!-- Daftar Menu -->
     <div class="menu-container" id="menuContainer"></div>
   </div>
 
   <!-- ===== FOOTER ===== -->
   <footer>© 2025 PT Mitra Asa Pratama – General Affairs</footer>
 
-  <script> // Daftar link Google Sheet const gsheetLinks = [ 
-  { title: "Dashboard Tasks GA", icon: "📊", color: "red", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
-  { title: "Checklist Monitoring CCTV", icon: "📷", color: "orange", url: "https://docs.google.com/spreadsheets/d/1zojEgfOMGMFcHCcmIJuVdIHoJAgVzh5u/edit?gid=755317208#gid=755317208" },
-  { title: "Pemakaian Kendaraan", icon: "🚗", color: "green", url: "https://docs.google.com/spreadsheets/d/1-aMiDuKCoG6bZNV5_Rggn3Ec5rVoDqkB/edit?gid=471085140#gid=471085140" },
-  { title: "Rekapitulasi ATK", icon: "📦", color: "purple", url: "https://docs.google.com/spreadsheets/d/1-STRMvWmcc8Bw-UuZmp1WjZ8d9OiLwB_/edit?gid=2111416520#gid=2111416520" }, 
-  { title: "Pajak kendaraan", icon: "🧾", color: "yellow", url: "https://docs.google.com/spreadsheets/d/1cSvzKSE4Q5iDDwReMxb_ln8MGc2R3an1/edit?gid=955670097#gid=955670097" },
-  { title: "Feedback", icon: "📨", color: "gold", url: "https://docs.google.com/spreadsheets/d/1EVioRSCcdHTh7jxAlIAvdQ_FvPrW1RVqV1Y19w4NrkA/edit?gid=1655850200#gid=1655850200" }
+  <script>
+    const gsheetLinks = [
+      { title: "Dashboard Tasks GA", icon: "📊", color: "red", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
+      { title: "Checklist Monitoring CCTV", icon: "📷", color: "orange", url: "https://docs.google.com/spreadsheets/d/1zojEgfOMGMFcHCcmIJuVdIHoJAgVzh5u/edit?gid=755317208#gid=755317208" },
+      { title: "Pemakaian Kendaraan", icon: "🚗", color: "green", url: "https://docs.google.com/spreadsheets/d/1-aMiDuKCoG6bZNV5_Rggn3Ec5rVoDqkB/edit?gid=471085140#gid=471085140" },
+      { title: "Rekapitulasi ATK", icon: "📦", color: "purple", url: "https://docs.google.com/spreadsheets/d/1-STRMvWmcc8Bw-UuZmp1WjZ8d9OiLwB_/edit?gid=2111416520#gid=2111416520" },
+      { title: "Pajak Kendaraan", icon: "🧾", color: "yellow", url: "https://docs.google.com/spreadsheets/d/1cSvzKSE4Q5iDDwReMxb_ln8MGc2R3an1/edit?gid=955670097#gid=955670097" },
+      { title: "Feedback", icon: "📨", color: "gold", url: "https://docs.google.com/spreadsheets/d/1EVioRSCcdHTh7jxAlIAvdQ_FvPrW1RVqV1Y19w4NrkA/edit?gid=1655850200#gid=1655850200" }
+    ];
 
     const menuContainer = document.getElementById("menuContainer");
+
     gsheetLinks.forEach(sheet => {
       const div = document.createElement("div");
       div.classList.add("menu-card", sheet.color);
-      div.innerHTML = `<i>${sheet.icon}</i><h4>${sheet.title}</h4><p>Klik untuk membuka</p>`;
+      div.innerHTML = `
+        <i>${sheet.icon}</i>
+        <h4>${sheet.title}</h4>
+        <p>Klik untuk membuka</p>
+      `;
       div.onclick = () => window.open(sheet.url, "_blank");
       menuContainer.appendChild(div);
     });
