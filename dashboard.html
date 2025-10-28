@@ -213,11 +213,11 @@
   <script>
     // Daftar link Google Sheet
     const gsheetLinks = [
-      { title: "Dashboard Tasks GA", icon: "📊", color: "red", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
-      { title: "Checklist Monitoring CCTV", icon: "📷", color: "orange", url: "https://docs.google.com/spreadsheets/d/1zojEgfOMGMFcHCcmIJuVdIHoJAgVzh5u/edit?gid=755317208#gid=755317208" },
-      { title: "Pemakaian Kendaraan", icon: "🚗", color: "green", url: "https://docs.google.com/spreadsheets/d/1-aMiDuKCoG6bZNV5_Rggn3Ec5rVoDqkB/edit?gid=471085140#gid=471085140" },
-      { title: "Rekapitulasi ATK", icon: "📦", color: "purple", url: "https://docs.google.com/spreadsheets/d/1-STRMvWmcc8Bw-UuZmp1WjZ8d9OiLwB_/edit?gid=2111416520#gid=2111416520" },
-      { title: "Pajak kendaraan", icon: "🧾", color: "#FFD700", url: "https://docs.google.com/spreadsheets/d/1cSvzKSE4Q5iDDwReMxb_ln8MGc2R3an1/edit?gid=955670097#gid=955670097" },
+      { title: "Dashboard Tasks GA", icon: "📊", color: "#e74c3c", url: "https://docs.google.com/spreadsheets/d/1sw2JWyLZNXTkT56SPZv35_8kHe8d3CyjByj5nL48m5w/edit?gid=1363633157#gid=1363633157" },
+      { title: "Checklist Monitoring CCTV", icon: "📷", color: "#e67e22", url: "https://docs.google.com/spreadsheets/d/1zojEgfOMGMFcHCcmIJuVdIHoJAgVzh5u/edit?gid=755317208#gid=755317208" },
+      { title: "Pemakaian Kendaraan", icon: "🚗", color: "#27ae60", url: "https://docs.google.com/spreadsheets/d/1-aMiDuKCoG6bZNV5_Rggn3Ec5rVoDqkB/edit?gid=471085140#gid=471085140" },
+      { title: "Rekapitulasi ATK", icon: "📦", color: "#8e44ad", url: "https://docs.google.com/spreadsheets/d/1-STRMvWmcc8Bw-UuZmp1WjZ8d9OiLwB_/edit?gid=2111416520#gid=2111416520" },
+      { title: "Pajak Kendaraan", icon: "🧾", color: "#FFD700", url: "https://docs.google.com/spreadsheets/d/1cSvzKSE4Q5iDDwReMxb_ln8MGc2R3an1/edit?gid=955670097#gid=955670097" },
       { title: "Feedback", icon: "📨", color: "#8B4513", url: "https://docs.google.com/spreadsheets/d/1EVioRSCcdHTh7jxAlIAvdQ_FvPrW1RVqV1Y19w4NrkA/edit?gid=1655850200#gid=1655850200" }
     ];
 
@@ -225,7 +225,7 @@
     gsheetLinks.forEach(sheet => {
       const div = document.createElement("div");
       div.classList.add("menu-card", sheet.color);
-      div.innerHTML = `<i>${sheet.icon}</i><h3>${sheet.title}</h3><p>Klik untuk membuka</p>`;
+      div.innerHTML = `<i>${sheet.icon}</i><h4>${sheet.title}</h4><p>Klik untuk membuka</p>`;
       div.onclick = () => window.open(sheet.url, "_blank");
       menuContainer.appendChild(div);
     });
