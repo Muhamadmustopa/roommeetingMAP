@@ -55,7 +55,6 @@
             backdrop-filter: blur(5px);
         }
 
-        /* Warna masing-masing ruang */
         #arjuna { background: rgba(255, 145, 0, 0.35); }
         #srikandi { background: rgba(0, 255, 150, 0.35); }
         #gatot { background: rgba(0, 136, 255, 0.35); }
@@ -79,37 +78,58 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: 0.3s;
             border-left: 6px solid #2575fc;
+            position: relative;
         }
 
         .booking-box:hover {
             transform: scale(1.03);
         }
 
-        .icon {
-            font-size: 22px;
-            margin-right: 8px;
+        .actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 10px;
         }
+
+        .btn-edit, .btn-delete {
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: white;
+            border: none;
+        }
+
+        .btn-edit {
+            background: #007bff;
+        }
+
+        .btn-delete {
+            background: #d60000;
+        }
+
     </style>
 </head>
+
 <body>
 
-<h1>📅 Penggunaan Ruang Meeting</h1>
+<h1>📅 Jadwal Penggunaan Ruang Meeting</h1>
 
 <a href="daftar.html" class="btn-add">+ Tambah Jadwal Meeting</a>
 
 <div class="container">
     <div class="column" id="arjuna">
-        <h2> Ruang Meeting Arjuna</h2>
+        <h2>Ruang Meeting Arjuna</h2>
         <div class="list"></div>
     </div>
 
     <div class="column" id="srikandi">
-        <h2> Ruang Meeting Srikandi</h2>
+        <h2>Ruang Meeting Srikandi</h2>
         <div class="list"></div>
     </div>
 
     <div class="column" id="gatot">
-        <h2> Ruang Meeting Gatot Kaca</h2>
+        <h2>Ruang Meeting Gatot Kaca</h2>
         <div class="list"></div>
     </div>
 </div>
@@ -118,20 +138,25 @@
     function loadData() {
         let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
 
-        // Sort supaya tanggal yang paling dekat muncul dulu
+        // sort berdasarkan tanggal terdekat
         data.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
 
         document.querySelector("#arjuna .list").innerHTML = "";
         document.querySelector("#srikandi .list").innerHTML = "";
         document.querySelector("#gatot .list").innerHTML = "";
 
-        data.forEach(item => {
+        data.forEach((item, index) => {
             let box = `
                 <div class="booking-box">
                     <div><b>📌 ${item.agenda}</b></div>
                     <div>📅 ${item.tanggal}</div>
                     <div>⏰ ${item.mulai} - ${item.selesai}</div>
                     <div>👤 ${item.nama}</div>
+
+                    <div class="actions">
+                        <button class="btn-edit" onclick="editData(${index})">✏️</button>
+                        <button class="btn-delete" onclick="deleteData(${index})">🗑️</button>
+                    </div>
                 </div>
             `;
 
@@ -145,6 +170,37 @@
                 document.querySelector("#gatot .list").innerHTML += box;
             }
         });
+    }
+
+    // --- fungsi hapus ---
+    function deleteData(index) {
+        if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+        let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+        data.splice(index, 1);
+        localStorage.setItem("jadwal_meeting", JSON.stringify(data));
+
+        loadData();
+    }
+
+    // --- fungsi edit ---
+    function editData(index) {
+        let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+        let item = data[index];
+
+        let agenda = prompt("Edit agenda:", item.agenda);
+        let tanggal = prompt("Edit tanggal (YYYY-MM-DD):", item.tanggal);
+        let mulai = prompt("Edit jam mulai (HH:MM):", item.mulai);
+        let selesai = prompt("Edit jam selesai (HH:MM):", item.selesai);
+        let nama = prompt("Edit nama peminjam:", item.nama);
+
+        // jika cancel, stop
+        if (!agenda || !tanggal || !mulai || !selesai || !nama) return;
+
+        data[index] = { ...item, agenda, tanggal, mulai, selesai, nama };
+        localStorage.setItem("jadwal_meeting", JSON.stringify(data));
+
+        loadData();
     }
 
     loadData();
