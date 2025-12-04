@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Jadwal Meeting</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+
+        .form-box {
+            background: white;
+            padding: 20px;
+            width: 400px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Tambah Jadwal Meeting</h2>
+
+<div class="form-box">
+    <label>Nama PIC</label>
+    <input type="text" id="nama" required>
+
+    <label>Agenda Meeting</label>
+    <input type="text" id="agenda" required>
+
+    <label>Pilih Ruangan</label>
+    <select id="ruangan">
+        <option value="Arjuna">R. Meeting Arjuna</option>
+        <option value="Srikandi">R. Meeting Srikandi</option>
+        <option value="Gatot Kaca">R. Meeting Gatot Kaca</option>
+    </select>
+
+    <label>Tanggal</label>
+    <input type="date" id="tanggal" required>
+
+    <label>Jam Mulai</label>
+    <input type="time" id="mulai">
+
+    <label>Jam Selesai</label>
+    <input type="time" id="selesai">
+
+    <button onclick="simpan()">Simpan</button>
+</div>
+
+<script>
+function simpan() {
+    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+
+    let newData = {
+        nama: document.getElementById("nama").value,
+        agenda: document.getElementById("agenda").value,
+        ruangan: document.getElementById("ruangan").value,
+        tanggal: document.getElementById("tanggal").value,
+        mulai: document.getElementById("mulai").value,
+        selesai: document.getElementById("selesai").value
+    };
+
+    data.push(newData);
+
+    localStorage.setItem("jadwal_meeting", JSON.stringify(data));
+
+    alert("Jadwal berhasil ditambahkan!");
+    window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>
