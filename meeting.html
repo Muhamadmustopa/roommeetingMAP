@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta-name viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Ruang Meeting</title>
 
     <style>
@@ -21,7 +21,6 @@
             font-weight: 700;
         }
 
-        /* Tombol bulat tambah */
         .btn-add {
             position: fixed;
             bottom: 25px;
@@ -44,7 +43,6 @@
             background: #0a84ff;
         }
 
-        /* Tombol back */
         .btn-back {
             display: inline-block;
             margin-bottom: 20px;
@@ -83,20 +81,47 @@
 
         .booking-box {
             background: white;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 12px;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 15px;
             color: #000;
             border-left: 4px solid #007bff;
             box-shadow: 0 3px 8px rgba(0,0,0,0.08);
             transition: 0.2s;
         }
         .booking-box:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
+        }
+
+        /* Tanggal lebih besar */
+        .tanggal {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #444;
+        }
+
+        /* Judul agenda di bawah tanggal */
+        .agenda {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        /* Jam lebih besar */
+        .jam {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .nama {
+            font-size: 14px;
+            opacity: 0.8;
         }
 
         .actions {
-            margin-top: 8px;
+            margin-top: 10px;
             display: flex;
             gap: 10px;
         }
@@ -119,7 +144,7 @@
 
 <a href="dashboard.html" class="btn-back">Back</a>
 
-<h1>Jadwal Penggunaan Ruang Meeting</h1>
+<h1>Jadwal Peminjaman Ruang Meeting</h1>
 
 <!-- tombol tambah -->
 <a href="daftar.html" class="btn-add">+</a>
@@ -145,7 +170,6 @@
     function loadData() {
         let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
 
-        // Urutkan berdasarkan tanggal
         data.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
 
         document.querySelector("#arjuna .list").innerHTML = "";
@@ -155,13 +179,14 @@
         data.forEach((item, index) => {
             let box = `
                 <div class="booking-box">
-                    <b>${item.agenda}</b><br>
-                    📅 ${item.tanggal}<br>
-                    ⏰ ${item.mulai} - ${item.selesai}<br>
-                    👤 ${item.nama}
+                    <div class="tanggal">📅 ${item.tanggal}</div>
+                    <div class="agenda">${item.agenda}</div>
+                    <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
+                    <div class="nama">👤 ${item.nama}</div>
+
                     <div class="actions">
-                        <button class="btn-edit" onclick="editData(${index})"></button>
-                        <button class="btn-delete" onclick="deleteData(${index})"></button>
+                        <button class="btn-edit" onclick="editData(${index})">Edit</button>
+                        <button class="btn-delete" onclick="deleteData(${index})">Hapus</button>
                     </div>
                 </div>
             `;
