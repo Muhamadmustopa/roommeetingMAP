@@ -97,7 +97,7 @@
 
 <body>
 
-<a href="meeting.html" class="back-btn">← Back to Dashboard</a>
+<a href="meeting.html" class="back-btn">Back</a>
 
 <div class="form-box">
     <h2>Tambah Jadwal Meeting</h2>
@@ -160,19 +160,16 @@ function simpan() {
     let mulai = document.getElementById("mulai").value;
     let selesai = document.getElementById("selesai").value;
 
-    // Validasi wajib
     if (!nama || !agenda || !tanggal || !mulai || !selesai) {
         alert("❌ Semua field harus diisi.");
         return;
     }
 
-    // Validasi jam
     if (toMinutes(mulai) >= toMinutes(selesai)) {
         alert("❌ Jam mulai harus lebih kecil dari jam selesai.");
         return;
     }
 
-    // Cek bentrok
     if (isBentrok(ruangan, tanggal, mulai, selesai)) {
         alert("❌ Jadwal bentrok dengan jadwal lain di ruangan yang sama.");
         return;
@@ -181,6 +178,7 @@ function simpan() {
     let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
 
     data.push({
+        id: Date.now(),   // ⭐ ID unik ditambahkan
         nama,
         agenda,
         ruangan,
