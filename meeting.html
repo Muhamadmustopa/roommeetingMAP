@@ -232,110 +232,119 @@
 </div>
 
 <script>
-    function loadData() {
-        let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
 
-        data.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+function loadData() {
+    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
 
-        document.querySelector("#arjuna .list").innerHTML = "";
-        document.querySelector("#srikandi .list").innerHTML = "";
-        document.querySelector("#gatot .list").innerHTML = "";
+    data.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
 
-        data.forEach((item, index) => {
-            let box = document.createElement("div");
-            box.className = "booking-box";
+    document.querySelector("#arjuna .list").innerHTML = "";
+    document.querySelector("#srikandi .list").innerHTML = "";
+    document.querySelector("#gatot .list").innerHTML = "";
 
-            box.innerHTML = `
-                <div class="tanggal">📅 ${item.tanggal}</div>
-                <div class="agenda">${item.agenda}</div>
-                <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
-                <div class="nama">👤 ${item.nama}</div>
+    data.forEach(item => {
+        let box = document.createElement("div");
+        box.className = "booking-box";
 
-                <div class="actions">
-                    <button class="btn-edit" onclick="event.stopPropagation(); editData(${index})"></button>
-                    <button class="btn-delete" onclick="event.stopPropagation(); deleteData(${index})"></button>
-                </div>
-            `;
+        box.innerHTML = `
+            <div class="tanggal">📅 ${item.tanggal}</div>
+            <div class="agenda">${item.agenda}</div>
+            <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
+            <div class="nama">👤 ${item.nama}</div>
 
-            box.onclick = () => showDetail(item);
+            <div class="actions">
+                <button class="btn-edit" onclick="event.stopPropagation(); editData('${item.id}')">Edit</button>
+                <button class="btn-delete" onclick="event.stopPropagation(); deleteData('${item.id}')">Delete</button>
+            </div>
+        `;
 
-            if (item.ruangan === "Arjuna") document.querySelector("#arjuna .list").appendChild(box);
-            if (item.ruangan === "Srikandi") document.querySelector("#srikandi .list").appendChild(box);
-            if (item.ruangan === "Gatot Kaca") document.querySelector("#gatot .list").appendChild(box);
-        });
-    }
+        box.onclick = () => showDetail(item);
 
-    /* POPUP */
-    function showDetail(item) {
-        document.getElementById("detail-ruangan").innerText = "🏢 Ruangan: " + item.ruangan;
-        document.getElementById("detail-agenda").innerText = "📝 Agenda: " + item.agenda;
-        document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + item.tanggal;
-        document.getElementById("detail-jam").innerText = "⏰ Jam: " + item.mulai + " - " + item.selesai;
-        document.getElementById("detail-nama").innerText = "👤 Pemakai: " + item.nama;
-        document.getElementById("detailModal").style.display = "flex";
-    }
+        if (item.ruangan === "Arjuna") document.querySelector("#arjuna .list").appendChild(box);
+        if (item.ruangan === "Srikandi") document.querySelector("#srikandi .list").appendChild(box);
+        if (item.ruangan === "Gatot Kaca") document.querySelector("#gatot .list").appendChild(box);
+    });
+}
 
-    function closeModal() {
-        document.getElementById("detailModal").style.display = "none";
-    }
+/* POPUP */
+function showDetail(item) {
+    document.getElementById("detail-ruangan").innerText = "🏢 Ruangan: " + item.ruangan;
+    document.getElementById("detail-agenda").innerText = "📝 Agenda: " + item.agenda;
+    document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + item.tanggal;
+    document.getElementById("detail-jam").innerText = "⏰ Jam: " + item.mulai + " - " + item.selesai;
+    document.getElementById("detail-nama").innerText = "👤 Pemakai: " + item.nama;
+    document.getElementById("detailModal").style.display = "flex";
+}
 
-    /* CEK BENTROK */
-    function isBentrok(ruangan, tanggal, mulai, selesai, ignoreIndex = -1) {
-        let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+function closeModal() {
+    document.getElementById("detailModal").style.display = "none";
+}
 
-        let start1 = toMinutes(mulai);
-        let end1 = toMinutes(selesai);
+/* DELETE BERDASARKAN ID */
+function deleteData(id) {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
 
-        return data.some((item, i) => {
-            if (i === ignoreIndex) return false;
-            if (item.ruangan !== ruangan) return false;
-            if (item.tanggal !== tanggal) return false;
+    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    let newData = data.filter(item => item.id !== id);
 
-            let start2 = toMinutes(item.mulai);
-            let end2 = toMinutes(item.selesai);
-
-            return !(end1 <= start2 || start1 >= end2);
-        });
-    }
-
-    function toMinutes(t) {
-        let [h, m] = t.split(":").map(Number);
-        return h * 60 + m;
-    }
-
-    /* DELETE */
-    function deleteData(index) {
-        if (!confirm("Yakin ingin menghapus data ini?")) return;
-        let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
-        data.splice(index, 1);
-        localStorage.setItem("jadwal_meeting", JSON.stringify(data));
-        loadData();
-    }
-
-    /* EDIT */
-    function editData(index) {
-        let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
-        let item = data[index];
-
-        let agenda = prompt("Edit agenda:", item.agenda);
-        let tanggal = prompt("Edit tanggal (YYYY-MM-DD):", item.tanggal);
-        let mulai = prompt("Edit jam mulai (HH:MM):", item.mulai);
-        let selesai = prompt("Edit jam selesai (HH:MM):", item.selesai);
-        let nama = prompt("Edit nama:", item.nama);
-
-        if (!agenda || !tanggal || !mulai || !selesai || !nama) return;
-
-        if (isBentrok(item.ruangan, tanggal, mulai, selesai, index)) {
-            alert("❌ Jadwal bentrok! Tidak bisa disimpan.");
-            return;
-        }
-
-        data[index] = { ...item, agenda, tanggal, mulai, selesai, nama };
-        localStorage.setItem("jadwal_meeting", JSON.stringify(data));
-        loadData();
-    }
-
+    localStorage.setItem("jadwal_meeting", JSON.stringify(newData));
     loadData();
+}
+
+/* EDIT BERDASARKAN ID */
+function editData(id) {
+    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    let item = data.find(a => a.id === id);
+
+    if (!item) return;
+
+    let agenda = prompt("Edit agenda:", item.agenda);
+    let tanggal = prompt("Edit tanggal (YYYY-MM-DD):", item.tanggal);
+    let mulai = prompt("Edit jam mulai (HH:MM):", item.mulai);
+    let selesai = prompt("Edit jam selesai (HH:MM):", item.selesai);
+    let nama = prompt("Edit nama:", item.nama);
+
+    if (!agenda || !tanggal || !mulai || !selesai || !nama) return;
+
+    if (isBentrok(item.ruangan, tanggal, mulai, selesai, id)) {
+        alert("❌ Jadwal bentrok! Tidak bisa disimpan.");
+        return;
+    }
+
+    item.agenda = agenda;
+    item.tanggal = tanggal;
+    item.mulai = mulai;
+    item.selesai = selesai;
+    item.nama = nama;
+
+    localStorage.setItem("jadwal_meeting", JSON.stringify(data));
+    loadData();
+}
+
+/* CEK BENTROK */
+function isBentrok(ruangan, tanggal, mulai, selesai, idIgnore) {
+    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+
+    let start1 = toMinutes(mulai);
+    let end1 = toMinutes(selesai);
+
+    return data.some(item => {
+        if (item.id === idIgnore) return false;
+        if (item.ruangan !== ruangan || item.tanggal !== tanggal) return false;
+
+        let start2 = toMinutes(item.mulai);
+        let end2 = toMinutes(item.selesai);
+
+        return !(end1 <= start2 || start1 >= end2);
+    });
+}
+
+function toMinutes(t) {
+    let [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+}
+
+loadData();
 </script>
 
 </body>
