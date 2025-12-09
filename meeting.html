@@ -25,28 +25,34 @@
             text-shadow: 0 3px 8px rgba(0,0,0,0.5);
         }
 
-        .btn-add {
+        /* ========================================
+           FLOATING ACTION BUTTON (FAB)
+        ======================================== */
+        .fab {
             position: fixed;
             bottom: 25px;
             right: 25px;
             width: 65px;
             height: 65px;
-            background: linear-gradient(135deg, #00d4ff, #009dff);
             border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #0090ff);
             display: flex;
             justify-content: center;
             align-items: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
             text-decoration: none;
-            font-size: 35px;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            transition: 0.25s ease-in-out;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+            transition: 0.3s ease;
+            z-index: 999;
         }
-        .btn-add:hover {
-            transform: scale(1.15) rotate(10deg);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+        .fab:hover {
+            transform: scale(1.15);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.45);
         }
 
+        /* ======================================== */
         .btn-back {
             display: inline-block;
             margin-bottom: 20px;
@@ -122,13 +128,17 @@
             gap: 10px;
         }
 
+        /* Button icons */
         .btn-edit, .btn-delete {
             padding: 6px 10px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
             color: white;
             border: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .btn-edit { background: #00b4ff; }
         .btn-delete { background: #ff3b3b; }
@@ -188,7 +198,8 @@
 
 <h1>Jadwal Peminjaman Ruang Meeting</h1>
 
-<a href="daftar.html" class="btn-add">add</a>
+<!-- Floating Button -->
+<a href="daftar.html" class="fab">+</a>
 
 <div class="container">
     <div class="column" id="arjuna">
@@ -261,9 +272,9 @@
         document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + item.tanggal;
         document.getElementById("detail-jam").innerText = "⏰ Jam: " + item.mulai + " - " + item.selesai;
         document.getElementById("detail-nama").innerText = "👤 Pemakai: " + item.nama;
-
         document.getElementById("detailModal").style.display = "flex";
     }
+
     function closeModal() {
         document.getElementById("detailModal").style.display = "none";
     }
