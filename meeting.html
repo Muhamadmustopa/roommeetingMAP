@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta-name viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Ruang Meeting</title>
 
     <style>
@@ -103,6 +103,7 @@
             border-left: 4px solid #00c8ff;
             box-shadow: 0 3px 8px rgba(0,0,0,0.25);
             backdrop-filter: blur(12px);
+            cursor: pointer;
             transition: 0.25s;
         }
         .booking-box:hover {
@@ -110,27 +111,10 @@
             border-left: 4px solid #00f7ff;
         }
 
-        .tanggal {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .agenda {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .jam {
-            font-size: 16px;
-            margin-bottom: 6px;
-        }
-
-        .nama {
-            font-size: 14px;
-            opacity: 0.9;
-        }
+        .tanggal { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+        .agenda { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .jam { font-size: 16px; margin-bottom: 6px; }
+        .nama { font-size: 14px; opacity: 0.9; }
 
         .actions {
             margin-top: 10px;
@@ -146,17 +130,54 @@
             color: white;
             border: none;
         }
-
         .btn-edit { background: #00b4ff; }
         .btn-delete { background: #ff3b3b; }
 
         @media (max-width: 800px) {
-            .container {
-                flex-direction: column;
-            }
-            .column {
-                width: 100%;
-            }
+            .container { flex-direction: column; }
+            .column { width: 100%; }
+        }
+
+        /* ==========================================
+           POPUP DETAIL
+        ========================================== */
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: rgba(255,255,255,0.18);
+            padding: 25px;
+            border-radius: 18px;
+            width: 90%;
+            max-width: 420px;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .btn-close {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+            background: #ff3b3b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -186,6 +207,19 @@
     </div>
 </div>
 
+<!-- POPUP DETAIL -->
+<div class="modal" id="detailModal">
+    <div class="modal-content">
+        <h3>Detail Jadwal</h3>
+        <p id="detail-ruangan"></p>
+        <p id="detail-agenda"></p>
+        <p id="detail-tanggal"></p>
+        <p id="detail-jam"></p>
+        <p id="detail-nama"></p>
+        <button class="btn-close" onclick="closeModal()">Tutup</button>
+    </div>
+</div>
+
 <script>
     function loadData() {
         let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
@@ -197,32 +231,68 @@
         document.querySelector("#gatot .list").innerHTML = "";
 
         data.forEach((item, index) => {
-            let box = `
-                <div class="booking-box">
-                    <div class="tanggal">📅 ${item.tanggal}</div>
-                    <div class="agenda">${item.agenda}</div>
-                    <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
-                    <div class="nama">👤 ${item.nama}</div>
+            let box = document.createElement("div");
+            box.className = "booking-box";
 
-                    <div class="actions">
-                        <button class="btn-edit" onclick="editData(${index})"></button>
-                        <button class="btn-delete" onclick="deleteData(${index})"></button>
-                    </div>
+            box.innerHTML = `
+                <div class="tanggal">📅 ${item.tanggal}</div>
+                <div class="agenda">${item.agenda}</div>
+                <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
+                <div class="nama">👤 ${item.nama}</div>
+
+                <div class="actions">
+                    <button class="btn-edit" onclick="event.stopPropagation(); editData(${index})"></button>
+                    <button class="btn-delete" onclick="event.stopPropagation(); deleteData(${index})"></button>
                 </div>
             `;
 
-            if (item.ruangan === "Arjuna") {
-                document.querySelector("#arjuna .list").innerHTML += box;
-            }
-            if (item.ruangan === "Srikandi") {
-                document.querySelector("#srikandi .list").innerHTML += box;
-            }
-            if (item.ruangan === "Gatot Kaca") {
-                document.querySelector("#gatot .list").innerHTML += box;
-            }
+            box.onclick = () => showDetail(item);
+
+            if (item.ruangan === "Arjuna") document.querySelector("#arjuna .list").appendChild(box);
+            if (item.ruangan === "Srikandi") document.querySelector("#srikandi .list").appendChild(box);
+            if (item.ruangan === "Gatot Kaca") document.querySelector("#gatot .list").appendChild(box);
         });
     }
 
+    /* POPUP */
+    function showDetail(item) {
+        document.getElementById("detail-ruangan").innerText = "🏢 Ruangan: " + item.ruangan;
+        document.getElementById("detail-agenda").innerText = "📝 Agenda: " + item.agenda;
+        document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + item.tanggal;
+        document.getElementById("detail-jam").innerText = "⏰ Jam: " + item.mulai + " - " + item.selesai;
+        document.getElementById("detail-nama").innerText = "👤 Pemakai: " + item.nama;
+
+        document.getElementById("detailModal").style.display = "flex";
+    }
+    function closeModal() {
+        document.getElementById("detailModal").style.display = "none";
+    }
+
+    /* CEK BENTROK */
+    function isBentrok(ruangan, tanggal, mulai, selesai, ignoreIndex = -1) {
+        let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+
+        let start1 = toMinutes(mulai);
+        let end1 = toMinutes(selesai);
+
+        return data.some((item, i) => {
+            if (i === ignoreIndex) return false;
+            if (item.ruangan !== ruangan) return false;
+            if (item.tanggal !== tanggal) return false;
+
+            let start2 = toMinutes(item.mulai);
+            let end2 = toMinutes(item.selesai);
+
+            return !(end1 <= start2 || start1 >= end2);
+        });
+    }
+
+    function toMinutes(t) {
+        let [h, m] = t.split(":").map(Number);
+        return h * 60 + m;
+    }
+
+    /* DELETE */
     function deleteData(index) {
         if (!confirm("Yakin ingin menghapus data ini?")) return;
         let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
@@ -231,21 +301,26 @@
         loadData();
     }
 
+    /* EDIT */
     function editData(index) {
         let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
         let item = data[index];
 
         let agenda = prompt("Edit agenda:", item.agenda);
         let tanggal = prompt("Edit tanggal (YYYY-MM-DD):", item.tanggal);
-        let mulai = prompt("Edit jam mulai:", item.mulai);
-        let selesai = prompt("Edit jam selesai:", item.selesai);
+        let mulai = prompt("Edit jam mulai (HH:MM):", item.mulai);
+        let selesai = prompt("Edit jam selesai (HH:MM):", item.selesai);
         let nama = prompt("Edit nama:", item.nama);
 
         if (!agenda || !tanggal || !mulai || !selesai || !nama) return;
 
+        if (isBentrok(item.ruangan, tanggal, mulai, selesai, index)) {
+            alert("❌ Jadwal bentrok! Tidak bisa disimpan.");
+            return;
+        }
+
         data[index] = { ...item, agenda, tanggal, mulai, selesai, nama };
         localStorage.setItem("jadwal_meeting", JSON.stringify(data));
-
         loadData();
     }
 
