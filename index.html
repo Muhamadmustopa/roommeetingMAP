@@ -18,7 +18,6 @@
       align-items: center;
       background: linear-gradient(135deg, rgba(30, 60, 114, 0.75), rgba(42, 82, 152, 0.75)),
         url('logine.png') no-repeat center center/cover;
-      /* Ganti 'office-bg.jpg' dengan gambar kamu */
       color: white;
       overflow: hidden;
     }
@@ -45,6 +44,7 @@
       box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
       transition: transform 0.5s ease;
     }
+
     .logo:hover {
       transform: scale(1.08) rotate(3deg);
     }
@@ -73,10 +73,12 @@
       color: #333;
       transition: all 0.3s;
     }
+
     input:focus {
       box-shadow: 0 0 0 2px #4caf50 inset;
     }
 
+    /* Tombol login */
     button {
       width: 85%;
       margin-top: 20px;
@@ -90,13 +92,33 @@
       cursor: pointer;
       transition: all 0.3s;
     }
+
     button:hover {
       background: #43a047;
       transform: translateY(-2px);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
-    button:active {
-      transform: scale(0.98);
+
+    /* Tombol menuju ruang meeting */
+    .meeting-btn {
+      width: 85%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 17px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #4fc3f7, #00c853);
+      transition: 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .meeting-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     }
 
     .error {
@@ -106,13 +128,7 @@
       min-height: 18px;
     }
 
-    /* Responsif untuk layar kecil */
     @media (max-width: 480px) {
-      body {
-        background-position: center;
-        background-size: cover;
-        padding: 20px;
-      }
       .login-container {
         padding: 35px 25px;
         width: 100%;
@@ -122,10 +138,7 @@
         width: 70px;
         height: 70px;
       }
-      h1 {
-        font-size: 20px;
-      }
-      button {
+      button, .meeting-btn {
         width: 100%;
       }
     }
@@ -136,14 +149,21 @@
     }
   </style>
 </head>
+
 <body>
   <div class="login-container">
     <img src="map-log.png" class="logo" alt="Logo MAP" />
     <h2>Dashboard General Affairs</h2>
     <h3>Sign In</h3>
+
     <input type="text" id="username" placeholder="Username" />
     <input type="password" id="password" placeholder="Password" />
+
     <button onclick="login()">Login</button>
+
+    <!-- 🔵🟢 Tombol Ruang Meeting -->
+    <a href="meeting.html" class="meeting-btn">📅 Cek Ruang Meeting</a>
+
     <p class="error" id="errorMsg"></p>
   </div>
 
