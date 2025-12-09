@@ -16,7 +16,6 @@
             align-items: center;
         }
 
-        /* Glassmorphism Form */
         .form-box {
             backdrop-filter: blur(12px);
             background: rgba(255, 255, 255, 0.20);
@@ -81,11 +80,6 @@
             box-shadow: 0 8px 20px rgba(0,123,255,0.55);
         }
 
-        button:active {
-            transform: scale(0.97);
-        }
-
-        /* Back Button */
         .back-btn {
             position: absolute;
             left: 20px;
@@ -98,70 +92,106 @@
             backdrop-filter: blur(6px);
             transition: 0.25s;
         }
-
-        .back-btn:hover {
-            background: rgba(0, 0, 0, 0.6);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 
 <body>
 
-    <a href="meeting.html" class="back-btn">← Back to Dashboard</a>
+<a href="meeting.html" class="back-btn">← Back to Dashboard</a>
 
-    <div class="form-box">
-        <h2>Tambah Jadwal Meeting</h2>
+<div class="form-box">
+    <h2>Tambah Jadwal Meeting</h2>
 
-        <label>Nama PIC</label>
-        <input type="text" id="nama" required>
+    <label>Nama PIC</label>
+    <input type="text" id="nama" required>
 
-        <label>Agenda Meeting</label>
-        <input type="text" id="agenda" required>
+    <label>Agenda Meeting</label>
+    <input type="text" id="agenda" required>
 
-        <label>Pilih Ruangan</label>
-        <select id="ruangan">
-            <option value="Arjuna">R. Meeting Arjuna</option>
-            <option value="Srikandi">R. Meeting Srikandi</option>
-            <option value="Gatot Kaca">R. Meeting Gatot Kaca</option>
-        </select>
+    <label>Pilih Ruangan</label>
+    <select id="ruangan">
+        <option value="Arjuna">R. Meeting Arjuna</option>
+        <option value="Srikandi">R. Meeting Srikandi</option>
+        <option value="Gatot Kaca">R. Meeting Gatot Kaca</option>
+    </select>
 
-        <label>Tanggal</label>
-        <input type="date" id="tanggal" required>
+    <label>Tanggal</label>
+    <input type="date" id="tanggal" required>
 
-        <label>Jam Mulai</label>
-        <input type="time" id="mulai">
+    <label>Jam Mulai</label>
+    <input type="time" id="mulai">
 
-        <label>Jam Selesai</label>
-        <input type="time" id="selesai">
+    <label>Jam Selesai</label>
+    <input type="time" id="selesai">
 
-        <button onclick="simpan()">Simpan</button>
-    </div>
+    <button onclick="simpan()">Simpan</button>
+</div>
 
 <script>
-function simpan() {
+
+// Convert jam ke menit
+function toMinutes(t) {
+    let [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+}
+
+// Cek bentrok jadwal
+function isBentrok(ruangan, tanggal, mulai, selesai) {
     let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
 
-    let newData = {
-        nama: document.getElementById("nama").value,
-        agenda: document.getElementById("agenda").value,
-        ruangan: document.getElementById("ruangan").value,
-        tanggal: document.getElementById("tanggal").value,
-        mulai: document.getElementById("mulai").value,
-        selesai: document.getElementById("selesai").value
-    };
+    let startNew = toMinutes(mulai);
+    let endNew = toMinutes(selesai);
 
-    data.push(newData);
+    return data.some(item => {
+        if (item.ruangan !== ruangan || item.tanggal !== tanggal) return false;
+
+        let startOld = toMinutes(item.mulai);
+        let endOld = toMinutes(item.selesai);
+
+        return !(endNew <= startOld || startNew >= endOld);
+    });
+}
+
+function simpan() {
+    let nama = document.getElementById("nama").value.trim();
+    let agenda = document.getElementById("agenda").value.trim();
+    let ruangan = document.getElementById("ruangan").value;
+    let tanggal = document.getElementById("tanggal").value;
+    let mulai = document.getElementById("mulai").value;
+    let selesai = document.getElementById("selesai").value;
+
+    // Validasi wajib
+    if (!nama || !agenda || !tanggal || !mulai || !selesai) {
+        alert("❌ Semua field harus diisi.");
+        return;
+    }
+
+    // Validasi jam
+    if (toMinutes(mulai) >= toMinutes(selesai)) {
+        alert("❌ Jam mulai harus lebih kecil dari jam selesai.");
+        return;
+    }
+
+    // Cek bentrok
+    if (isBentrok(ruangan, tanggal, mulai, selesai)) {
+        alert("❌ Jadwal bentrok dengan jadwal lain di ruangan yang sama.");
+        return;
+    }
+
+    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+
+    data.push({
+        nama,
+        agenda,
+        ruangan,
+        tanggal,
+        mulai,
+        selesai
+    });
 
     localStorage.setItem("jadwal_meeting", JSON.stringify(data));
 
-    alert("Jadwal berhasil ditambahkan!");
-
-    // Redirect ke meeting.html
+    alert("✔ Jadwal berhasil ditambahkan!");
     window.location.href = "meeting.html";
 }
 </script>
