@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Ruang Meeting</title> 
-
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dashboard Ruang Meeting</title>
     <style>
         body {
             margin: 0;
             padding: 20px;
             font-family: 'Segoe UI', sans-serif;
-            background: 
+            background:
                 linear-gradient(0deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
                 url('citylight.png') no-repeat center center/cover;
             color: #ffffff;
@@ -25,9 +24,6 @@
             text-shadow: 0 3px 8px rgba(0,0,0,0.5);
         }
 
-        /* ========================================
-           FLOATING ACTION BUTTON (FAB)
-        ======================================== */
         .fab {
             position: fixed;
             bottom: 25px;
@@ -47,12 +43,8 @@
             transition: 0.3s ease;
             z-index: 999;
         }
-        .fab:hover {
-            transform: scale(1.15);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.45);
-        }
+        .fab:hover { transform: scale(1.15); box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
 
-        /* ======================================== */
         .btn-back {
             display: inline-block;
             margin-bottom: 20px;
@@ -66,9 +58,7 @@
             font-weight: 600;
             transition: .2s;
         }
-        .btn-back:hover {
-            background: rgba(255,255,255,0.35);
-        }
+        .btn-back:hover { background: rgba(255,255,255,0.35); }
 
         .container {
             display: flex;
@@ -78,127 +68,75 @@
 
         .column {
             width: 32%;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.12);
             border-radius: 18px;
             padding: 18px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.25);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.22);
             transition: 0.25s ease;
         }
-
-        .column:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.35);
-        }
+        .column:hover { transform: translateY(-5px); box-shadow: 0 12px 28px rgba(0,0,0,0.28); }
 
         .column h2 {
             text-align: center;
-            font-size: 22px;
+            font-size: 20px;
             margin-top: 0;
-            color: #00e1ff;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            color: #bfefff;
         }
 
         .booking-box {
-            background: rgba(255,255,255,0.12);
-            padding: 14px;
+            background: rgba(255,255,255,0.08);
+            padding: 12px;
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             color: #fff;
             border-left: 4px solid #00c8ff;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-            backdrop-filter: blur(12px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
             cursor: pointer;
-            transition: 0.25s;
+            transition: 0.18s;
         }
-        .booking-box:hover {
-            transform: scale(1.05);
-            border-left: 4px solid #00f7ff;
-        }
+        .booking-box:hover { transform: scale(1.02); border-left-color: #00f7ff; }
 
-        .tanggal { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-        .agenda { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-        .jam { font-size: 16px; margin-bottom: 6px; }
-        .nama { font-size: 14px; opacity: 0.9; }
+        .tanggal { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .agenda  { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .jam     { font-size: 14px; margin-bottom: 4px; }
+        .nama    { font-size: 13px; opacity: 0.9; }
 
-        .actions {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-        }
-
-        /* Button icons */
+        .actions { margin-top: 8px; display:flex; gap:8px; }
         .btn-edit, .btn-delete {
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            color: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            padding:6px 10px; border-radius:8px; border:none; cursor:pointer;
+            font-size:13px; color:white;
         }
-        .btn-edit { background: #00b4ff; }
-        .btn-delete { background: #ff3b3b; }
+        .btn-edit { background:#00b4ff; }
+        .btn-delete { background:#ff3b3b; }
 
-        @media (max-width: 800px) {
-            .container { flex-direction: column; }
-            .column { width: 100%; }
-        }
-
-        /* ==========================================
-           POPUP DETAIL
-        ========================================== */
         .modal {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            position: fixed; inset:0;
+            display:none; align-items:center; justify-content:center;
             background: rgba(0,0,0,0.55);
-            display: none;
-            justify-content: center;
-            align-items: center;
             backdrop-filter: blur(4px);
+            z-index: 1200;
         }
-
         .modal-content {
-            background: rgba(255,255,255,0.18);
-            padding: 25px;
-            border-radius: 18px;
-            width: 90%;
-            max-width: 420px;
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-            animation: fadeIn 0.25s ease;
+            background: rgba(255,255,255,0.12);
+            padding:20px; border-radius:12px; width:90%; max-width:420px;
+            color:#fff; border:1px solid rgba(255,255,255,0.18);
+            box-shadow:0 8px 20px rgba(0,0,0,0.3);
         }
+        .btn-close { margin-top:12px; padding:10px; width:100%; background:#ff3b3b; color:white; border:none; border-radius:8px; cursor:pointer; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .btn-close {
-            margin-top: 15px;
-            padding: 10px;
-            width: 100%;
-            background: #ff3b3b;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
+        @media (max-width:800px) {
+            .container{ flex-direction:column; }
+            .column{ width:100%; }
         }
     </style>
 </head>
-
 <body>
 
-<a href="index.html" class="btn-back">← Back</a>
-
+<a href="index.html" class="btn-back">Back</a>
 <h1>Jadwal Peminjaman Ruang Meeting</h1>
 
-<!-- Floating Button -->
 <a href="daftar.html" class="fab">+</a>
 
 <div class="container">
@@ -218,10 +156,10 @@
     </div>
 </div>
 
-<!-- POPUP DETAIL -->
+<!-- detail modal -->
 <div class="modal" id="detailModal">
-    <div class="modal-content">
-        <h3>Detail Jadwal</h3>
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+        <h3 id="detailTitle">Detail Jadwal</h3>
         <p id="detail-ruangan"></p>
         <p id="detail-agenda"></p>
         <p id="detail-tanggal"></p>
@@ -232,120 +170,172 @@
 </div>
 
 <script>
+/* ---------- Utilities ---------- */
+function safeId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+}
+function toMinutes(t) {
+    if (!t || t.indexOf(":") === -1) return NaN;
+    const [h,m] = t.split(":").map(Number);
+    return h*60 + (m||0);
+}
+function normalizeId(x){ return x === undefined || x === null ? String(x) : String(x); }
 
+/* ---------- Load and normalize stored data ---------- */
 function loadData() {
-    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    let raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
 
-    data.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+    // ensure every item has id (handle older data)
+    let changed = false;
+    raw = raw.map(item => {
+        if (!item.hasOwnProperty("id") || item.id === null || item.id === undefined) {
+            item.id = safeId();
+            changed = true;
+        }
+        // ensure time fields exist to avoid errors
+        item.mulai = item.mulai || "00:00";
+        item.selesai = item.selesai || "00:00";
+        return item;
+    });
+    if (changed) localStorage.setItem("jadwal_meeting", JSON.stringify(raw));
 
-    document.querySelector("#arjuna .list").innerHTML = "";
-    document.querySelector("#srikandi .list").innerHTML = "";
-    document.querySelector("#gatot .list").innerHTML = "";
+    // sort by tanggal then mulai
+    raw.sort((a,b) => {
+        const da = new Date(a.tanggal), db = new Date(b.tanggal);
+        if (da - db !== 0) return da - db;
+        const ma = toMinutes(a.mulai) || 0, mb = toMinutes(b.mulai) || 0;
+        return ma - mb;
+    });
+
+    // render
+    renderLists(raw);
+}
+
+/* ---------- Render ---------- */
+function renderLists(data) {
+    const arjunaEl = document.querySelector("#arjuna .list");
+    const srikandiEl = document.querySelector("#srikandi .list");
+    const gatotEl = document.querySelector("#gatot .list");
+    arjunaEl.innerHTML = ""; srikandiEl.innerHTML = ""; gatotEl.innerHTML = "";
 
     data.forEach(item => {
-        let box = document.createElement("div");
+        const box = document.createElement("div");
         box.className = "booking-box";
-
         box.innerHTML = `
             <div class="tanggal">📅 ${item.tanggal}</div>
-            <div class="agenda">${item.agenda}</div>
+            <div class="agenda">${escapeHtml(item.agenda)}</div>
             <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
-            <div class="nama">👤 ${item.nama}</div>
-
+            <div class="nama">👤 ${escapeHtml(item.nama)}</div>
             <div class="actions">
-                <button class="btn-edit" onclick="event.stopPropagation(); editData('${item.id}')">Edit</button>
-                <button class="btn-delete" onclick="event.stopPropagation(); deleteData('${item.id}')">Delete</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); editData('${normalizeId(item.id)}')"></button>
+                <button class="btn-delete" onclick="event.stopPropagation(); deleteData('${normalizeId(item.id)}')"></button>
             </div>
         `;
-
         box.onclick = () => showDetail(item);
 
-        if (item.ruangan === "Arjuna") document.querySelector("#arjuna .list").appendChild(box);
-        if (item.ruangan === "Srikandi") document.querySelector("#srikandi .list").appendChild(box);
-        if (item.ruangan === "Gatot Kaca") document.querySelector("#gatot .list").appendChild(box);
+        if (item.ruangan === "Arjuna") arjunaEl.appendChild(box);
+        else if (item.ruangan === "Srikandi") srikandiEl.appendChild(box);
+        else if (item.ruangan === "Gatot Kaca") gatotEl.appendChild(box);
     });
 }
 
-/* POPUP */
+/* simple html escape to avoid injection from prompt */
+function escapeHtml(s){
+    if (s === null || s === undefined) return "";
+    return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+/* ---------- Detail modal ---------- */
 function showDetail(item) {
     document.getElementById("detail-ruangan").innerText = "🏢 Ruangan: " + item.ruangan;
-    document.getElementById("detail-agenda").innerText = "📝 Agenda: " + item.agenda;
+    document.getElementById("detail-agenda").innerText  = "📝 Agenda: " + item.agenda;
     document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + item.tanggal;
-    document.getElementById("detail-jam").innerText = "⏰ Jam: " + item.mulai + " - " + item.selesai;
-    document.getElementById("detail-nama").innerText = "👤 Pemakai: " + item.nama;
+    document.getElementById("detail-jam").innerText     = "⏰ Jam: " + item.mulai + " - " + item.selesai;
+    document.getElementById("detail-nama").innerText    = "👤 Pemakai: " + item.nama;
     document.getElementById("detailModal").style.display = "flex";
 }
+function closeModal(){ document.getElementById("detailModal").style.display = "none"; }
 
-function closeModal() {
-    document.getElementById("detailModal").style.display = "none";
-}
-
-/* DELETE BERDASARKAN ID */
+/* ---------- Delete by ID ---------- */
 function deleteData(id) {
-    if (!confirm("Yakin ingin menghapus data ini?")) return;
-
-    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
-    let newData = data.filter(item => item.id !== id);
-
+    if (!confirm("Yakin ingin menghapus jadwal ini?")) return;
+    const raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    const newData = raw.filter(item => normalizeId(item.id) !== normalizeId(id));
     localStorage.setItem("jadwal_meeting", JSON.stringify(newData));
     loadData();
 }
 
-/* EDIT BERDASARKAN ID */
+/* ---------- Edit by ID (prompt-based) ---------- */
 function editData(id) {
-    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
-    let item = data.find(a => a.id === id);
+    const raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    const idx = raw.findIndex(item => normalizeId(item.id) === normalizeId(id));
+    if (idx === -1) { alert("Data tidak ditemukan."); return; }
 
-    if (!item) return;
+    const item = raw[idx];
 
-    let agenda = prompt("Edit agenda:", item.agenda);
-    let tanggal = prompt("Edit tanggal (YYYY-MM-DD):", item.tanggal);
-    let mulai = prompt("Edit jam mulai (HH:MM):", item.mulai);
-    let selesai = prompt("Edit jam selesai (HH:MM):", item.selesai);
-    let nama = prompt("Edit nama:", item.nama);
+    // Prompt values (prefilled)
+    const agenda  = prompt("Edit agenda:", item.agenda);
+    if (agenda === null) return; // user cancel
+    const tanggal = prompt("Edit tanggal (YYYY-MM-DD):", item.tanggal);
+    if (tanggal === null) return;
+    const mulai   = prompt("Edit jam mulai (HH:MM):", item.mulai);
+    if (mulai === null) return;
+    const selesai = prompt("Edit jam selesai (HH:MM):", item.selesai);
+    if (selesai === null) return;
+    const nama    = prompt("Edit nama:", item.nama);
+    if (nama === null) return;
 
-    if (!agenda || !tanggal || !mulai || !selesai || !nama) return;
+    // basic validation
+    if (!agenda.trim() || !tanggal.trim() || !mulai.trim() || !selesai.trim() || !nama.trim()) {
+        alert("Semua field harus diisi.");
+        return;
+    }
+    const sm = toMinutes(mulai), se = toMinutes(selesai);
+    if (isNaN(sm) || isNaN(se) || sm >= se) {
+        alert("Jam tidak valid (pastikan mulai < selesai).");
+        return;
+    }
 
-    if (isBentrok(item.ruangan, tanggal, mulai, selesai, id)) {
+    // check bentrok except current id
+    if (isBentrok(item.ruangan, tanggal, mulai, selesai, normalizeId(item.id))) {
         alert("❌ Jadwal bentrok! Tidak bisa disimpan.");
         return;
     }
 
-    item.agenda = agenda;
-    item.tanggal = tanggal;
-    item.mulai = mulai;
-    item.selesai = selesai;
-    item.nama = nama;
+    // commit changes
+    raw[idx].agenda = agenda.trim();
+    raw[idx].tanggal = tanggal.trim();
+    raw[idx].mulai = mulai.trim();
+    raw[idx].selesai = selesai.trim();
+    raw[idx].nama = nama.trim();
 
-    localStorage.setItem("jadwal_meeting", JSON.stringify(data));
+    localStorage.setItem("jadwal_meeting", JSON.stringify(raw));
     loadData();
 }
 
-/* CEK BENTROK */
+/* ---------- Check overlap (ignore a specific id) ---------- */
 function isBentrok(ruangan, tanggal, mulai, selesai, idIgnore) {
-    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    const raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    const start1 = toMinutes(mulai), end1 = toMinutes(selesai);
+    if (isNaN(start1) || isNaN(end1)) return false;
 
-    let start1 = toMinutes(mulai);
-    let end1 = toMinutes(selesai);
-
-    return data.some(item => {
-        if (item.id === idIgnore) return false;
+    return raw.some(item => {
+        if (normalizeId(item.id) === normalizeId(idIgnore)) return false;
         if (item.ruangan !== ruangan || item.tanggal !== tanggal) return false;
-
-        let start2 = toMinutes(item.mulai);
-        let end2 = toMinutes(item.selesai);
-
-        return !(end1 <= start2 || start1 >= end2);
+        const s2 = toMinutes(item.mulai), e2 = toMinutes(item.selesai);
+        if (isNaN(s2) || isNaN(e2)) return false;
+        return !(end1 <= s2 || start1 >= e2);
     });
 }
 
-function toMinutes(t) {
-    let [h, m] = t.split(":").map(Number);
-    return h * 60 + m;
-}
-
+/* ---------- init ---------- */
 loadData();
 </script>
-
 </body>
 </html>
