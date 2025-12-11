@@ -170,6 +170,30 @@
 </div>
 
 <script>
+/* ---------- Format Tanggal ---------- */
+function namaBulan(b) {
+    const bulan = ["","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+    return bulan[b] || "";
+}
+
+function formatTanggal(tgl) {
+    if (!tgl) return "";
+
+    // format: 2025-12-16
+    if (tgl.includes("-")) {
+        const [y, m, d] = tgl.split("-");
+        return `${Number(d)} ${namaBulan(Number(m))} ${y}`;
+    }
+
+    // format: 16/12/2025
+    if (tgl.includes("/")) {
+        const [d, m, y] = tgl.split("/");
+        return `${Number(d)} ${namaBulan(Number(m))} ${y}`;
+    }
+
+    return tgl;
+}
+
 /* ---------- Utilities ---------- */
 function safeId() {
     if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
@@ -186,29 +210,26 @@ function normalizeId(x){ return x === undefined || x === null ? String(x) : Stri
 function loadData() {
     let raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
 
-    // ensure every item has id (handle older data)
+    // ensure every item has id
     let changed = false;
     raw = raw.map(item => {
-        if (!item.hasOwnProperty("id") || item.id === null || item.id === undefined) {
+        if (!item.id) {
             item.id = safeId();
             changed = true;
         }
-        // ensure time fields exist to avoid errors
         item.mulai = item.mulai || "00:00";
         item.selesai = item.selesai || "00:00";
         return item;
     });
     if (changed) localStorage.setItem("jadwal_meeting", JSON.stringify(raw));
 
-    // sort by tanggal then mulai
+    // sort
     raw.sort((a,b) => {
         const da = new Date(a.tanggal), db = new Date(b.tanggal);
         if (da - db !== 0) return da - db;
-        const ma = toMinutes(a.mulai) || 0, mb = toMinutes(b.mulai) || 0;
-        return ma - mb;
+        return (toMinutes(a.mulai)||0) - (toMinutes(b.mulai)||0);
     });
 
-    // render
     renderLists(raw);
 }
 
@@ -223,7 +244,7 @@ function renderLists(data) {
         const box = document.createElement("div");
         box.className = "booking-box";
         box.innerHTML = `
-            <div class="tanggal">📅 ${item.tanggal}</div>
+            <div class="tanggal">📅 ${formatTanggal(item.tanggal)}</div>
             <div class="agenda">${escapeHtml(item.agenda)}</div>
             <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
             <div class="nama">👤 ${escapeHtml(item.nama)}</div>
@@ -240,22 +261,22 @@ function renderLists(data) {
     });
 }
 
-/* simple html escape to avoid injection from prompt */
+/* simple html escape */
 function escapeHtml(s){
-    if (s === null || s === undefined) return "";
+    if (!s) return "";
     return String(s)
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
         .replaceAll(">","&gt;")
         .replaceAll('"',"&quot;")
-        .replaceAll("'", "&#39;");
+        .replaceAll("'","&#39;");
 }
 
 /* ---------- Detail modal ---------- */
 function showDetail(item) {
     document.getElementById("detail-ruangan").innerText = "🏢 Ruangan: " + item.ruangan;
     document.getElementById("detail-agenda").innerText  = "📝 Agenda: " + item.agenda;
-    document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + item.tanggal;
+    document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + formatTanggal(item.tanggal);
     document.getElementById("detail-jam").innerText     = "⏰ Jam: " + item.mulai + " - " + item.selesai;
     document.getElementById("detail-nama").innerText    = "👤 Pemakai: " + item.nama;
     document.getElementById("detailModal").style.display = "flex";
@@ -271,65 +292,67 @@ function deleteData(id) {
     loadData();
 }
 
-/* ---------- Edit by ID (prompt-based) ---------- */
+/* ---------- Edit by ID ---------- */
 function editData(id) {
     const raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
     const idx = raw.findIndex(item => normalizeId(item.id) === normalizeId(id));
-    if (idx === -1) { alert("Data tidak ditemukan."); return; }
+    if (idx === -1) return alert("Data tidak ditemukan.");
 
     const item = raw[idx];
 
-    // Prompt values (prefilled)
     const agenda  = prompt("Edit agenda:", item.agenda);
-    if (agenda === null) return; // user cancel
-    const tanggal = prompt("Edit tanggal (YYYY-MM-DD):", item.tanggal);
+    if (agenda === null) return;
+
+    const tanggal = prompt("Edit tanggal (YYYY-MM-DD atau DD/MM/YYYY):", item.tanggal);
     if (tanggal === null) return;
+
     const mulai   = prompt("Edit jam mulai (HH:MM):", item.mulai);
     if (mulai === null) return;
+
     const selesai = prompt("Edit jam selesai (HH:MM):", item.selesai);
     if (selesai === null) return;
+
     const nama    = prompt("Edit nama:", item.nama);
     if (nama === null) return;
 
-    // basic validation
+    // validation
     if (!agenda.trim() || !tanggal.trim() || !mulai.trim() || !selesai.trim() || !nama.trim()) {
         alert("Semua field harus diisi.");
         return;
     }
+
     const sm = toMinutes(mulai), se = toMinutes(selesai);
     if (isNaN(sm) || isNaN(se) || sm >= se) {
-        alert("Jam tidak valid (pastikan mulai < selesai).");
+        alert("Jam tidak valid!");
         return;
     }
 
-    // check bentrok except current id
-    if (isBentrok(item.ruangan, tanggal, mulai, selesai, normalizeId(item.id))) {
-        alert("❌ Jadwal bentrok! Tidak bisa disimpan.");
+    if (isBentrok(item.ruangan, tanggal, mulai, selesai, item.id)) {
+        alert("❌ Jadwal bentrok!");
         return;
     }
 
-    // commit changes
-    raw[idx].agenda = agenda.trim();
+    raw[idx].agenda  = agenda.trim();
     raw[idx].tanggal = tanggal.trim();
-    raw[idx].mulai = mulai.trim();
+    raw[idx].mulai   = mulai.trim();
     raw[idx].selesai = selesai.trim();
-    raw[idx].nama = nama.trim();
+    raw[idx].nama    = nama.trim();
 
     localStorage.setItem("jadwal_meeting", JSON.stringify(raw));
     loadData();
 }
 
-/* ---------- Check overlap (ignore a specific id) ---------- */
+/* ---------- Check overlap ---------- */
 function isBentrok(ruangan, tanggal, mulai, selesai, idIgnore) {
     const raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
     const start1 = toMinutes(mulai), end1 = toMinutes(selesai);
-    if (isNaN(start1) || isNaN(end1)) return false;
 
     return raw.some(item => {
         if (normalizeId(item.id) === normalizeId(idIgnore)) return false;
-        if (item.ruangan !== ruangan || item.tanggal !== tanggal) return false;
+        if (item.ruangan !== ruangan) return false;
+        if (item.tanggal !== tanggal) return false;
+
         const s2 = toMinutes(item.mulai), e2 = toMinutes(item.selesai);
-        if (isNaN(s2) || isNaN(e2)) return false;
         return !(end1 <= s2 || start1 >= e2);
     });
 }
