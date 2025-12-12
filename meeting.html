@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Dashboard Ruang Meeting</title>
+
     <style>
         body {
             margin: 0;
@@ -14,6 +15,22 @@
                 url('citylight.png') no-repeat center center/cover;
             color: #ffffff;
             min-height: 100vh;
+        }
+
+        /* --- LOGO RESPONSIF --- */
+        .logo {
+            display: block;
+            width: 130px;      /* ukuran default laptop */
+            margin: 0 auto 15px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+
+        @media (max-width: 900px) {
+            .logo { width: 110px; }  /* tablet */
+        }
+
+        @media (max-width: 600px) {
+            .logo { width: 85px; }   /* HP */
         }
 
         h1 {
@@ -43,7 +60,10 @@
             transition: 0.3s ease;
             z-index: 999;
         }
-        .fab:hover { transform: scale(1.15); box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
+        .fab:hover {
+            transform: scale(1.15);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+        }
 
         .btn-back {
             display: inline-block;
@@ -58,7 +78,9 @@
             font-weight: 600;
             transition: .2s;
         }
-        .btn-back:hover { background: rgba(255,255,255,0.35); }
+        .btn-back:hover {
+            background: rgba(255,255,255,0.35);
+        }
 
         .container {
             display: flex;
@@ -76,7 +98,10 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.22);
             transition: 0.25s ease;
         }
-        .column:hover { transform: translateY(-5px); box-shadow: 0 12px 28px rgba(0,0,0,0.28); }
+        .column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.28);
+        }
 
         .column h2 {
             text-align: center;
@@ -96,69 +121,93 @@
             cursor: pointer;
             transition: 0.18s;
         }
-        .booking-box:hover { transform: scale(1.02); border-left-color: #00f7ff; }
+        .booking-box:hover {
+            transform: scale(1.02);
+            border-left-color: #00f7ff;
+        }
 
         .tanggal { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
         .agenda  { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
         .jam     { font-size: 14px; margin-bottom: 4px; }
         .nama    { font-size: 13px; opacity: 0.9; }
 
-        .actions { margin-top: 8px; display:flex; gap:8px; }
-        .btn-edit, .btn-delete {
-            padding:6px 10px; border-radius:8px; border:none; cursor:pointer;
-            font-size:13px; color:white;
+        .actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
         }
-        .btn-edit { background:#00b4ff; }
-        .btn-delete { background:#ff3b3b; }
+        .btn-edit, .btn-delete {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            color: white;
+        }
+        .btn-edit { background: #00b4ff; }
+        .btn-delete { background: #ff3b3b; }
 
         .modal {
-            position: fixed; inset:0;
-            display:none; align-items:center; justify-content:center;
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
             background: rgba(0,0,0,0.55);
             backdrop-filter: blur(4px);
             z-index: 1200;
         }
+
         .modal-content {
             background: rgba(255,255,255,0.12);
-            padding:20px; border-radius:12px; width:90%; max-width:420px;
-            color:#fff; border:1px solid rgba(255,255,255,0.18);
-            box-shadow:0 8px 20px rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 420px;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
-        .btn-close { margin-top:12px; padding:10px; width:100%; background:#ff3b3b; color:white; border:none; border-radius:8px; cursor:pointer; }
+
+        .btn-close {
+            margin-top: 12px;
+            padding: 10px;
+            width: 100%;
+            background: #ff3b3b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
 
         @media (max-width:800px) {
-            .container{ flex-direction:column; }
-            .column{ width:100%; }
+            .container { flex-direction: column; }
+            .column { width: 100%; }
         }
+
     </style>
 </head>
+
 <body>
 
 <a href="index.html" class="btn-back">Back</a>
-<h1>Jadwal Peminjaman Ruang Meeting</h1>
+
+<!-- LOGO DI ATAS JUDUL -->
+<img src="map-log.png" alt="Logo" class="logo">
+
+<h1>Jadwal Peminjaman Ruang Meeting PT Mitra Asa Pratama</h1>
 
 <a href="daftar.html" class="fab">+</a>
 
 <div class="container">
-    <div class="column" id="arjuna">
-        <h2>Ruang Meeting Arjuna</h2>
-        <div class="list"></div>
-    </div>
-
-    <div class="column" id="srikandi">
-        <h2>Ruang Meeting Srikandi</h2>
-        <div class="list"></div>
-    </div>
-
-    <div class="column" id="gatot">
-        <h2>Ruang Meeting Gatot Kaca</h2>
-        <div class="list"></div>
-    </div>
+    <div class="column" id="arjuna"><h2>Ruang Meeting Arjuna</h2><div class="list"></div></div>
+    <div class="column" id="srikandi"><h2>Ruang Meeting Srikandi</h2><div class="list"></div></div>
+    <div class="column" id="gatot"><h2>Ruang Meeting Gatot Kaca</h2><div class="list"></div></div>
 </div>
 
-<!-- detail modal -->
+<!-- MODAL DETAIL -->
 <div class="modal" id="detailModal">
-    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-content" role="dialog" aria-modal="true">
         <h3 id="detailTitle">Detail Jadwal</h3>
         <p id="detail-ruangan"></p>
         <p id="detail-agenda"></p>
@@ -170,31 +219,25 @@
 </div>
 
 <script>
-/* ---------- Format Tanggal ---------- */
+/* --- FORMAT TANGGAL --- */
 function namaBulan(b) {
     const bulan = ["","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
     return bulan[b] || "";
 }
-
 function formatTanggal(tgl) {
     if (!tgl) return "";
-
-    // format: 2025-12-16
     if (tgl.includes("-")) {
         const [y, m, d] = tgl.split("-");
         return `${Number(d)} ${namaBulan(Number(m))} ${y}`;
     }
-
-    // format: 16/12/2025
     if (tgl.includes("/")) {
         const [d, m, y] = tgl.split("/");
         return `${Number(d)} ${namaBulan(Number(m))} ${y}`;
     }
-
     return tgl;
 }
 
-/* ---------- Utilities ---------- */
+/* --- UTILS --- */
 function safeId() {
     if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
     return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
@@ -204,64 +247,8 @@ function toMinutes(t) {
     const [h,m] = t.split(":").map(Number);
     return h*60 + (m||0);
 }
-function normalizeId(x){ return x === undefined || x === null ? String(x) : String(x); }
+function normalizeId(x){ return x == null ? String(x) : String(x); }
 
-/* ---------- Load and normalize stored data ---------- */
-function loadData() {
-    let raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
-
-    // ensure every item has id
-    let changed = false;
-    raw = raw.map(item => {
-        if (!item.id) {
-            item.id = safeId();
-            changed = true;
-        }
-        item.mulai = item.mulai || "00:00";
-        item.selesai = item.selesai || "00:00";
-        return item;
-    });
-    if (changed) localStorage.setItem("jadwal_meeting", JSON.stringify(raw));
-
-    // sort
-    raw.sort((a,b) => {
-        const da = new Date(a.tanggal), db = new Date(b.tanggal);
-        if (da - db !== 0) return da - db;
-        return (toMinutes(a.mulai)||0) - (toMinutes(b.mulai)||0);
-    });
-
-    renderLists(raw);
-}
-
-/* ---------- Render ---------- */
-function renderLists(data) {
-    const arjunaEl = document.querySelector("#arjuna .list");
-    const srikandiEl = document.querySelector("#srikandi .list");
-    const gatotEl = document.querySelector("#gatot .list");
-    arjunaEl.innerHTML = ""; srikandiEl.innerHTML = ""; gatotEl.innerHTML = "";
-
-    data.forEach(item => {
-        const box = document.createElement("div");
-        box.className = "booking-box";
-        box.innerHTML = `
-            <div class="tanggal">📅 ${formatTanggal(item.tanggal)}</div>
-            <div class="agenda">${escapeHtml(item.agenda)}</div>
-            <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
-            <div class="nama">👤 ${escapeHtml(item.nama)}</div>
-            <div class="actions">
-                <button class="btn-edit" onclick="event.stopPropagation(); editData('${normalizeId(item.id)}')"></button>
-                <button class="btn-delete" onclick="event.stopPropagation(); deleteData('${normalizeId(item.id)}')"></button>
-            </div>
-        `;
-        box.onclick = () => showDetail(item);
-
-        if (item.ruangan === "Arjuna") arjunaEl.appendChild(box);
-        else if (item.ruangan === "Srikandi") srikandiEl.appendChild(box);
-        else if (item.ruangan === "Gatot Kaca") gatotEl.appendChild(box);
-    });
-}
-
-/* simple html escape */
 function escapeHtml(s){
     if (!s) return "";
     return String(s)
@@ -272,27 +259,81 @@ function escapeHtml(s){
         .replaceAll("'","&#39;");
 }
 
-/* ---------- Detail modal ---------- */
+/* --- LOAD DATA --- */
+function loadData() {
+    let raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    let changed = false;
+
+    raw = raw.map(item => {
+        if (!item.id) { item.id = safeId(); changed = true; }
+        item.mulai = item.mulai || "00:00";
+        item.selesai = item.selesai || "00:00";
+        return item;
+    });
+    if (changed) localStorage.setItem("jadwal_meeting", JSON.stringify(raw));
+
+    raw.sort((a,b)=>{
+        const da = new Date(a.tanggal), db = new Date(b.tanggal);
+        if (da-db!==0) return da-db;
+        return (toMinutes(a.mulai)||0) - (toMinutes(b.mulai)||0);
+    });
+
+    renderLists(raw);
+}
+
+/* --- RENDER DATA --- */
+function renderLists(data) {
+    const arjunaEl = document.querySelector("#arjuna .list");
+    const srikandiEl = document.querySelector("#srikandi .list");
+    const gatotEl = document.querySelector("#gatot .list");
+    arjunaEl.innerHTML = ""; srikandiEl.innerHTML = ""; gatotEl.innerHTML = "";
+
+    data.forEach(item => {
+        const box = document.createElement("div");
+        box.className = "booking-box";
+        box.onclick = () => showDetail(item);
+
+        box.innerHTML = `
+            <div class="tanggal">📅 ${formatTanggal(item.tanggal)}</div>
+            <div class="agenda">${escapeHtml(item.agenda)}</div>
+            <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
+            <div class="nama">👤 ${escapeHtml(item.nama)}</div>
+            <div class="actions">
+                <button class="btn-edit" onclick="event.stopPropagation(); editData('${normalizeId(item.id)}')">Edit</button>
+                <button class="btn-delete" onclick="event.stopPropagation(); deleteData('${normalizeId(item.id)}')">Hapus</button>
+            </div>
+        `;
+
+        if (item.ruangan === "Arjuna") arjunaEl.appendChild(box);
+        else if (item.ruangan === "Srikandi") srikandiEl.appendChild(box);
+        else if (item.ruangan === "Gatot Kaca") gatotEl.appendChild(box);
+    });
+}
+
+/* --- DETAIL MODAL --- */
 function showDetail(item) {
     document.getElementById("detail-ruangan").innerText = "🏢 Ruangan: " + item.ruangan;
     document.getElementById("detail-agenda").innerText  = "📝 Agenda: " + item.agenda;
     document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + formatTanggal(item.tanggal);
     document.getElementById("detail-jam").innerText     = "⏰ Jam: " + item.mulai + " - " + item.selesai;
     document.getElementById("detail-nama").innerText    = "👤 Pemakai: " + item.nama;
+
     document.getElementById("detailModal").style.display = "flex";
 }
 function closeModal(){ document.getElementById("detailModal").style.display = "none"; }
 
-/* ---------- Delete by ID ---------- */
+/* --- DELETE --- */
 function deleteData(id) {
     if (!confirm("Yakin ingin menghapus jadwal ini?")) return;
-    const raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
-    const newData = raw.filter(item => normalizeId(item.id) !== normalizeId(id));
-    localStorage.setItem("jadwal_meeting", JSON.stringify(newData));
+
+    let raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+    raw = raw.filter(item => normalizeId(item.id) !== normalizeId(id));
+
+    localStorage.setItem("jadwal_meeting", JSON.stringify(raw));
     loadData();
 }
 
-/* ---------- Edit by ID ---------- */
+/* --- EDIT --- */
 function editData(id) {
     const raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
     const idx = raw.findIndex(item => normalizeId(item.id) === normalizeId(id));
@@ -315,21 +356,13 @@ function editData(id) {
     const nama    = prompt("Edit nama:", item.nama);
     if (nama === null) return;
 
-    // validation
     if (!agenda.trim() || !tanggal.trim() || !mulai.trim() || !selesai.trim() || !nama.trim()) {
-        alert("Semua field harus diisi.");
-        return;
+        alert("Semua field harus diisi."); return;
     }
 
-    const sm = toMinutes(mulai), se = toMinutes(selesai);
-    if (isNaN(sm) || isNaN(se) || sm >= se) {
-        alert("Jam tidak valid!");
-        return;
-    }
-
-    if (isBentrok(item.ruangan, tanggal, mulai, selesai, item.id)) {
-        alert("❌ Jadwal bentrok!");
-        return;
+    const m1 = toMinutes(mulai), m2 = toMinutes(selesai);
+    if (isNaN(m1) || isNaN(m2) || m1 >= m2) {
+        alert("Jam tidak valid!"); return;
     }
 
     raw[idx].agenda  = agenda.trim();
@@ -342,23 +375,9 @@ function editData(id) {
     loadData();
 }
 
-/* ---------- Check overlap ---------- */
-function isBentrok(ruangan, tanggal, mulai, selesai, idIgnore) {
-    const raw = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
-    const start1 = toMinutes(mulai), end1 = toMinutes(selesai);
-
-    return raw.some(item => {
-        if (normalizeId(item.id) === normalizeId(idIgnore)) return false;
-        if (item.ruangan !== ruangan) return false;
-        if (item.tanggal !== tanggal) return false;
-
-        const s2 = toMinutes(item.mulai), e2 = toMinutes(item.selesai);
-        return !(end1 <= s2 || start1 >= e2);
-    });
-}
-
-/* ---------- init ---------- */
+/* --- INIT --- */
 loadData();
+
 </script>
 </body>
 </html>
