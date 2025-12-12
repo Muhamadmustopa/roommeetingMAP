@@ -20,7 +20,7 @@
         /* --- LOGO RESPONSIF --- */
         .logo {
             display: block;
-            width: 130px;      /* ukuran default laptop */
+            width: 140px;      /* ukuran default laptop */
             margin: 0 auto 15px;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
         }
@@ -299,8 +299,8 @@ function renderLists(data) {
             <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
             <div class="nama">👤 ${escapeHtml(item.nama)}</div>
             <div class="actions">
-                <button class="btn-edit" onclick="event.stopPropagation(); editData('${normalizeId(item.id)}')">Edit</button>
-                <button class="btn-delete" onclick="event.stopPropagation(); deleteData('${normalizeId(item.id)}')">Hapus</button>
+                <button class="btn-edit" onclick="event.stopPropagation(); editData('${normalizeId(item.id)}')"></button>
+                <button class="btn-delete" onclick="event.stopPropagation(); deleteData('${normalizeId(item.id)}')"></button>
             </div>
         `;
 
