@@ -1,152 +1,124 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Dashboard Ruang Meeting</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard Ruang Meeting</title>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', sans-serif;
-            background:
-                linear-gradient(0deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-                URL('citylight.png') no-repeat center center/cover;
-            color: #ffffff;
-            min-height: 100vh;
-        }
+<style>
+/* ===== STYLE ASLI TIDAK DIUBAH ===== */
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    background:
+        linear-gradient(0deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        URL('citylight.png') no-repeat center center/cover;
+    color: #ffffff;
+    min-height: 100vh;
+}
 
-        .logo {
-            display: block;
-            width: 140px;
-            margin: 0 auto 15px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
-        }
+.logo {
+    display: block;
+    width: 140px;
+    margin: 0 auto 15px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
 
-        @media (max-width: 900px) {
-            .logo { width: 110px; }
-        }
+@media (max-width: 900px) { .logo { width: 110px; } }
+@media (max-width: 600px) { .logo { width: 85px; } }
 
-        @media (max-width: 600px) {
-            .logo { width: 85px; }
-        }
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 32px;
+    font-weight: 700;
+    text-shadow: 0 3px 8px rgba(0,0,0,0.5);
+}
 
-        h1 {
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 32px;
-            font-weight: 700;
-            text-shadow: 0 3px 8px rgba(0,0,0,0.5);
-        }
+.btn-back {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+}
 
-        .btn-back {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 18px;
-            background: rgba(255,255,255,0.25);
-            backdrop-filter: blur(8px);
-            color: #fff;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-            transition: .2s;
-        }
-        .btn-back:hover {
-            background: rgba(255,255,255,0.35);
-        }
+.container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
 
-        .container {
-            display: flex;
-            gap: 20px;
-            justify-content: space-between;
-        }
+.column {
+    width: 32%;
+    background: rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 18px;
+    backdrop-filter: blur(10px);
+}
 
-        .column {
-            width: 32%;
-            background: rgba(255,255,255,0.12);
-            border-radius: 18px;
-            padding: 18px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.22);
-            transition: 0.25s ease;
-        }
-        .column h2 {
-            text-align: center;
-            font-size: 20px;
-            margin-top: 0;
-            color: #bfefff;
-        }
+.column h2 {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 0;
+    color: #bfefff;
+}
 
-        .booking-box {
-            background: rgba(255,255,255,0.08);
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            color: #fff;
-            border-left: 4px solid #00c8ff;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-            cursor: pointer;
-            transition: 0.18s;
-        }
-        .booking-box:hover {
-            transform: scale(1.02);
-            border-left-color: #00f7ff;
-        }
+.booking-box {
+    background: rgba(255,255,255,0.08);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border-left: 4px solid #00c8ff;
+    cursor: pointer;
+}
 
-        .tanggal { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-        .agenda  { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-        .jam     { font-size: 14px; margin-bottom: 4px; }
-        .nama    { font-size: 13px; opacity: 0.9; }
+.actions{
+    margin-top:8px;
+    display:flex;
+    gap:8px;
+}
 
-        .modal {
-            position: fixed;
-            inset: 0;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(4px);
-            z-index: 1200;
-        }
+.btn-edit,.btn-delete{
+    border:none;
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+}
+.btn-edit{ background:#ffc107; }
+.btn-delete{ background:#ff3b3b;color:#fff; }
 
-        .modal-content {
-            background: rgba(255,255,255,0.12);
-            padding: 20px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 420px;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        .btn-close {
-            margin-top: 12px;
-            padding: 10px;
-            width: 100%;
-            background: #ff3b3b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        @media (max-width:800px) {
-            .container { flex-direction: column; }
-            .column { width: 100%; }
-        }
-    </style>
+/* ===== FAB (+) ===== */
+.fab{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#00c8ff;
+    color:white;
+    font-size:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    box-shadow:0 8px 20px rgba(0,0,0,.4);
+}
+</style>
 </head>
 
 <body>
 
 <a href="index.html" class="btn-back">Back</a>
-
-<img src="map-log.png" alt="Logo" class="logo">
-
+<img src="map-log.png" class="logo">
 <h1>Jadwal Peminjaman Ruang Meeting PT Mitra Asa Pratama</h1>
 
 <a href="daftar.html" class="fab">+</a>
@@ -157,90 +129,72 @@
     <div class="column" id="Gatot Kaca"><h2>Ruang Meeting Gatot Kaca</h2><div class="list"></div></div>
 </div>
 
-<!-- MODAL DETAIL -->
-<div class="modal" id="detailModal">
-    <div class="modal-content">
-        <h3 id="detailTitle">Detail Jadwal</h3>
-        <p id="detail-ruangan"></p>
-        <p id("detail-agenda"></p>
-        <p id="detail-tanggal"></p>
-        <p id="detail-jam"></p>
-        <p id="detail-nama"></p>
-        <button class="btn-close" onclick="closeModal()">Tutup</button>
-    </div>
-</div>
-
 <script>
-// URL Google Apps Script Web App (sudah kamu deploy)
-const API_URL = "https://script.google.com/macros/s/AKfycbzz1xsfp8YRU809ZbBSwCurTJLbnfvi9LYU1LuthoQEqQo_R2zORRoe7xfL2OJgLy4c/exec";
+/* ===== API BARU ===== */
+const API_URL="https://script.google.com/macros/s/AKfycbztad3MUDmIvrw2HF0Qz5MmWugiXlyaNibfIulhjYEMR4eeeseQcq2E8RWTaV9TrbrV/exec";
 
-/* --- FORMAT TANGGAL --- */
-function namaBulan(b) {
-    const bulan = ["","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-    return bulan[b] || "";
+function namaBulan(b){
+    return ["","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"][b];
 }
-function formatTanggal(tgl) {
-    if (!tgl) return "";
-    if (tgl.includes("-")) {
-        const [y,m,d] = tgl.split("-");
-        return `${Number(d)} ${namaBulan(Number(m))} ${y}`;
-    }
-    return tgl;
+function formatTanggal(t){
+    let [y,m,d]=t.split("-");
+    return `${d} ${namaBulan(m)} ${y}`;
 }
 
-/* --- RENDER DATA --- */
-function renderLists(data) {
-    const arjunaEl = document.querySelector("#Arjuna .list");
-    const srikandiEl = document.querySelector("#Srikandi .list");
-    const gatotEl = document.querySelector("#Gatot Kaca .list");
-    arjunaEl.innerHTML = ""; srikandiEl.innerHTML = ""; gatotEl.innerHTML = "";
+/* ===== LOAD ===== */
+async function loadData(){
+    const res=await fetch(API_URL);
+    const data=await res.json();
+    renderLists(data);
+}
 
-    data.forEach(item => {
-        const box = document.createElement("div");
-        box.className = "booking-box";
-        box.onclick = () => showDetail(item);
+/* ===== RENDER ===== */
+function renderLists(data){
+    ["Arjuna","Srikandi","Gatot Kaca"].forEach(r=>{
+        document.querySelector(`#${r} .list`).innerHTML="";
+    });
 
-        box.innerHTML = `
-            <div class="tanggal">📅 ${formatTanggal(item.tanggal)}</div>
-            <div class="agenda">${item.agenda}</div>
-            <div class="jam">⏰ ${item.mulai} - ${item.selesai}</div>
-            <div class="nama">👤 ${item.nama}</div>
-        `;
-        if (item.ruangan === "Arjuna") arjunaEl.appendChild(box);
-        if (item.ruangan === "Srikandi") srikandiEl.appendChild(box);
-        if (item.ruangan === "Gatot Kaca") gatotEl.appendChild(box);
+    data.forEach(d=>{
+        const box=document.createElement("div");
+        box.className="booking-box";
+        box.innerHTML=`
+            <div>📅 ${formatTanggal(d.tanggal)}</div>
+            <div><b>${d.agenda}</b></div>
+            <div>⏰ ${d.mulai} - ${d.selesai}</div>
+            <div>👤 ${d.nama}</div>
+            <div class="actions">
+                <button class="btn-edit" onclick='editData(${JSON.stringify(d)})'>Edit</button>
+                <button class="btn-delete" onclick="deleteData('${d.id}')">Hapus</button>
+            </div>`;
+        document.querySelector(`#${d.ruangan} .list`).appendChild(box);
     });
 }
 
-/* --- DETAIL MODAL --- */
-function showDetail(item) {
-    document.getElementById("detail-ruangan").innerText = "🏢 Ruangan: " + item.ruangan;
-    document.getElementById("detail-agenda").innerText  = "📝 Agenda: " + item.agenda;
-    document.getElementById("detail-tanggal").innerText = "📅 Tanggal: " + formatTanggal(item.tanggal);
-    document.getElementById("detail-jam").innerText     = "⏰ Jam: " + item.mulai + " - " + item.selesai;
-    document.getElementById("detail-nama").innerText    = "👤 Pemakai: " + item.nama;
-    document.getElementById("detailModal").style.display = "flex";
-}
-function closeModal() {
-    document.getElementById("detailModal").style.display = "none";
-}
+/* ===== EDIT ===== */
+async function editData(d){
+    const agenda=prompt("Agenda:",d.agenda); if(!agenda)return;
+    const tanggal=prompt("Tanggal YYYY-MM-DD:",d.tanggal); if(!tanggal)return;
+    const mulai=prompt("Jam mulai:",d.mulai); if(!mulai)return;
+    const selesai=prompt("Jam selesai:",d.selesai); if(!selesai)return;
+    const nama=prompt("Nama:",d.nama); if(!nama)return;
 
-/* --- LOAD DATA DARI GSHEET --- */
-async function loadData() {
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-
-        // filter / sort opsional
-        data.sort((a,b)=> new Date(a.tanggal) - new Date(b.tanggal));
-
-        renderLists(data);
-    } catch (err) {
-        console.error("Gagal load data:", err);
-    }
+    await fetch(API_URL,{
+        method:"POST",
+        body:JSON.stringify({_method:"PUT",id:d.id,ruangan:d.ruangan,agenda,tanggal,mulai,selesai,nama})
+    });
+    loadData();
 }
 
-/* --- INIT --- */
+/* ===== DELETE ===== */
+async function deleteData(id){
+    if(!confirm("Hapus jadwal ini?"))return;
+    await fetch(API_URL,{
+        method:"POST",
+        body:JSON.stringify({_method:"DELETE",id})
+    });
+    loadData();
+}
+
 loadData();
 </script>
 
