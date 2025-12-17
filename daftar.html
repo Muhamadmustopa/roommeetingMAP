@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Jadwal Meeting</title>
-    
+
     <style>
         body {
             margin: 0;
@@ -25,13 +25,11 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.25);
             color: white;
             border: 1px solid rgba(255,255,255,0.3);
-            animation: fadeIn 0.6s ease;
         }
 
         h2 {
             text-align: center;
-            color: white;
-            margin-top: -10px;
+            margin-top: 0;
             text-shadow: 0 2px 4px rgba(0,0,0,.4);
         }
 
@@ -40,7 +38,6 @@
             margin-top: 12px;
             display: block;
             font-size: 14px;
-            color: #f7f7f7;
         }
 
         input, select {
@@ -50,14 +47,7 @@
             border-radius: 10px;
             border: none;
             font-size: 14px;
-            outline: none;
-            background: rgba(255,255,255,0.85);
-            transition: 0.25s;
-        }
-
-        input:focus, select:focus {
-            background: white;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.35);
+            background: rgba(255,255,255,0.9);
         }
 
         button {
@@ -71,13 +61,6 @@
             font-size: 17px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.25s ease;
-            box-shadow: 0 5px 15px rgba(0,123,255,0.4);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,123,255,0.55);
         }
 
         .back-btn {
@@ -89,8 +72,6 @@
             color: white;
             border-radius: 10px;
             text-decoration: none;
-            backdrop-filter: blur(6px);
-            transition: 0.25s;
         }
     </style>
 </head>
@@ -103,10 +84,10 @@
     <h2>Tambah Jadwal Meeting</h2>
 
     <label>Nama PIC</label>
-    <input type="text" id="nama" required>
+    <input type="text" id="nama">
 
     <label>Agenda Meeting</label>
-    <input type="text" id="agenda" required>
+    <input type="text" id="agenda">
 
     <label>Pilih Ruangan</label>
     <select id="ruangan">
@@ -116,7 +97,7 @@
     </select>
 
     <label>Tanggal</label>
-    <input type="date" id="tanggal" required>
+    <input type="date" id="tanggal">
 
     <label>Jam Mulai</label>
     <input type="time" id="mulai">
@@ -128,68 +109,70 @@
 </div>
 
 <script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzz1xsfp8YRU809ZbBSwCurTJLbnfvi9LYU1LuthoQEqQo_R2zORRoe7xfL2OJgLy4c/exec";
 
-// Convert jam ke menit
 function toMinutes(t) {
     let [h, m] = t.split(":").map(Number);
     return h * 60 + m;
 }
 
-// Cek bentrok jadwal
-function isBentrok(ruangan, tanggal, mulai, selesai) {
-    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
+// 🔎 Cek bentrok dari GOOGLE SHEETS
+async function isBentrok(ruangan, tanggal, mulai, selesai) {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-    let startNew = toMinutes(mulai);
-    let endNew = toMinutes(selesai);
+    const startNew = toMinutes(mulai);
+    const endNew = toMinutes(selesai);
 
     return data.some(item => {
         if (item.ruangan !== ruangan || item.tanggal !== tanggal) return false;
 
-        let startOld = toMinutes(item.mulai);
-        let endOld = toMinutes(item.selesai);
+        const startOld = toMinutes(item.mulai);
+        const endOld = toMinutes(item.selesai);
 
         return !(endNew <= startOld || startNew >= endOld);
     });
 }
 
-function simpan() {
-    let nama = document.getElementById("nama").value.trim();
-    let agenda = document.getElementById("agenda").value.trim();
-    let ruangan = document.getElementById("ruangan").value;
-    let tanggal = document.getElementById("tanggal").value;
-    let mulai = document.getElementById("mulai").value;
-    let selesai = document.getElementById("selesai").value;
+async function simpan() {
+    const nama = document.getElementById("nama").value.trim();
+    const agenda = document.getElementById("agenda").value.trim();
+    const ruangan = document.getElementById("ruangan").value;
+    const tanggal = document.getElementById("tanggal").value;
+    const mulai = document.getElementById("mulai").value;
+    const selesai = document.getElementById("selesai").value;
 
     if (!nama || !agenda || !tanggal || !mulai || !selesai) {
-        alert("❌ Semua field harus diisi.");
+        alert("❌ Semua field harus diisi");
         return;
     }
 
     if (toMinutes(mulai) >= toMinutes(selesai)) {
-        alert("❌ Jam mulai harus lebih kecil dari jam selesai.");
+        alert("❌ Jam tidak valid");
         return;
     }
 
-    if (isBentrok(ruangan, tanggal, mulai, selesai)) {
-        alert("❌ Jadwal bentrok dengan jadwal lain di ruangan yang sama.");
+    if (await isBentrok(ruangan, tanggal, mulai, selesai)) {
+        alert("❌ Jadwal bentrok dengan yang sudah ada");
         return;
     }
 
-    let data = JSON.parse(localStorage.getItem("jadwal_meeting")) || [];
-
-    data.push({
-        id: Date.now(),   // ⭐ ID unik ditambahkan
+    const payload = {
+        id: Date.now(),
         nama,
         agenda,
         ruangan,
         tanggal,
         mulai,
         selesai
+    };
+
+    await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
     });
 
-    localStorage.setItem("jadwal_meeting", JSON.stringify(data));
-
-    alert("✔ Jadwal berhasil ditambahkan!");
+    alert("✔ Jadwal berhasil disimpan ke Google Sheets");
     window.location.href = "meeting.html";
 }
 </script>
