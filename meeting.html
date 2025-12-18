@@ -2,33 +2,40 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Meeting MAP</title>
+<title>Jadwal Meeting</title>
 
 <style>
 body{
   margin:0;
   padding:20px;
-  font-family:Segoe UI;
+  font-family:'Segoe UI',sans-serif;
   background:
-    linear-gradient(0deg,rgba(0,0,0,.6),rgba(0,0,0,.6)),
+    linear-gradient(0deg,rgba(0,0,0,.5),rgba(0,0,0,.5)),
     url('citylight.png') no-repeat center/cover;
   color:#fff;
 }
-.container{display:flex;gap:20px}
+
+.container{display:flex;gap:20px;flex-wrap:wrap}
 .column{
   flex:1;
   background:rgba(255,255,255,.15);
-  padding:16px;border-radius:14px
+  padding:16px;border-radius:16px;
+  min-width:250px;
 }
 .booking{
-  background:rgba(255,255,255,.15);
-  padding:12px;border-radius:10px;margin-bottom:10px
+  background:rgba(255,255,255,.2);
+  padding:12px;border-radius:12px;margin-bottom:10px
 }
-.btn{border:none;padding:6px;border-radius:6px;color:#fff}
+.btn{
+  border:none;padding:6px 10px;
+  border-radius:8px;color:#fff;
+  cursor:pointer
+}
 .edit{background:#00b4ff}
 .delete{background:#ff3b3b}
+
 .fab{
-  position:fixed;right:20px;bottom:20px;
+  position:fixed;right:24px;bottom:24px;
   width:60px;height:60px;border-radius:50%;
   background:#00c8ff;color:#fff;
   display:flex;align-items:center;justify-content:center;
@@ -50,65 +57,86 @@ body{
 <a href="daftar.html" class="fab">+</a>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzm9o4CWCAfECu3oNefcbYmF7N_MbmaLITEp0ERw7KsLCc33DMNYrBfa78OszgodbIi/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwlcY4I-eplFOAhVYmMzfE_n0SKYY7urrtci4CdCj0/dev";
 
+/* Format tanggal & jam */
+function formatTanggal(v){
+  if(!v) return "-";
+  const d = new Date(v);
+  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
+}
+function formatJam(v){
+  if(!v) return "-";
+  if(v.length <= 5) return v;
+  const d = new Date(v);
+  return d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+}
+
+/* Load data */
 async function loadData(){
   const res = await fetch(API_URL);
   const data = await res.json();
 
-  arjuna.innerHTML="";
-  srikandi.innerHTML="";
-  gatot.innerHTML="";
+  document.getElementById("arjuna").innerHTML="";
+  document.getElementById("srikandi").innerHTML="";
+  document.getElementById("gatot").innerHTML="";
 
   data.forEach(d=>{
     const el=document.createElement("div");
     el.className="booking";
     el.innerHTML=`
       <b>${d.agenda}</b><br>
-      📅 ${d.tanggal}<br>
-      ⏰ ${d.mulai} - ${d.selesai}<br>
+      📅 ${formatTanggal(d.tanggal)}<br>
+      ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}<br><br>
-      <button class="btn edit" onclick="editData('${d.id}')"></button>
-      <button class="btn delete" onclick="hapusData('${d.id}')"></button>
+
+      <button class="btn edit" onclick="editData('${d.id}')">Edit</button>
+      <button class="btn delete" onclick="hapusData('${d.id}')">Delete</button>
     `;
-    if(d.ruangan==="Arjuna") arjuna.appendChild(el);
-    if(d.ruangan==="Srikandi") srikandi.appendChild(el);
-    if(d.ruangan==="Gatot Kaca") gatot.appendChild(el);
+
+    if(d.ruangan==="Arjuna") document.getElementById("arjuna").appendChild(el);
+    if(d.ruangan==="Srikandi") document.getElementById("srikandi").appendChild(el);
+    if(d.ruangan==="Gatot Kaca") document.getElementById("gatot").appendChild(el);
   });
 }
 
+/* Hapus */
+async function hapusData(id){
+  if(!confirm("Yakin hapus jadwal ini?")) return;
+
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+    body:"action=delete&id="+encodeURIComponent(id)
+  });
+
+  alert("🗑️ Jadwal terhapus");
+  loadData();
+}
+
+/* Edit */
 async function editData(id){
-  const agenda  = prompt("Agenda baru:");
+  const agenda  = prompt("Agenda:");
   const tanggal = prompt("Tanggal (YYYY-MM-DD):");
   const mulai   = prompt("Jam mulai:");
   const selesai = prompt("Jam selesai:");
   const nama    = prompt("Nama PIC:");
 
-  if(!agenda || !tanggal) return;
+  if(!agenda) return;
 
   await fetch(API_URL,{
     method:"POST",
     headers:{ "Content-Type":"application/x-www-form-urlencoded" },
     body:
-      "action=update&id="+id+
-      "&agenda="+agenda+
-      "&tanggal="+tanggal+
-      "&mulai="+mulai+
-      "&selesai="+selesai+
-      "&nama="+nama
+      "action=update&id="+encodeURIComponent(id)+
+      "&agenda="+encodeURIComponent(agenda)+
+      "&tanggal="+encodeURIComponent(tanggal)+
+      "&mulai="+encodeURIComponent(mulai)+
+      "&selesai="+encodeURIComponent(selesai)+
+      "&nama="+encodeURIComponent(nama)
   });
 
-  alert("✅ Data diupdate");
-  loadData();
-}
-
-async function hapusData(id){
-  if(!confirm("Hapus jadwal ini?")) return;
-  await fetch(API_URL,{
-    method:"POST",
-    headers:{ "Content-Type":"application/x-www-form-urlencoded" },
-    body:"action=delete&id="+id
-  });
+  alert("✏️ Jadwal diperbarui");
   loadData();
 }
 
