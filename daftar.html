@@ -48,13 +48,13 @@ button{
 <body>
 
 <div class="form-box">
-<h2>Tambah Jadwal</h2>
+<h2>Tambah Jadwal Peminjaman</h2>
 
 <label>Nama PIC</label>
-<input id="nama">
+<input id="nama" required>
 
 <label>Agenda</label>
-<input id="agenda">
+<input id="agenda" required>
 
 <label>Ruangan</label>
 <select id="ruangan">
@@ -64,39 +64,48 @@ button{
 </select>
 
 <label>Tanggal</label>
-<input type="date" id="tanggal">
+<input type="date" id="tanggal" required>
 
 <label>Jam Mulai</label>
-<input type="time" id="mulai">
+<input type="time" id="mulai" required>
 
 <label>Jam Selesai</label>
-<input type="time" id="selesai">
+<input type="time" id="selesai" required>
 
 <button onclick="simpan()">Simpan</button>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbztad3MUDmIvrw2HF0Qz5MmWugiXlyaNibfIulhjYEMR4eeeseQcq2E8RWTaV9TrbrV/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzm9o4CWCAfECu3oNefcbYmF7N_MbmaLITEp0ERw7KsLCc33DMNYrBfa78OszgodbIi/exec";
 
 async function simpan(){
   const data = new URLSearchParams({
-    action:"add",
-    id:Date.now(),
-    nama:nama.value,
-    agenda:agenda.value,
-    ruangan:ruangan.value,
-    tanggal:tanggal.value,
-    mulai:mulai.value,
-    selesai:selesai.value
+    action: "add",
+    id: Date.now(),
+    nama: document.getElementById("nama").value,
+    agenda: document.getElementById("agenda").value,
+    ruangan: document.getElementById("ruangan").value,
+    tanggal: document.getElementById("tanggal").value,
+    mulai: document.getElementById("mulai").value,
+    selesai: document.getElementById("selesai").value
   });
 
-  await fetch(API_URL,{
-    method:"POST",
-    body:data
-  });
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: data
+    });
 
-  alert("✅ Data berhasil disimpan");
-  location.reload();
+    const text = await res.text();
+    console.log(text);
+
+    alert("✅ Data berhasil disimpan");
+    location.reload();
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Gagal menyimpan data");
+  }
 }
 </script>
 
