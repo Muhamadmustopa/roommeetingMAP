@@ -15,7 +15,7 @@ body{
   color:#fff;
 }
 
-/* Logo */
+/* LOGO */
 .logo{
   display:block;
   width:120px;
@@ -24,6 +24,7 @@ body{
 
 h1{text-align:center;margin-bottom:30px}
 
+/* CONTAINER */
 .container{display:flex;gap:20px;flex-wrap:wrap}
 
 .column{
@@ -34,20 +35,32 @@ h1{text-align:center;margin-bottom:30px}
   min-width:260px;
 }
 
+/* JUDUL RUANGAN CENTER */
+.column h3{
+  text-align:center;
+  margin-top:0;
+  letter-spacing:1px;
+}
+
+/* BOOKING CARD */
 .booking{
-  background:rgba(255,255,255,.22);
+  background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.15));
   padding:14px;
-  border-radius:14px;
+  border-radius:16px;
   margin-bottom:12px;
   cursor:pointer;
-  transition:.2s;
+  transition:.25s;
 }
-.booking:hover{background:rgba(255,255,255,.3)}
+.booking:hover{
+  transform:translateY(-4px) scale(1.02);
+  background:rgba(255,255,255,.35);
+}
 
+/* BUTTON */
 .btn{
   border:none;
-  padding:6px 10px;
-  border-radius:8px;
+  padding:6px 12px;
+  border-radius:10px;
   color:#fff;
   cursor:pointer;
   font-size:13px;
@@ -55,6 +68,7 @@ h1{text-align:center;margin-bottom:30px}
 .edit{background:#00b4ff}
 .delete{background:#ff3b3b}
 
+/* FAB */
 .fab{
   position:fixed;
   right:24px;
@@ -71,33 +85,59 @@ h1{text-align:center;margin-bottom:30px}
   text-decoration:none;
 }
 
-/* === MODAL === */
+/* ===== MODAL ===== */
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.65);
   display:none;
   align-items:center;
   justify-content:center;
   z-index:999;
 }
+
 .modal-box{
   background:#fff;
   color:#111;
-  padding:24px;
-  width:320px;
-  border-radius:16px;
-  animation:pop .25s ease;
+  padding:26px;
+  width:340px;
+  border-radius:18px;
+  animation:slideUp .3s ease;
 }
-@keyframes pop{
-  from{transform:scale(.9);opacity:0}
-  to{transform:scale(1);opacity:1}
+
+@keyframes slideUp{
+  from{transform:translateY(30px);opacity:0}
+  to{transform:translateY(0);opacity:1}
 }
-.modal h3{margin-top:0}
+
+.modal-box h3{
+  margin:0 0 12px;
+  color:#2563eb;
+}
+
+.modal p{
+  margin:8px 0;
+  font-size:14px;
+}
+
 .close{
   float:right;
   cursor:pointer;
   font-weight:bold;
+}
+
+/* SKELETON (FAST LOAD FEEL) */
+.skeleton{
+  height:70px;
+  background:rgba(255,255,255,.25);
+  border-radius:14px;
+  margin-bottom:12px;
+  animation:pulse 1.2s infinite;
+}
+@keyframes pulse{
+  0%{opacity:.4}
+  50%{opacity:.8}
+  100%{opacity:.4}
 }
 </style>
 </head>
@@ -108,9 +148,27 @@ h1{text-align:center;margin-bottom:30px}
 <h1>Jadwal Peminjaman Ruang Meeting<br>PT Mitra Asa Pratama</h1>
 
 <div class="container">
-  <div class="column"><h3>Arjuna</h3><div id="arjuna"></div></div>
-  <div class="column"><h3>Srikandi</h3><div id="srikandi"></div></div>
-  <div class="column"><h3>Gatot Kaca</h3><div id="gatot"></div></div>
+  <div class="column">
+    <h3>Ruang Arjuna</h3>
+    <div id="arjuna">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+  <div class="column">
+    <h3>Ruang Srikandi</h3>
+    <div id="srikandi">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+  <div class="column">
+    <h3>Ruang Gatot Kaca (UG)</h3>
+    <div id="gatot">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
 </div>
 
 <a href="daftar.html" class="fab">+</a>
@@ -120,7 +178,7 @@ h1{text-align:center;margin-bottom:30px}
   <div class="modal-box" onclick="event.stopPropagation()">
     <span class="close" onclick="closeModal()">✖</span>
     <h3 id="mAgenda"></h3>
-    <p>📍 <span id="mRuangan"></span></p>
+    <p>📍 <b id="mRuangan"></b></p>
     <p>📅 <span id="mTanggal"></span></p>
     <p>⏰ <span id="mJam"></span></p>
     <p>👤 <span id="mNama"></span></p>
@@ -128,17 +186,17 @@ h1{text-align:center;margin-bottom:30px}
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
 
-const formatTanggal = v =>
-  new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
-const formatJam = v => v.length<=5 ? v :
-  new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+const formatTanggal=v=>new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
+const formatJam=v=>v.length<=5?v:new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
 
-/* LOAD DATA */
+/* FAST LOAD */
+requestAnimationFrame(loadData);
+
 async function loadData(){
-  const res = await fetch(API_URL,{cache:"no-store"});
-  const data = await res.json();
+  const res=await fetch(API_URL,{cache:"no-store"});
+  const data=await res.json();
 
   arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
 
@@ -146,7 +204,6 @@ async function loadData(){
     const el=document.createElement("div");
     el.className="booking";
     el.onclick=()=>openModal(d);
-
     el.innerHTML=`
       <b>${d.agenda}</b><br>
       📅 ${formatTanggal(d.tanggal)}<br>
@@ -171,32 +228,20 @@ function openModal(d){
   mNama.textContent=d.nama;
   modal.style.display="flex";
 }
-function closeModal(){ modal.style.display="none"; }
+function closeModal(){modal.style.display="none";}
 
-/* DELETE */
+/* CRUD */
 async function hapusData(id){
-  if(!confirm("Hapus jadwal ini?")) return;
-  await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:"action=delete&id="+id
-  });
+  if(!confirm("Hapus jadwal ini?"))return;
+  await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"action=delete&id="+id});
   loadData();
 }
-
-/* EDIT */
 async function editData(id){
   const agenda=prompt("Agenda:");
-  if(!agenda) return;
-  await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:`action=update&id=${id}&agenda=${agenda}`
-  });
+  if(!agenda)return;
+  await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:`action=update&id=${id}&agenda=${agenda}`});
   loadData();
 }
-
-loadData();
 </script>
 
 </body>
