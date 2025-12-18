@@ -25,7 +25,11 @@ body{
 h1{text-align:center;margin-bottom:30px}
 
 /* CONTAINER */
-.container{display:flex;gap:20px;flex-wrap:wrap}
+.container{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
 
 .column{
   flex:1;
@@ -37,7 +41,7 @@ h1{text-align:center;margin-bottom:30px}
 
 .column h3{
   text-align:center;
-  margin-top:6px;
+  margin:6px 0 14px;
   letter-spacing:1px;
 }
 
@@ -48,13 +52,14 @@ h1{text-align:center;margin-bottom:30px}
   border-radius:14px;
   margin-bottom:12px;
   cursor:pointer;
-  transition:.2s;
+  transition:.25s ease;
 }
 .booking:hover{
-  transform:scale(1.02);
+  transform:translateY(-2px) scale(1.02);
   background:rgba(255,255,255,.35);
 }
 
+/* BUTTON */
 .btn{
   border:none;
   padding:6px 10px;
@@ -82,13 +87,15 @@ h1{text-align:center;margin-bottom:30px}
   font-size:36px;
   text-decoration:none;
   box-shadow:0 10px 25px rgba(0,0,0,.5);
+  transition:.25s;
 }
+.fab:hover{transform:scale(1.1)}
 
 /* MODAL */
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.65);
   display:none;
   align-items:center;
   justify-content:center;
@@ -102,6 +109,7 @@ h1{text-align:center;margin-bottom:30px}
   width:320px;
   border-radius:18px;
   animation:pop .25s ease;
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
 }
 
 @keyframes pop{
@@ -115,6 +123,23 @@ h1{text-align:center;margin-bottom:30px}
   cursor:pointer;
   font-weight:bold;
   font-size:18px;
+}
+
+/* SKELETON */
+.skeleton{
+  height:80px;
+  background:linear-gradient(90deg,
+    rgba(255,255,255,.15),
+    rgba(255,255,255,.3),
+    rgba(255,255,255,.15));
+  background-size:200% 100%;
+  animation:shimmer 1.2s infinite;
+  border-radius:14px;
+  margin-bottom:12px;
+}
+@keyframes shimmer{
+  from{background-position:200%}
+  to{background-position:-200%}
 }
 </style>
 </head>
@@ -154,8 +179,18 @@ const formatTanggal = v =>
 const formatJam = v => v.length<=5 ? v :
   new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
 
-/* LOAD DATA SUPER CEPAT */
+/* LOADING */
+function showSkeleton(){
+  ["arjuna","srikandi","gatot"].forEach(id=>{
+    document.getElementById(id).innerHTML =
+      `<div class="skeleton"></div><div class="skeleton"></div>`;
+  });
+}
+
+/* LOAD DATA */
 async function loadData(){
+  showSkeleton();
+
   const cache = localStorage.getItem(CACHE_KEY);
   if(cache){
     render(JSON.parse(cache));
@@ -208,7 +243,11 @@ function openModal(d){
 }
 function closeModal(){ modal.style.display="none"; }
 
-/* DELETE INSTAN */
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape") closeModal();
+});
+
+/* DELETE */
 function hapusData(id){
   if(!confirm("Hapus jadwal ini?")) return;
 
@@ -225,7 +264,7 @@ function hapusData(id){
   });
 }
 
-/* EDIT INSTAN */
+/* EDIT */
 function editData(id){
   const agenda = prompt("Agenda baru:");
   if(!agenda) return;
