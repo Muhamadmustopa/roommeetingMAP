@@ -17,6 +17,24 @@ body{
   height:100vh;
 }
 
+/* Tombol Back */
+.back-btn{
+  position:fixed;
+  top:20px;
+  left:20px;
+  padding:10px 14px;
+  border-radius:10px;
+  background:rgba(255,255,255,.9);
+  color:#111;
+  text-decoration:none;
+  font-weight:600;
+  box-shadow:0 6px 18px rgba(0,0,0,.3);
+}
+
+.back-btn:hover{
+  background:#fff;
+}
+
 .form-box{
   background:rgba(255,255,255,.95);
   padding:30px;
@@ -60,14 +78,17 @@ button{
 
 <body>
 
+<!-- BACK BUTTON -->
+<a href="meeting.html" class="back-btn">Kembali</a>
+
 <div class="form-box">
-<h2>Tambah Jadwal</h2>
+<h2>Daftar Peminjaman Ruang Meeting</h2>
 
 <label>Nama PIC</label>
-<input id="nama">
+<input id="nama" required>
 
 <label>Agenda</label>
-<input id="agenda">
+<input id="agenda" required>
 
 <label>Ruangan</label>
 <select id="ruangan">
@@ -77,13 +98,13 @@ button{
 </select>
 
 <label>Tanggal</label>
-<input type="date" id="tanggal">
+<input type="date" id="tanggal" required>
 
 <label>Jam Mulai</label>
-<input type="time" id="mulai">
+<input type="time" id="mulai" required>
 
 <label>Jam Selesai</label>
-<input type="time" id="selesai">
+<input type="time" id="selesai" required>
 
 <button onclick="simpan()">Simpan</button>
 </div>
@@ -91,24 +112,4 @@ button{
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
 
-async function simpan(){
-  const data = new URLSearchParams({
-    action:"add",
-    id:Date.now(),
-    nama:nama.value,
-    agenda:agenda.value,
-    ruangan:ruangan.value,
-    tanggal:tanggal.value,
-    mulai:mulai.value,
-    selesai:selesai.value
-  });
-
-  await fetch(API_URL,{ method:"POST", body:data });
-
-  alert("✅ Data berhasil disimpan");
-  location.href="meeting.html";
-}
-</script>
-
-</body>
-</html>
+async
