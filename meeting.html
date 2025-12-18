@@ -2,159 +2,114 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Ruang Meeting</title>
+<title>Meeting MAP</title>
 
 <style>
 body{
-    margin:0;
-    padding:20px;
-    font-family:'Segoe UI',sans-serif;
-    background:
-        linear-gradient(0deg,rgba(0,0,0,.5),rgba(0,0,0,.5)),
-        url('citylight.png') no-repeat center/cover;
-    color:#fff;
-    min-height:100vh;
+  margin:0;
+  padding:20px;
+  font-family:Segoe UI;
+  background:
+    linear-gradient(0deg,rgba(0,0,0,.6),rgba(0,0,0,.6)),
+    url('citylight.png') no-repeat center/cover;
+  color:#fff;
 }
-
-.logo{
-    display:block;
-    width:130px;
-    margin:0 auto 10px;
-}
-
-h1{
-    text-align:center;
-    margin-bottom:25px;
-}
-
-.container{
-    display:flex;
-    gap:20px;
-}
+.container{display:flex;gap:20px}
 .column{
-    flex:1;
-    background:rgba(255,255,255,.12);
-    border-radius:16px;
-    padding:16px;
+  flex:1;
+  background:rgba(255,255,255,.15);
+  padding:16px;border-radius:14px
 }
-.column h2{
-    text-align:center;
-    color:#bfefff;
-}
-
 .booking{
-    background:rgba(255,255,255,.1);
-    padding:12px;
-    border-radius:12px;
-    margin-bottom:10px;
-    border-left:4px solid #00c8ff;
+  background:rgba(255,255,255,.15);
+  padding:12px;border-radius:10px;margin-bottom:10px
 }
-.booking .agenda{font-weight:600}
-.booking .actions{
-    margin-top:8px;
-    display:flex;
-    gap:6px;
-}
-.btn{
-    flex:1;
-    border:none;
-    border-radius:8px;
-    padding:6px;
-    font-size:13px;
-    cursor:pointer;
-    color:#fff;
-}
+.btn{border:none;padding:6px;border-radius:6px;color:#fff}
 .edit{background:#00b4ff}
 .delete{background:#ff3b3b}
-
-/* FAB */
 .fab{
-    position:fixed;
-    right:28px;
-    bottom:28px;
-    width:64px;
-    height:64px;
-    border-radius:50%;
-    background:linear-gradient(135deg,#00d4ff,#0090ff);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:38px;
-    font-weight:bold;
-    color:#fff;
-    text-decoration:none;
-    box-shadow:0 10px 25px rgba(0,0,0,.45);
-    z-index:9999;
-}
-
-@media(max-width:800px){
-    .container{flex-direction:column}
+  position:fixed;right:20px;bottom:20px;
+  width:60px;height:60px;border-radius:50%;
+  background:#00c8ff;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;text-decoration:none
 }
 </style>
 </head>
 
 <body>
 
-<img src="map-log.png" class="logo">
-<h1>Jadwal Peminjaman Ruang Meeting MAP</h1>
+<h1>Jadwal Peminjaman Ruang Meeting PT Mitra Asa Pratama</h1>
 
 <div class="container">
-    <div class="column"><h2>Arjuna</h2><div id="arjuna"></div></div>
-    <div class="column"><h2>Srikandi</h2><div id="srikandi"></div></div>
-    <div class="column"><h2>Gatot Kaca</h2><div id="gatot"></div></div>
+  <div class="column"><h3>Arjuna</h3><div id="arjuna"></div></div>
+  <div class="column"><h3>Srikandi</h3><div id="srikandi"></div></div>
+  <div class="column"><h3>Gatot Kaca</h3><div id="gatot"></div></div>
 </div>
 
 <a href="daftar.html" class="fab">+</a>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbztad3MUDmIvrw2HF0Qz5MmWugiXlyaNibfIulhjYEMR4eeeseQcq2E8RWTaV9TrbrV/exec";
-
-function formatTanggal(t){
-    const b=["","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
-    const [y,m,d]=t.split("-");
-    return d+" "+b[Number(m)]+" "+y;
-}
+const API_URL = "https://script.google.com/macros/s/AKfycbzm9o4CWCAfECu3oNefcbYmF7N_MbmaLITEp0ERw7KsLCc33DMNYrBfa78OszgodbIi/exec";
 
 async function loadData(){
-    const res = await fetch(API_URL);
-    const data = await res.json();
+  const res = await fetch(API_URL);
+  const data = await res.json();
 
-    arjuna.innerHTML="";
-    srikandi.innerHTML="";
-    gatot.innerHTML="";
+  arjuna.innerHTML="";
+  srikandi.innerHTML="";
+  gatot.innerHTML="";
 
-    data.forEach(d=>{
-        const el=document.createElement("div");
-        el.className="booking";
-        el.innerHTML=`
-            <div class="agenda">${d.agenda}</div>
-            <div>📅 ${formatTanggal(d.tanggal)}</div>
-            <div>⏰ ${d.mulai} - ${d.selesai}</div>
-            <div>👤 ${d.nama}</div>
-            <div class="actions">
-                <button class="btn edit" onclick="editData('${d.id}')">Edit</button>
-                <button class="btn delete" onclick="hapusData('${d.id}')">Hapus</button>
-            </div>
-        `;
-        if(d.ruangan==="Arjuna") arjuna.appendChild(el);
-        if(d.ruangan==="Srikandi") srikandi.appendChild(el);
-        if(d.ruangan==="Gatot Kaca") gatot.appendChild(el);
-    });
+  data.forEach(d=>{
+    const el=document.createElement("div");
+    el.className="booking";
+    el.innerHTML=`
+      <b>${d.agenda}</b><br>
+      📅 ${d.tanggal}<br>
+      ⏰ ${d.mulai} - ${d.selesai}<br>
+      👤 ${d.nama}<br><br>
+      <button class="btn edit" onclick="editData('${d.id}')"></button>
+      <button class="btn delete" onclick="hapusData('${d.id}')"></button>
+    `;
+    if(d.ruangan==="Arjuna") arjuna.appendChild(el);
+    if(d.ruangan==="Srikandi") srikandi.appendChild(el);
+    if(d.ruangan==="Gatot Kaca") gatot.appendChild(el);
+  });
 }
 
-function editData(id){
-    location.href="daftar.html?id="+id;
+async function editData(id){
+  const agenda  = prompt("Agenda baru:");
+  const tanggal = prompt("Tanggal (YYYY-MM-DD):");
+  const mulai   = prompt("Jam mulai:");
+  const selesai = prompt("Jam selesai:");
+  const nama    = prompt("Nama PIC:");
+
+  if(!agenda || !tanggal) return;
+
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+    body:
+      "action=update&id="+id+
+      "&agenda="+agenda+
+      "&tanggal="+tanggal+
+      "&mulai="+mulai+
+      "&selesai="+selesai+
+      "&nama="+nama
+  });
+
+  alert("✅ Data diupdate");
+  loadData();
 }
 
 async function hapusData(id){
-    if(!confirm("Hapus jadwal ini?")) return;
-    await fetch(API_URL,{
-        method:"POST",
-        headers:{ "Content-Type":"application/x-www-form-urlencoded" },
-        body:"action=delete&id="+id
-    });
-    loadData();
+  if(!confirm("Hapus jadwal ini?")) return;
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+    body:"action=delete&id="+id
+  });
+  loadData();
 }
 
 loadData();
