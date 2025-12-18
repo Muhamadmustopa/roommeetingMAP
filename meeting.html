@@ -10,43 +10,102 @@ body{
   padding:20px;
   font-family:'Segoe UI',sans-serif;
   background:
-    linear-gradient(0deg,rgba(0,0,0,.5),rgba(0,0,0,.5)),
+    linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,.55)),
     url('citylight.png') no-repeat center/cover;
   color:#fff;
 }
 
+/* Logo */
+.logo{
+  display:block;
+  width:120px;
+  margin:0 auto 10px;
+}
+
+h1{text-align:center;margin-bottom:30px}
+
 .container{display:flex;gap:20px;flex-wrap:wrap}
+
 .column{
   flex:1;
   background:rgba(255,255,255,.15);
-  padding:16px;border-radius:16px;
-  min-width:250px;
+  padding:16px;
+  border-radius:18px;
+  min-width:260px;
 }
+
 .booking{
-  background:rgba(255,255,255,.2);
-  padding:12px;border-radius:12px;margin-bottom:10px
+  background:rgba(255,255,255,.22);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:.2s;
 }
+.booking:hover{background:rgba(255,255,255,.3)}
+
 .btn{
-  border:none;padding:6px 10px;
-  border-radius:8px;color:#fff;
-  cursor:pointer
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  color:#fff;
+  cursor:pointer;
+  font-size:13px;
 }
 .edit{background:#00b4ff}
 .delete{background:#ff3b3b}
 
 .fab{
-  position:fixed;right:24px;bottom:24px;
-  width:60px;height:60px;border-radius:50%;
-  background:#00c8ff;color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-size:34px;text-decoration:none
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#00d4ff,#0090ff);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  text-decoration:none;
+}
+
+/* === MODAL === */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.modal-box{
+  background:#fff;
+  color:#111;
+  padding:24px;
+  width:320px;
+  border-radius:16px;
+  animation:pop .25s ease;
+}
+@keyframes pop{
+  from{transform:scale(.9);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+.modal h3{margin-top:0}
+.close{
+  float:right;
+  cursor:pointer;
+  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Jadwal Peminjaman Ruang Meeting PT Mitra Asa Pratama</h1>
+<img src="map-log.png" class="logo">
+<h1>Jadwal Peminjaman Ruang Meeting<br>PT Mitra Asa Pratama</h1>
 
 <div class="container">
   <div class="column"><h3>Arjuna</h3><div id="arjuna"></div></div>
@@ -56,87 +115,84 @@ body{
 
 <a href="daftar.html" class="fab">+</a>
 
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <span class="close" onclick="closeModal()">✖</span>
+    <h3 id="mAgenda"></h3>
+    <p>📍 <span id="mRuangan"></span></p>
+    <p>📅 <span id="mTanggal"></span></p>
+    <p>⏰ <span id="mJam"></span></p>
+    <p>👤 <span id="mNama"></span></p>
+  </div>
+</div>
+
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
 
-/* Format tanggal & jam */
-function formatTanggal(v){
-  if(!v) return "-";
-  const d = new Date(v);
-  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
-}
-function formatJam(v){
-  if(!v) return "-";
-  if(v.length <= 5) return v;
-  const d = new Date(v);
-  return d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
-}
+const formatTanggal = v =>
+  new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
+const formatJam = v => v.length<=5 ? v :
+  new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
 
-/* Load data */
+/* LOAD DATA */
 async function loadData(){
-  const res = await fetch(API_URL);
+  const res = await fetch(API_URL,{cache:"no-store"});
   const data = await res.json();
 
-  document.getElementById("arjuna").innerHTML="";
-  document.getElementById("srikandi").innerHTML="";
-  document.getElementById("gatot").innerHTML="";
+  arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
 
   data.forEach(d=>{
     const el=document.createElement("div");
     el.className="booking";
+    el.onclick=()=>openModal(d);
+
     el.innerHTML=`
       <b>${d.agenda}</b><br>
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}<br><br>
-
-      <button class="btn edit" onclick="editData('${d.id}')">Edit</button>
-      <button class="btn delete" onclick="hapusData('${d.id}')">Delete</button>
+      <button class="btn edit" onclick="event.stopPropagation();editData('${d.id}')">Edit</button>
+      <button class="btn delete" onclick="event.stopPropagation();hapusData('${d.id}')">Delete</button>
     `;
 
-    if(d.ruangan==="Arjuna") document.getElementById("arjuna").appendChild(el);
-    if(d.ruangan==="Srikandi") document.getElementById("srikandi").appendChild(el);
-    if(d.ruangan==="Gatot Kaca") document.getElementById("gatot").appendChild(el);
+    if(d.ruangan==="Arjuna") arjuna.appendChild(el);
+    if(d.ruangan==="Srikandi") srikandi.appendChild(el);
+    if(d.ruangan==="Gatot Kaca") gatot.appendChild(el);
   });
 }
 
-/* Hapus */
-async function hapusData(id){
-  if(!confirm("Yakin hapus jadwal ini?")) return;
+/* MODAL */
+function openModal(d){
+  mAgenda.textContent=d.agenda;
+  mRuangan.textContent=d.ruangan;
+  mTanggal.textContent=formatTanggal(d.tanggal);
+  mJam.textContent=`${formatJam(d.mulai)} - ${formatJam(d.selesai)}`;
+  mNama.textContent=d.nama;
+  modal.style.display="flex";
+}
+function closeModal(){ modal.style.display="none"; }
 
+/* DELETE */
+async function hapusData(id){
+  if(!confirm("Hapus jadwal ini?")) return;
   await fetch(API_URL,{
     method:"POST",
-    headers:{ "Content-Type":"application/x-www-form-urlencoded" },
-    body:"action=delete&id="+encodeURIComponent(id)
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:"action=delete&id="+id
   });
-
-  alert("🗑️ Jadwal terhapus");
   loadData();
 }
 
-/* Edit */
+/* EDIT */
 async function editData(id){
-  const agenda  = prompt("Agenda:");
-  const tanggal = prompt("Tanggal (YYYY-MM-DD):");
-  const mulai   = prompt("Jam mulai:");
-  const selesai = prompt("Jam selesai:");
-  const nama    = prompt("Nama PIC:");
-
+  const agenda=prompt("Agenda:");
   if(!agenda) return;
-
   await fetch(API_URL,{
     method:"POST",
-    headers:{ "Content-Type":"application/x-www-form-urlencoded" },
-    body:
-      "action=update&id="+encodeURIComponent(id)+
-      "&agenda="+encodeURIComponent(agenda)+
-      "&tanggal="+encodeURIComponent(tanggal)+
-      "&mulai="+encodeURIComponent(mulai)+
-      "&selesai="+encodeURIComponent(selesai)+
-      "&nama="+encodeURIComponent(nama)
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`action=update&id=${id}&agenda=${agenda}`
   });
-
-  alert("✏️ Jadwal diperbarui");
   loadData();
 }
 
