@@ -87,7 +87,7 @@ button{
 <label>Jam Selesai</label>
 <input type="time" id="selesai">
 
-<button onclick="simpan()">Simpan</button>
+<button type="button" onclick="simpan()">Simpan</button>
 </div>
 
 <script>
@@ -95,11 +95,14 @@ const API_URL="https://script.google.com/macros/s/AKfycbztad3MUDmIvrw2HF0Qz5MmWu
 const params=new URLSearchParams(location.search);
 const editId=params.get("id");
 
-function toMin(t){let[a,b]=t.split(":");return (+a)*60+(+b);}
+function toMin(t){
+  let[a,b]=t.split(":");
+  return (+a)*60+(+b);
+}
 
 async function loadEdit(){
     if(!editId) return;
-    document.getElementById("judul").innerText="Edit Jadwal Meeting";
+    judul.innerText="Edit Jadwal Meeting";
 
     const res=await fetch(API_URL);
     const data=await res.json();
@@ -131,22 +134,26 @@ async function simpan(){
         alert("❌ Semua field wajib diisi");
         return;
     }
+
     if(toMin(mulai.value)>=toMin(selesai.value)){
-        alert("❌ Jam tidak valid"); return;
+        alert("❌ Jam tidak valid");
+        return;
     }
+
     if(await isBentrok()){
-        alert("❌ Jadwal bentrok"); return;
+        alert("❌ Jadwal bentrok");
+        return;
     }
 
     const body=
-        "action="+(editId?"update":"add")+
-        "&id="+(editId||Date.now())+
-        "&nama="+encodeURIComponent(nama.value)+
-        "&agenda="+encodeURIComponent(agenda.value)+
-        "&ruangan="+encodeURIComponent(ruangan.value)+
-        "&tanggal="+tanggal.value+
-        "&mulai="+mulai.value+
-        "&selesai="+selesai.value;
+      "action="+(editId?"update":"add")+
+      "&id="+(editId||Date.now())+
+      "&nama="+encodeURIComponent(nama.value)+
+      "&agenda="+encodeURIComponent(agenda.value)+
+      "&ruangan="+encodeURIComponent(ruangan.value)+
+      "&tanggal="+tanggal.value+
+      "&mulai="+mulai.value+
+      "&selesai="+selesai.value;
 
     await fetch(API_URL,{
         method:"POST",
