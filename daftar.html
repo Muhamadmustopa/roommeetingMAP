@@ -1,180 +1,164 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Jadwal Meeting</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form Jadwal Meeting</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: url("citylight.png") no-repeat center center/cover;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .form-box {
-            backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.20);
-            padding: 30px;
-            width: 380px;
-            border-radius: 18px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        h2 {
-            text-align: center;
-            margin-top: 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,.4);
-        }
-
-        label {
-            font-weight: bold;
-            margin-top: 12px;
-            display: block;
-            font-size: 14px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            border-radius: 10px;
-            border: none;
-            font-size: 14px;
-            background: rgba(255,255,255,0.9);
-        }
-
-        button {
-            margin-top: 22px;
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #38b6ff, #0066ff);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .back-btn {
-            position: absolute;
-            left: 20px;
-            top: 20px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 10px 16px;
-            color: white;
-            border-radius: 10px;
-            text-decoration: none;
-        }
-    </style>
+<style>
+body{
+    margin:0;
+    font-family:"Segoe UI",Arial,sans-serif;
+    background:url("citylight.png") no-repeat center/cover;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.form-box{
+    backdrop-filter:blur(12px);
+    background:rgba(255,255,255,.20);
+    padding:30px;
+    width:380px;
+    border-radius:18px;
+    color:#fff;
+    box-shadow:0 8px 30px rgba(0,0,0,.3);
+}
+h2{text-align:center;margin-top:0}
+label{font-weight:600;margin-top:10px;display:block}
+input,select{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:none;
+    margin-top:5px;
+}
+button{
+    margin-top:20px;
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#38b6ff,#0066ff);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+.back-btn{
+    position:absolute;
+    left:20px;
+    top:20px;
+    padding:10px 14px;
+    background:rgba(0,0,0,.4);
+    color:white;
+    border-radius:10px;
+    text-decoration:none;
+}
+</style>
 </head>
 
 <body>
 
-<a href="meeting.html" class="back-btn">Back</a>
+<a href="meeting.html" class="back-btn">⬅ Back</a>
 
 <div class="form-box">
-    <h2>Tambah Jadwal Meeting</h2>
+<h2 id="judul">Tambah Jadwal Meeting</h2>
 
-    <label>Nama PIC</label>
-    <input type="text" id="nama">
+<label>Nama PIC</label>
+<input id="nama">
 
-    <label>Agenda Meeting</label>
-    <input type="text" id="agenda">
+<label>Agenda Meeting</label>
+<input id="agenda">
 
-    <label>Pilih Ruangan</label>
-    <select id="ruangan">
-        <option value="Arjuna">R. Meeting Arjuna</option>
-        <option value="Srikandi">R. Meeting Srikandi</option>
-        <option value="Gatot Kaca">R. Meeting Gatot Kaca</option>
-    </select>
+<label>Ruangan</label>
+<select id="ruangan">
+    <option value="Arjuna">R. Meeting Arjuna</option>
+    <option value="Srikandi">R. Meeting Srikandi</option>
+    <option value="Gatot Kaca">R. Meeting Gatot Kaca</option>
+</select>
 
-    <label>Tanggal</label>
-    <input type="date" id="tanggal">
+<label>Tanggal</label>
+<input type="date" id="tanggal">
 
-    <label>Jam Mulai</label>
-    <input type="time" id="mulai">
+<label>Jam Mulai</label>
+<input type="time" id="mulai">
 
-    <label>Jam Selesai</label>
-    <input type="time" id="selesai">
+<label>Jam Selesai</label>
+<input type="time" id="selesai">
 
-    <button onclick="simpan()">Simpan</button>
+<button onclick="simpan()">Simpan</button>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbztad3MUDmIvrw2HF0Qz5MmWugiXlyaNibfIulhjYEMR4eeeseQcq2E8RWTaV9TrbrV/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbztad3MUDmIvrw2HF0Qz5MmWugiXlyaNibfIulhjYEMR4eeeseQcq2E8RWTaV9TrbrV/exec";
+const params=new URLSearchParams(location.search);
+const editId=params.get("id");
 
-function toMinutes(t) {
-    let [h, m] = t.split(":").map(Number);
-    return h * 60 + m;
+function toMin(t){let[a,b]=t.split(":");return (+a)*60+(+b);}
+
+async function loadEdit(){
+    if(!editId) return;
+    document.getElementById("judul").innerText="Edit Jadwal Meeting";
+
+    const res=await fetch(API_URL);
+    const data=await res.json();
+    const d=data.find(x=>x.id==editId);
+    if(!d) return;
+
+    nama.value=d.nama;
+    agenda.value=d.agenda;
+    ruangan.value=d.ruangan;
+    tanggal.value=d.tanggal;
+    mulai.value=d.mulai;
+    selesai.value=d.selesai;
 }
 
-// 🔎 Cek bentrok dari GOOGLE SHEETS
-async function isBentrok(ruangan, tanggal, mulai, selesai) {
-    const res = await fetch(API_URL);
-    const data = await res.json();
+async function isBentrok(){
+    const res=await fetch(API_URL);
+    const data=await res.json();
+    const sNew=toMin(mulai.value), eNew=toMin(selesai.value);
 
-    const startNew = toMinutes(mulai);
-    const endNew = toMinutes(selesai);
-
-    return data.some(item => {
-        if (item.ruangan !== ruangan || item.tanggal !== tanggal) return false;
-
-        const startOld = toMinutes(item.mulai);
-        const endOld = toMinutes(item.selesai);
-
-        return !(endNew <= startOld || startNew >= endOld);
+    return data.some(d=>{
+        if(editId && d.id==editId) return false;
+        if(d.ruangan!==ruangan.value||d.tanggal!==tanggal.value) return false;
+        return !(eNew<=toMin(d.mulai)||sNew>=toMin(d.selesai));
     });
 }
 
-async function simpan() {
-    const nama = document.getElementById("nama").value.trim();
-    const agenda = document.getElementById("agenda").value.trim();
-    const ruangan = document.getElementById("ruangan").value;
-    const tanggal = document.getElementById("tanggal").value;
-    const mulai = document.getElementById("mulai").value;
-    const selesai = document.getElementById("selesai").value;
-
-    if (!nama || !agenda || !tanggal || !mulai || !selesai) {
-        alert("❌ Semua field harus diisi");
+async function simpan(){
+    if(!nama.value||!agenda.value||!tanggal.value||!mulai.value||!selesai.value){
+        alert("❌ Semua field wajib diisi");
         return;
     }
-
-    if (toMinutes(mulai) >= toMinutes(selesai)) {
-        alert("❌ Jam tidak valid");
-        return;
+    if(toMin(mulai.value)>=toMin(selesai.value)){
+        alert("❌ Jam tidak valid"); return;
+    }
+    if(await isBentrok()){
+        alert("❌ Jadwal bentrok"); return;
     }
 
-    if (await isBentrok(ruangan, tanggal, mulai, selesai)) {
-        alert("❌ Jadwal bentrok dengan yang sudah ada");
-        return;
-    }
+    const body=
+        "action="+(editId?"update":"add")+
+        "&id="+(editId||Date.now())+
+        "&nama="+encodeURIComponent(nama.value)+
+        "&agenda="+encodeURIComponent(agenda.value)+
+        "&ruangan="+encodeURIComponent(ruangan.value)+
+        "&tanggal="+tanggal.value+
+        "&mulai="+mulai.value+
+        "&selesai="+selesai.value;
 
-    const payload = {
-        id: Date.now(),
-        nama,
-        agenda,
-        ruangan,
-        tanggal,
-        mulai,
-        selesai
-    };
-
-    await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
+    await fetch(API_URL,{
+        method:"POST",
+        headers:{"Content-Type":"application/x-www-form-urlencoded"},
+        body
     });
 
-    alert("✔ Jadwal berhasil disimpan ke Google Sheets");
-    window.location.href = "meeting.html";
+    alert("✅ Data tersimpan");
+    location.href="meeting.html";
 }
+
+loadEdit();
 </script>
 
 </body>
