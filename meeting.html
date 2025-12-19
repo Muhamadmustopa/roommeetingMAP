@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jadwal Meeting</title>
 
 <style>
@@ -25,11 +26,7 @@ body{
 h1{text-align:center;margin-bottom:30px}
 
 /* CONTAINER */
-.container{
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
-}
+.container{display:flex;gap:20px;flex-wrap:wrap}
 
 .column{
   flex:1;
@@ -39,13 +36,9 @@ h1{text-align:center;margin-bottom:30px}
   min-width:260px;
 }
 
-.column h3{
-  text-align:center;
-  margin:6px 0 14px;
-  letter-spacing:1px;
-}
+.column h3{text-align:center;margin:6px 0 14px}
 
-/* BOOKING */
+/* CARD */
 .booking{
   background:rgba(255,255,255,.25);
   padding:14px;
@@ -55,7 +48,7 @@ h1{text-align:center;margin-bottom:30px}
   transition:.25s;
 }
 .booking:hover{
-  transform:translateY(-2px) scale(1.02);
+  transform:scale(1.02);
   background:rgba(255,255,255,.35);
 }
 
@@ -93,28 +86,47 @@ h1{text-align:center;margin-bottom:30px}
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.65);
+  background:rgba(0,0,0,.6);
   display:none;
   align-items:center;
   justify-content:center;
   z-index:999;
 }
+
 .modal-box{
   background:#fff;
   color:#111;
   padding:24px;
   width:320px;
   border-radius:18px;
-  animation:pop .25s ease;
 }
-@keyframes pop{
-  from{transform:scale(.85);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
+
 .close{
   float:right;
   cursor:pointer;
-  font-weight:bold;
+  font-size:18px;
+}
+
+/* SKELETON */
+.skeleton{
+  height:80px;
+  background:linear-gradient(90deg,rgba(255,255,255,.15),rgba(255,255,255,.3),rgba(255,255,255,.15));
+  background-size:200% 100%;
+  animation:shimmer 1.2s infinite;
+  border-radius:14px;
+  margin-bottom:12px;
+}
+@keyframes shimmer{
+  from{background-position:200%}
+  to{background-position:-200%}
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .container{flex-direction:column}
+  .btn{width:100%;margin-top:6px;padding:10px}
+  h1{font-size:18px}
+  .fab{width:56px;height:56px;font-size:32px}
 }
 </style>
 </head>
@@ -145,54 +157,53 @@ h1{text-align:center;margin-bottom:30px}
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
-const CACHE_KEY = "jadwal_meeting_cache";
-const ROLE = localStorage.getItem("role")==="admin" ? "admin" : "user";
+const API_URL="https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
+const CACHE_KEY="jadwal_meeting_cache";
+const ROLE=localStorage.getItem("role")==="admin"?"admin":"user";
 
-/* ================= FORMAT ================= */
-const formatTanggal = v =>
-  new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
-const formatJam = v =>
-  v.length<=5 ? v : new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+/* FORMAT */
+const formatTanggal=v=>new Date(v).toLocaleDateString("id-ID");
+const formatJam=v=>v.length<=5?v:new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
 
-/* ================= LOAD DATA ================= */
-async function loadData(){
-  const cache = localStorage.getItem(CACHE_KEY);
-  if(cache) render(JSON.parse(cache));
-
-  try{
-    const res = await fetch(API_URL,{cache:"no-store"});
-    const data = await res.json();
-    localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-    render(data);
-  }catch(e){
-    console.warn("Server delay / offline");
-  }
+/* SKELETON */
+function showSkeleton(){
+  ["arjuna","srikandi","gatot"].forEach(id=>{
+    document.getElementById(id).innerHTML=`<div class="skeleton"></div>`;
+  });
 }
 
-/* ================= RENDER ================= */
+/* LOAD */
+async function loadData(){
+  showSkeleton();
+
+  const cache=localStorage.getItem(CACHE_KEY);
+  if(cache) render(JSON.parse(cache));
+
+  const res=await fetch(API_URL);
+  const data=await res.json();
+  localStorage.setItem(CACHE_KEY,JSON.stringify(data));
+  render(data);
+}
+
+/* RENDER */
 function render(data){
-  arjuna.innerHTML = srikandi.innerHTML = gatot.innerHTML = "";
+  arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
 
   data.forEach(d=>{
-    const el = document.createElement("div");
-    el.className = "booking";
-    el.dataset.id = d.id;
-    el.onclick = ()=>openModal(d);
+    const el=document.createElement("div");
+    el.className="booking";
+    el.dataset.id=d.id;
+    el.onclick=()=>openModal(d);
 
-    el.innerHTML = `
+    el.innerHTML=`
       <b>${d.agenda}</b><br>
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}<br><br>
-
-      ${ROLE==="admin" ? `
-        <button class="btn edit"
-          onclick="event.stopPropagation();editData('${d.id}')">Edit</button>
-        <button class="btn delete"
-          onclick="event.stopPropagation();hapusData('${d.id}')">Delete</button>
-      ` : ``}
+      ${ROLE==="admin"?`
+        <button class="btn edit" onclick="event.stopPropagation();editData('${d.id}')">Edit</button>
+        <button class="btn delete" onclick="event.stopPropagation();hapusData('${d.id}')">Delete</button>
+      `:""}
     `;
 
     if(d.ruangan==="Arjuna") arjuna.appendChild(el);
@@ -201,7 +212,7 @@ function render(data){
   });
 }
 
-/* ================= MODAL ================= */
+/* MODAL */
 function openModal(d){
   mAgenda.textContent=d.agenda;
   mRuangan.textContent=d.ruangan;
@@ -210,30 +221,27 @@ function openModal(d){
   mNama.textContent=d.nama;
   modal.style.display="flex";
 }
-function closeModal(){ modal.style.display="none"; }
+function closeModal(){modal.style.display="none"}
 
-/* ================= DELETE (LOCAL ONLY) ================= */
+/* DELETE = LOCAL ONLY */
 function hapusData(id){
-  if(ROLE!=="admin") return;
-  if(!confirm("Hapus dari tampilan saja?")) return;
-
+  if(!confirm("Hapus dari tampilan saja?"))return;
   document.querySelector(`[data-id="${id}"]`)?.remove();
 
-  let cache = JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
-  cache = cache.filter(d=>d.id!=id);
+  let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
+  cache=cache.filter(d=>d.id!=id);
   localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
 }
 
-/* ================= EDIT ================= */
+/* EDIT = LOCAL ONLY */
 function editData(id){
-  if(ROLE!=="admin") return;
-  const agenda = prompt("Agenda baru:");
-  if(!agenda) return;
+  const agenda=prompt("Agenda baru:");
+  if(!agenda)return;
 
-  let cache = JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
-  const d = cache.find(x=>x.id==id);
+  let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
+  const d=cache.find(x=>x.id==id);
   if(d){
-    d.agenda = agenda;
+    d.agenda=agenda;
     localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
     render(cache);
   }
