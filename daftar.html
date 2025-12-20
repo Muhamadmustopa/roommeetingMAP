@@ -2,8 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tambah Jadwal</title>
- 
+
 <style>
 body{
   margin:0;
@@ -31,6 +32,7 @@ body{
   box-shadow:0 6px 18px rgba(0,0,0,.3);
 }
 
+/* FORM */
 .form-box{
   background:rgba(255,255,255,.95);
   padding:30px;
@@ -41,12 +43,14 @@ body{
 
 h2{text-align:center;margin-top:0}
 label{font-weight:600;margin-top:10px;display:block}
+
 input,select{
   width:100%;
   padding:10px;
   margin-top:5px;
   border-radius:8px;
   border:1px solid #ccc;
+  font-size:16px;
 }
 
 button{
@@ -60,6 +64,24 @@ button{
   font-size:16px;
   cursor:pointer;
 }
+button:disabled{
+  opacity:.6;
+}
+
+/* TOAST */
+#toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#111;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:20px;
+  opacity:0;
+  transition:.3s;
+}
+#toast.show{opacity:1}
 </style>
 </head>
 
@@ -71,7 +93,7 @@ button{
 <h2>Daftar Peminjaman Ruang Meeting</h2>
 
 <label>Nama PIC</label>
-<input id="nama" required>
+<input id="nama" required autofocus>
 
 <label>Agenda</label>
 <input id="agenda" required>
@@ -92,44 +114,74 @@ button{
 <label>Jam Selesai</label>
 <input type="time" id="selesai" required>
 
-<button onclick="simpan()">Simpan</button>
+<button id="btn" onclick="simpan()">Simpan</button>
 </div>
+
+<div id="toast"></div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
 const CACHE_KEY = "jadwal_meeting_cache";
 
+/* ===== TOAST ===== */
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2000);
+}
+
+/* ===== AUTO NEXT INPUT ===== */
+const fields=[nama,agenda,ruangan,tanggal,mulai,selesai];
+fields.forEach((f,i)=>{
+  f.addEventListener("change",()=>{
+    fields[i+1]?.focus();
+  });
+});
+
+/* ===== SIMPAN ===== */
 function simpan(){
-  // 1️⃣ Buat object data
-  const data = {
-    id: Date.now().toString(),
-    nama: nama.value,
-    agenda: agenda.value,
-    ruangan: ruangan.value,
-    tanggal: tanggal.value,
-    mulai: mulai.value,
-    selesai: selesai.value
+  if(!nama.value||!agenda.value||!tanggal.value||!mulai.value||!selesai.value){
+    toast("Lengkapi semua data");
+    navigator.vibrate?.(100);
+    return;
+  }
+
+  if(selesai.value <= mulai.value){
+    toast("Jam selesai harus lebih besar");
+    navigator.vibrate?.(150);
+    return;
+  }
+
+  btn.disabled=true;
+
+  const data={
+    id:Date.now().toString(),
+    nama:nama.value,
+    agenda:agenda.value,
+    ruangan:ruangan.value,
+    tanggal:tanggal.value,
+    mulai:mulai.value,
+    selesai:selesai.value
   };
 
-  // 2️⃣ SIMPAN KE CACHE (INSTANT)
-  const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "[]");
+  /* SIMPAN CACHE */
+  const cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
   cache.push(data);
-  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
 
-  // 3️⃣ LANGSUNG PINDAH HALAMAN (TANPA NUNGGU)
-  location.href = "meeting.html";
+  toast("Jadwal disimpan");
+  navigator.vibrate?.(50);
 
-  // 4️⃣ KIRIM KE GOOGLE SHEET DI BACKGROUND
-  const body = new URLSearchParams({
-    action: "add",
-    ...data
-  });
+  /* PINDAH HALAMAN */
+  setTimeout(()=>{
+    location.href="meeting.html";
+  },300);
 
-  fetch(API_URL,{
-    method:"POST",
-    body: body
-  }).catch(err=>{
-    console.warn("Sync ke GSheet gagal:",err);
+  /* SYNC BACKGROUND */
+  const body=new URLSearchParams({action:"add",...data});
+  fetch(API_URL,{method:"POST",body}).catch(()=>{
+    console.warn("Sync gagal");
   });
 }
 </script>
