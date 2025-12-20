@@ -162,8 +162,18 @@ const CACHE_KEY="jadwal_meeting_cache";
 const ROLE=localStorage.getItem("role")==="admin"?"admin":"user";
 
 /* FORMAT */
-const formatTanggal=v=>new Date(v).toLocaleDateString("id-ID");
-const formatJam=v=>v.length<=5?v:new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+/* FORMAT */
+const formatTanggal = v =>
+  new Date(v).toLocaleDateString("id-ID");
+
+const formatJam = v => {
+  if (!v) return "-";
+  if (typeof v === "string" && v.length <= 5) return v;
+  const d = new Date(v);
+  if (isNaN(d)) return "-";
+  return d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+};
+
 
 /* SKELETON */
 function showSkeleton(){
