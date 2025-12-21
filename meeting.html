@@ -216,9 +216,12 @@ function render(data){
       `:""}
     `;
 
-    if(d.ruangan==="Arjuna") arjuna.appendChild(el);
-    if(d.ruangan==="Srikandi") srikandi.appendChild(el);
-    if(d.ruangan==="Gatot Kaca") gatot.appendChild(el);
+    const ruang = (d.ruangan || "").toLowerCase().trim();
+
+if(ruang.includes("arjuna")) arjuna.appendChild(el);
+else if(ruang.includes("srikandi")) srikandi.appendChild(el);
+else if(ruang.includes("gatot")) gatot.appendChild(el);
+
   });
 }
 
