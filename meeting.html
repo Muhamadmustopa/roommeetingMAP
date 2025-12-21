@@ -186,14 +186,37 @@ function showSkeleton(){
 async function loadData(){
   showSkeleton();
 
-  const cache=localStorage.getItem(CACHE_KEY);
-  if(cache) render(JSON.parse(cache));
+  // 1️⃣ Ambil cache (langsung render)
+  let cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "[]");
+  if (cache.length) render(cache);
 
-  const res=await fetch(API_URL);
-  const data=await res.json();
-  localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-  render(data);
+  try{
+    // 2️⃣ Ambil data dari Google Sheet
+    const res = await fetch(API_URL);
+    const apiData = await res.json();
+
+    // 3️⃣ MERGE (cache lebih prioritas)
+    const map = new Map();
+
+    apiData.forEach(d => {
+      if(d && d.id) map.set(d.id, d);
+    });
+
+    cache.forEach(d => {
+      if(d && d.id) map.set(d.id, d);
+    });
+
+    const merged = [...map.values()];
+
+    // 4️⃣ Simpan & render ulang
+    localStorage.setItem(CACHE_KEY, JSON.stringify(merged));
+    render(merged);
+
+  }catch(err){
+    console.warn("Sync API gagal:", err);
+  }
 }
+
 
 /* RENDER */
 function render(data){
