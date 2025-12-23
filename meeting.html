@@ -48,17 +48,24 @@ h1{text-align:center;margin-bottom:30px}
   transform:scale(1.02);
   background:rgba(255,255,255,.35);
 }
-
-.btn{
+.icon-btn{
+  background:transparent;
   border:none;
-  padding:6px 10px;
-  border-radius:8px;
-  color:#fff;
   cursor:pointer;
-  font-size:13px;
+  font-size:18px;
+  margin-right:8px;
+  padding:6px;
+  border-radius:8px;
+  transition:.2s;
 }
-.edit{background:#00b4ff}
-.delete{background:#ff3b3b}
+
+.icon-btn:hover{
+  background:rgba(255,255,255,.25);
+}
+
+.icon-edit{color:#00d4ff}
+.icon-delete{color:#ff4d4d}
+
 
 .fab{
   position:fixed;
@@ -113,13 +120,6 @@ h1{text-align:center;margin-bottom:30px}
   from{background-position:200%}
   to{background-position:-200%}
 }
-
-@media(max-width:768px){
-  .container{flex-direction:column}
-  .btn{width:100%;margin-top:6px;padding:10px}
-  h1{font-size:18px}
-  .fab{width:56px;height:56px;font-size:32px}
-}
 </style>
 </head>
 
@@ -129,9 +129,9 @@ h1{text-align:center;margin-bottom:30px}
 <h1>Jadwal Peminjaman Ruang Meeting<br>PT Mitra Asa Pratama</h1>
 
 <div class="container">
-  <div class="column"><h3>Arjuna</h3><div id="arjuna"></div></div>
-  <div class="column"><h3>Srikandi</h3><div id="srikandi"></div></div>
-  <div class="column"><h3>Gatot Kaca</h3><div id="gatot"></div></div>
+  <div class="column"><h3>Ruang Arjuna</h3><div id="arjuna"></div></div>
+  <div class="column"><h3>Ruang Srikandi</h3><div id="srikandi"></div></div>
+  <div class="column"><h3>Ruang Gatot Kaca</h3><div id="gatot"></div></div>
 </div>
 
 <a href="daftar.html" class="fab">+</a>
@@ -160,8 +160,7 @@ const formatJam = v => {
   if (!v) return "-";
   if (typeof v === "string" && v.length <= 5) return v;
   const d = new Date(v);
-  if (isNaN(d)) return "-";
-  return d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+  return isNaN(d) ? "-" : d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
 };
 
 /* SKELETON */
@@ -171,33 +170,27 @@ function showSkeleton(){
   });
 }
 
-/* LOAD DATA (ANTI HILANG) */
+/* LOAD DATA */
 async function loadData(){
   showSkeleton();
 
   let cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "[]");
-  if (Array.isArray(cache) && cache.length) render(cache);
+  if (cache.length) render(cache);
 
   try{
     const res = await fetch(API_URL);
-    const json = await res.json();
-
-    const apiData = Array.isArray(json)
-      ? json
-      : Array.isArray(json.data) ? json.data : [];
-
-    if (!apiData.length) return;
+    const apiData = await res.json();
 
     const map = new Map();
-    apiData.forEach(d=>d?.id && map.set(d.id,d));
-    cache.forEach(d=>d?.id && map.set(d.id,d));
+    apiData.forEach(d=>{
+      if(!d.id) d.id = crypto.randomUUID();
+      map.set(String(d.id), d);
+    });
 
-    const merged=[...map.values()];
-    localStorage.setItem(CACHE_KEY,JSON.stringify(merged));
-    render(merged);
-
+    localStorage.setItem(CACHE_KEY, JSON.stringify([...map.values()]));
+    render([...map.values()]);
   }catch(e){
-    console.warn("API error:",e);
+    console.error("API error:", e);
   }
 }
 
@@ -210,7 +203,6 @@ function render(data){
 
     const el=document.createElement("div");
     el.className="booking";
-    el.dataset.id=d.id;
     el.onclick=()=>openModal(d);
 
     el.innerHTML=`
@@ -218,16 +210,26 @@ function render(data){
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama||"-"}<br><br>
-      ${ROLE==="admin"?`
-        <button class="btn edit" onclick="event.stopPropagation();editData('${d.id}')">Edit</button>
-        <button class="btn delete" onclick="event.stopPropagation();hapusData('${d.id}')">Delete</button>
-      `:""}
+    ${ROLE==="admin"?`
+  <button class="icon-btn icon-edit"
+    title="Edit"
+    onclick="event.stopPropagation();editData('${d.id}')">
+    ✏️
+  </button>
+
+  <button class="icon-btn icon-delete"
+    title="Hapus"
+    onclick="event.stopPropagation();hapusData('${d.id}')">
+    🗑️
+  </button>
+`:""}
+
     `;
 
-    const ruang=(d.ruangan||"").toLowerCase();
-    if(ruang.includes("arjuna")) arjuna.appendChild(el);
-    else if(ruang.includes("srikandi")) srikandi.appendChild(el);
-    else if(ruang.includes("gatot")) gatot.appendChild(el);
+    const r=d.ruangan.toLowerCase();
+    if(r.includes("arjuna")) arjuna.appendChild(el);
+    else if(r.includes("srikandi")) srikandi.appendChild(el);
+    else if(r.includes("gatot")) gatot.appendChild(el);
   });
 }
 
@@ -242,26 +244,23 @@ function openModal(d){
 }
 function closeModal(){modal.style.display="none"}
 
-/* LOCAL DELETE */
-function hapusData(id){
-  if(!confirm("Hapus dari tampilan saja?"))return;
-  let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
-  cache=cache.filter(d=>d.id!==id);
-  localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
-  render(cache);
-}
+/* DELETE (UI + SERVER) */
+async function hapusData(id){
+  if(!confirm("Hapus data ini?")) return;
 
-/* LOCAL EDIT */
-function editData(id){
-  const agenda=prompt("Agenda baru:");
-  if(!agenda)return;
-  let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
-  const d=cache.find(x=>x.id===id);
-  if(d){
-    d.agenda=agenda;
-    localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
-    render(cache);
-  }
+  let cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "[]");
+  cache = cache.filter(d => String(d.id) !== String(id));
+  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  render(cache);
+
+  const form = new FormData();
+  form.append("action","delete");
+  form.append("id",id);
+
+  await fetch(API_URL,{
+    method:"POST",
+    body:form
+  });
 }
 
 loadData();
