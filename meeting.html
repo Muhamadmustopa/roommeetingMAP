@@ -156,21 +156,21 @@ input[type=password]{
 </div>
 
 <script>
-/* ========== CONFIG ========== */
-const API_URL="https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
-const CACHE_KEY="jadwal_meeting_cache";
-const ADMIN_PIN_HASH="8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+/* ================= CONFIG ================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
+const CACHE_KEY = "jadwal_meeting_cache";
+const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
-/* ========== ROLE ========== */
-let ROLE=localStorage.getItem("role")||"user";
+/* ================= ROLE ================= */
+let ROLE = localStorage.getItem("role") || "user";
 
-/* ========== HASH ========== */
+/* ================= HASH ================= */
 async function sha256(text){
-  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
 }
 
-/* ========== LOGIN ========== */
+/* ================= LOGIN ================= */
 function openLoginModal(){
   loginModal.style.display="flex";
   pinInput.value="";
@@ -179,17 +179,12 @@ function closeLoginModal(){
   loginModal.style.display="none";
 }
 async function submitPin(){
-  const pin=pinInput.value;
-  if(!pin) return alert("PIN kosong");
-
-  const hash=await sha256(pin);
-  if(hash===ADMIN_PIN_HASH){
+  const hash = await sha256(pinInput.value);
+  if(hash === ADMIN_PIN_HASH){
     ROLE="admin";
     localStorage.setItem("role","admin");
-    alert("Login admin berhasil");
-    closeLoginModal();
     updateUI();
-    loadData();
+    closeLoginModal();
   }else{
     alert("PIN salah");
   }
@@ -198,10 +193,9 @@ function logoutAdmin(){
   ROLE="user";
   localStorage.removeItem("role");
   updateUI();
-  loadData();
 }
 
-/* ========== UI ========== */
+/* ================= UI ================= */
 function updateUI(){
   loginBtn.style.display  = ROLE==="admin" ? "none" : "inline-block";
   logoutBtn.style.display = ROLE==="admin" ? "inline-block" : "none";
@@ -209,9 +203,8 @@ function updateUI(){
 }
 updateUI();
 
-/* ========== FORMAT TANGGAL & JAM ========== */
+/* ================= FORMAT ================= */
 function formatTanggal(tgl){
-  if(!tgl) return "-";
   const [y,m,d] = tgl.split("-");
   return new Date(y, m-1, d).toLocaleDateString("id-ID",{
     day:"2-digit",
@@ -219,36 +212,32 @@ function formatTanggal(tgl){
     year:"numeric"
   });
 }
-
 function formatJam(jam){
-  if(!jam) return "-";
-  return jam.slice(0,5);
+  return jam ? jam.slice(0,5) : "-";
 }
 
-
-/* ========== LOAD DATA ========== */
+/* ================= LOAD DATA ================= */
 async function loadData(){
-  let data=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
+  let data = JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
 
   if(!data.length){
-    const res=await fetch(API_URL);
-    data=await res.json();
+    const res = await fetch(API_URL);
+    data = await res.json();
     data.forEach(d=>d.id=d.id||crypto.randomUUID());
     localStorage.setItem(CACHE_KEY,JSON.stringify(data));
   }
 
-  /* URUTKAN */
+  /* SORT AMAN SEMUA DEVICE */
   data.sort((a,b)=>{
-    const da=new Date(a.tanggal);
-    const db=new Date(b.tanggal);
-    if(da-db!==0) return da-db;
+    const t = a.tanggal.localeCompare(b.tanggal);
+    if(t !== 0) return t;
     return (a.mulai||"").localeCompare(b.mulai||"");
   });
 
   render(data);
 }
 
-/* ========== RENDER ========== */
+/* ================= RENDER ================= */
 function render(data){
   arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
 
@@ -264,9 +253,10 @@ function render(data){
       👤 ${d.nama}<br><br>
 
       ${ROLE==="admin"?`
-        <button class="icon-btn icon-edit" onclick="event.stopPropagation();alert('Edit '+d.id)">✏️edit</button>
-        <button class="icon-btn icon-delete" onclick="event.stopPropagation();hapusData('${d.id}')">🗑️hapus</button>
-      `:""}
+        <button class="icon-btn icon-delete"
+          onclick="event.stopPropagation();hapusData('${d.id}')">
+          🗑️ hapus
+        </button>`:""}
     `;
 
     const r=d.ruangan.toLowerCase();
@@ -276,7 +266,7 @@ function render(data){
   });
 }
 
-/* ========== MODAL DETAIL ========== */
+/* ================= MODAL ================= */
 function openModal(d){
   mAgenda.textContent=d.agenda;
   mRuangan.textContent=d.ruangan;
@@ -285,23 +275,23 @@ function openModal(d){
   mNama.textContent=d.nama;
   modal.style.display="flex";
 }
-function closeModal(){modal.style.display="none"}
+function closeModal(){ modal.style.display="none"; }
 
-/* ========== DELETE ========== */
+/* ================= DELETE (UI ONLY) ================= */
 function hapusData(id){
-  if(!confirm("Hapus data ini dari tampilan saja?")) return;
+  if(!confirm("Hapus dari tampilan saja?")) return;
 
-  let data = JSON.parse(localStorage.getItem(CACHE_KEY)||"[]")
+  const data = JSON.parse(localStorage.getItem(CACHE_KEY)||"[]")
     .filter(d=>d.id!==id);
 
-  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-
-  // render ulang UI saja
+  localStorage.setItem(CACHE_KEY,JSON.stringify(data));
   render(data);
 
-  alert("Data dihapus dari tampilan.\nData di Google Sheet tetap aman.");
+  alert("Data dihapus dari tampilan.\nGoogle Sheet tetap aman.");
 }
 
+/* ================= INIT ================= */
+loadData();
 </script>
 
 </body>
