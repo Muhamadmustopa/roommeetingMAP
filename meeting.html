@@ -210,20 +210,21 @@ function updateUI(){
 updateUI();
 
 /* ========== FORMAT TANGGAL & JAM ========== */
-function formatTanggal(v){
-  if(!v) return "-";
-  return new Date(v).toLocaleDateString("id-ID",{
+function formatTanggal(tgl){
+  if(!tgl) return "-";
+  const [y,m,d] = tgl.split("-");
+  return new Date(y, m-1, d).toLocaleDateString("id-ID",{
     day:"2-digit",
     month:"long",
     year:"numeric"
   });
 }
 
-function formatJam(v){
-  if(!v) return "-";
-  if(typeof v==="string" && v.includes(":")) return v.slice(0,5);
-  return new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+function formatJam(jam){
+  if(!jam) return "-";
+  return jam.slice(0,5);
 }
+
 
 /* ========== LOAD DATA ========== */
 async function loadData(){
@@ -287,22 +288,20 @@ function openModal(d){
 function closeModal(){modal.style.display="none"}
 
 /* ========== DELETE ========== */
-async function hapusData(id){
-  if(!confirm("Hapus data ini?"))return;
+function hapusData(id){
+  if(!confirm("Hapus data ini dari tampilan saja?")) return;
 
-  let data=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]")
+  let data = JSON.parse(localStorage.getItem(CACHE_KEY)||"[]")
     .filter(d=>d.id!==id);
 
-  localStorage.setItem(CACHE_KEY,JSON.stringify(data));
+  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+
+  // render ulang UI saja
   render(data);
 
-  const f=new FormData();
-  f.append("action","delete");
-  f.append("id",id);
-  await fetch(API_URL,{method:"POST",body:f});
+  alert("Data dihapus dari tampilan.\nData di Google Sheet tetap aman.");
 }
 
-loadData();
 </script>
 
 </body>
