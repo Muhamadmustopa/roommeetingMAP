@@ -16,7 +16,7 @@ body{
   color:#fff;
 }
 
-.logo{display:block;width:120px;margin:0 auto 10px}
+.logo{display:block;width:130px;margin:0 auto 10px}
 h1{text-align:center;margin-bottom:30px}
 
 .top-bar{
@@ -69,6 +69,7 @@ h1{text-align:center;margin-bottom:30px}
 .icon-edit{color:#00d4ff}
 .icon-delete{color:#ff4d4d}
 
+/* tombol + */
 .fab{
   position:fixed;
   right:24px;
@@ -78,7 +79,7 @@ h1{text-align:center;margin-bottom:30px}
   border-radius:50%;
   background:linear-gradient(135deg,#00d4ff,#0090ff);
   color:#fff;
-  display:flex;
+  display:none;
   align-items:center;
   justify-content:center;
   font-size:36px;
@@ -103,6 +104,7 @@ h1{text-align:center;margin-bottom:30px}
   border-radius:18px;
 }
 .close{float:right;cursor:pointer}
+
 input[type=password]{
   width:100%;
   padding:10px;
@@ -129,7 +131,8 @@ input[type=password]{
   <div class="column"><h3>Ruang Gatot Kaca</h3><div id="gatot"></div></div>
 </div>
 
-<a href="daftar.html" class="fab">+</a>
+<!-- tombol + hanya admin -->
+<a href="daftar.html" class="fab" id="addBtn">+</a>
 
 <!-- MODAL DETAIL -->
 <div class="modal" id="modal" onclick="closeModal()">
@@ -200,46 +203,75 @@ function logoutAdmin(){
 
 /* ========== UI ========== */
 function updateUI(){
-  loginBtn.style.display=ROLE==="admin"?"none":"inline-block";
-  logoutBtn.style.display=ROLE==="admin"?"inline-block":"none";
+  loginBtn.style.display  = ROLE==="admin" ? "none" : "inline-block";
+  logoutBtn.style.display = ROLE==="admin" ? "inline-block" : "none";
+  addBtn.style.display    = ROLE==="admin" ? "flex" : "none";
 }
 updateUI();
 
-/* ========== FORMAT ========== */
-const formatTanggal=v=>new Date(v).toLocaleDateString("id-ID");
-const formatJam=v=>typeof v==="string"?v:new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+/* ========== FORMAT TANGGAL & JAM ========== */
+function formatTanggal(v){
+  if(!v) return "-";
+  return new Date(v).toLocaleDateString("id-ID",{
+    day:"2-digit",
+    month:"long",
+    year:"numeric"
+  });
+}
 
-/* ========== DATA ========== */
+function formatJam(v){
+  if(!v) return "-";
+  if(typeof v==="string" && v.includes(":")) return v.slice(0,5);
+  return new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+}
+
+/* ========== LOAD DATA ========== */
 async function loadData(){
-  let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
-  if(cache.length) render(cache);
+  let data=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
 
-  const res=await fetch(API_URL);
-  const data=await res.json();
-  data.forEach(d=>d.id=d.id||crypto.randomUUID());
-  localStorage.setItem(CACHE_KEY,JSON.stringify(data));
+  if(!data.length){
+    const res=await fetch(API_URL);
+    data=await res.json();
+    data.forEach(d=>d.id=d.id||crypto.randomUUID());
+    localStorage.setItem(CACHE_KEY,JSON.stringify(data));
+  }
+
+  /* URUTKAN */
+  data.sort((a,b)=>{
+    const da=new Date(a.tanggal);
+    const db=new Date(b.tanggal);
+    if(da-db!==0) return da-db;
+    return (a.mulai||"").localeCompare(b.mulai||"");
+  });
+
   render(data);
 }
 
+/* ========== RENDER ========== */
 function render(data){
   arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
+
   data.forEach(d=>{
     const el=document.createElement("div");
     el.className="booking";
     el.onclick=()=>openModal(d);
+
     el.innerHTML=`
       <b>${d.agenda}</b><br>
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}<br><br>
+
       ${ROLE==="admin"?`
         <button class="icon-btn icon-edit" onclick="event.stopPropagation();alert('Edit '+d.id)">✏️edit</button>
-        <button class="icon-btn icon-delete" onclick="event.stopPropagation();hapusData('${d.id}')">🗑️delete</button>
+        <button class="icon-btn icon-delete" onclick="event.stopPropagation();hapusData('${d.id}')">🗑️hapus</button>
       `:""}
     `;
-    if(d.ruangan.toLowerCase().includes("arjuna")) arjuna.appendChild(el);
-    if(d.ruangan.toLowerCase().includes("srikandi")) srikandi.appendChild(el);
-    if(d.ruangan.toLowerCase().includes("gatot")) gatot.appendChild(el);
+
+    const r=d.ruangan.toLowerCase();
+    if(r.includes("arjuna")) arjuna.appendChild(el);
+    if(r.includes("srikandi")) srikandi.appendChild(el);
+    if(r.includes("gatot")) gatot.appendChild(el);
   });
 }
 
@@ -257,9 +289,12 @@ function closeModal(){modal.style.display="none"}
 /* ========== DELETE ========== */
 async function hapusData(id){
   if(!confirm("Hapus data ini?"))return;
-  let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]").filter(d=>d.id!==id);
-  localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
-  render(cache);
+
+  let data=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]")
+    .filter(d=>d.id!==id);
+
+  localStorage.setItem(CACHE_KEY,JSON.stringify(data));
+  render(data);
 
   const f=new FormData();
   f.append("action","delete");
