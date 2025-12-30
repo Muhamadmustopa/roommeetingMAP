@@ -110,8 +110,8 @@ h1{text-align:center;margin-bottom:30px}
 <body>
 
 <div class="top-bar">
-  <button id="loginBtn" class="btn btn-login" onclick="loginAdmin()">Login Admin</button>
-  <button id="logoutBtn" class="btn btn-logout" onclick="logoutAdmin()" style="display:none">Logout</button>
+  <button id="loginBtn" class="btn btn-login" onclick="loginAdmin()">.</button>
+  <button id="logoutBtn" class="btn btn-logout" onclick="logoutAdmin()" style="display:none">.</button>
 </div>
 
 <img src="map-log.png" class="logo">
@@ -140,28 +140,31 @@ h1{text-align:center;margin-bottom:30px}
 /* ========== CONFIG ========== */
 const API_URL="https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
 const CACHE_KEY="jadwal_meeting_cache";
-const ADMIN_PIN="123456"; // ← GANTI PIN DI SINI
+
+/* 🔐 HASH PIN ADMIN (123456) */
+const ADMIN_PIN_HASH =
+"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
 /* ========== ROLE ========== */
 let ROLE = localStorage.getItem("role") || "user";
 
-/* ========== FORMAT ========== */
-const formatTanggal=v=>{
-  if(!v) return "-";
-  const d=new Date(v);
-  return d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
-};
-const formatJam=v=>{
-  if(!v) return "-";
-  if(typeof v==="string" && v.length<=5) return v;
-  const d=new Date(v);
-  return d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
-};
+/* ========== HASH FUNCTION ========== */
+async function sha256(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return [...new Uint8Array(buf)]
+    .map(b=>b.toString(16).padStart(2,"0"))
+    .join("");
+}
 
 /* ========== LOGIN ADMIN ========== */
-function loginAdmin(){
-  const pin=prompt("Masukkan PIN Admin:");
-  if(pin===ADMIN_PIN){
+async function loginAdmin(){
+  const pin = prompt("Masukkan PIN Admin:");
+  if(!pin) return;
+
+  const inputHash = await sha256(pin);
+
+  if(inputHash === ADMIN_PIN_HASH){
     ROLE="admin";
     localStorage.setItem("role","admin");
     alert("Login admin berhasil");
@@ -185,6 +188,17 @@ function updateUI(){
   logoutBtn.style.display = ROLE==="admin" ? "inline-block" : "none";
 }
 updateUI();
+
+/* ========== FORMAT ========== */
+const formatTanggal=v=>{
+  if(!v) return "-";
+  return new Date(v).toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
+};
+const formatJam=v=>{
+  if(!v) return "-";
+  if(typeof v==="string" && v.length<=5) return v;
+  return new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+};
 
 /* ========== LOAD & RENDER ========== */
 async function loadData(){
