@@ -65,8 +65,6 @@ h1{text-align:center;margin-bottom:30px}
   cursor:pointer;
   font-size:18px;
   margin-right:8px;
-  padding:6px;
-  border-radius:8px;
 }
 .icon-edit{color:#00d4ff}
 .icon-delete{color:#ff4d4d}
@@ -87,6 +85,7 @@ h1{text-align:center;margin-bottom:30px}
   text-decoration:none;
 }
 
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
@@ -104,14 +103,21 @@ h1{text-align:center;margin-bottom:30px}
   border-radius:18px;
 }
 .close{float:right;cursor:pointer}
+input[type=password]{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  margin:10px 0;
+}
 </style>
 </head>
 
 <body>
 
 <div class="top-bar">
-  <button id="loginBtn" class="btn btn-login" onclick="loginAdmin()">.</button>
-  <button id="logoutBtn" class="btn btn-logout" onclick="logoutAdmin()" style="display:none">.</button>
+  <button id="loginBtn" class="btn btn-login" onclick="openLoginModal()">.</button>
+  <button id="logoutBtn" class="btn btn-logout" onclick="logoutAdmin()" style="display:none">Logout</button>
 </div>
 
 <img src="map-log.png" class="logo">
@@ -125,6 +131,7 @@ h1{text-align:center;margin-bottom:30px}
 
 <a href="daftar.html" class="fab">+</a>
 
+<!-- MODAL DETAIL -->
 <div class="modal" id="modal" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <span class="close" onclick="closeModal()">✖</span>
@@ -136,45 +143,54 @@ h1{text-align:center;margin-bottom:30px}
   </div>
 </div>
 
+<!-- MODAL LOGIN -->
+<div class="modal" id="loginModal" onclick="closeLoginModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <h3>Login Admin</h3>
+    <input type="password" id="pinInput" placeholder="Masukkan PIN">
+    <button class="btn btn-login" style="width:100%" onclick="submitPin()">Login</button>
+  </div>
+</div>
+
 <script>
 /* ========== CONFIG ========== */
 const API_URL="https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
 const CACHE_KEY="jadwal_meeting_cache";
-
-/* 🔐 HASH PIN ADMIN (123456) */
-const ADMIN_PIN_HASH =
-"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+const ADMIN_PIN_HASH="8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
 /* ========== ROLE ========== */
-let ROLE = localStorage.getItem("role") || "user";
+let ROLE=localStorage.getItem("role")||"user";
 
-/* ========== HASH FUNCTION ========== */
+/* ========== HASH ========== */
 async function sha256(text){
-  const enc = new TextEncoder().encode(text);
-  const buf = await crypto.subtle.digest("SHA-256", enc);
-  return [...new Uint8Array(buf)]
-    .map(b=>b.toString(16).padStart(2,"0"))
-    .join("");
+  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
 }
 
-/* ========== LOGIN ADMIN ========== */
-async function loginAdmin(){
-  const pin = prompt("Masukkan PIN Admin:");
-  if(!pin) return;
+/* ========== LOGIN ========== */
+function openLoginModal(){
+  loginModal.style.display="flex";
+  pinInput.value="";
+}
+function closeLoginModal(){
+  loginModal.style.display="none";
+}
+async function submitPin(){
+  const pin=pinInput.value;
+  if(!pin) return alert("PIN kosong");
 
-  const inputHash = await sha256(pin);
-
-  if(inputHash === ADMIN_PIN_HASH){
+  const hash=await sha256(pin);
+  if(hash===ADMIN_PIN_HASH){
     ROLE="admin";
     localStorage.setItem("role","admin");
     alert("Login admin berhasil");
+    closeLoginModal();
     updateUI();
     loadData();
   }else{
     alert("PIN salah");
   }
 }
-
 function logoutAdmin(){
   ROLE="user";
   localStorage.removeItem("role");
@@ -182,70 +198,57 @@ function logoutAdmin(){
   loadData();
 }
 
-/* ========== UI LOGIN ========== */
+/* ========== UI ========== */
 function updateUI(){
-  loginBtn.style.display = ROLE==="admin" ? "none" : "inline-block";
-  logoutBtn.style.display = ROLE==="admin" ? "inline-block" : "none";
+  loginBtn.style.display=ROLE==="admin"?"none":"inline-block";
+  logoutBtn.style.display=ROLE==="admin"?"inline-block":"none";
 }
 updateUI();
 
 /* ========== FORMAT ========== */
-const formatTanggal=v=>{
-  if(!v) return "-";
-  return new Date(v).toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
-};
-const formatJam=v=>{
-  if(!v) return "-";
-  if(typeof v==="string" && v.length<=5) return v;
-  return new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
-};
+const formatTanggal=v=>new Date(v).toLocaleDateString("id-ID");
+const formatJam=v=>typeof v==="string"?v:new Date(v).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
 
-/* ========== LOAD & RENDER ========== */
+/* ========== DATA ========== */
 async function loadData(){
   let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
   if(cache.length) render(cache);
 
   const res=await fetch(API_URL);
   const data=await res.json();
-  data.forEach(d=>{ if(!d.id) d.id=crypto.randomUUID(); });
-
+  data.forEach(d=>d.id=d.id||crypto.randomUUID());
   localStorage.setItem(CACHE_KEY,JSON.stringify(data));
   render(data);
 }
 
 function render(data){
   arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
-
   data.forEach(d=>{
     const el=document.createElement("div");
     el.className="booking";
     el.onclick=()=>openModal(d);
-
     el.innerHTML=`
       <b>${d.agenda}</b><br>
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}<br><br>
-
       ${ROLE==="admin"?`
-        <button class="icon-btn icon-edit" onclick="event.stopPropagation();editData('${d.id}')">✏️edit</button>
+        <button class="icon-btn icon-edit" onclick="event.stopPropagation();alert('Edit '+d.id)">✏️edit</button>
         <button class="icon-btn icon-delete" onclick="event.stopPropagation();hapusData('${d.id}')">🗑️delete</button>
       `:""}
     `;
-
-    const r=d.ruangan.toLowerCase();
-    if(r.includes("arjuna")) arjuna.appendChild(el);
-    else if(r.includes("srikandi")) srikandi.appendChild(el);
-    else if(r.includes("gatot")) gatot.appendChild(el);
+    if(d.ruangan.toLowerCase().includes("arjuna")) arjuna.appendChild(el);
+    if(d.ruangan.toLowerCase().includes("srikandi")) srikandi.appendChild(el);
+    if(d.ruangan.toLowerCase().includes("gatot")) gatot.appendChild(el);
   });
 }
 
-/* ========== MODAL ========== */
+/* ========== MODAL DETAIL ========== */
 function openModal(d){
   mAgenda.textContent=d.agenda;
   mRuangan.textContent=d.ruangan;
   mTanggal.textContent=formatTanggal(d.tanggal);
-  mJam.textContent=`${formatJam(d.mulai)} - ${formatJam(d.selesai)}`;
+  mJam.textContent=formatJam(d.mulai)+" - "+formatJam(d.selesai);
   mNama.textContent=d.nama;
   modal.style.display="flex";
 }
@@ -253,9 +256,8 @@ function closeModal(){modal.style.display="none"}
 
 /* ========== DELETE ========== */
 async function hapusData(id){
-  if(!confirm("Hapus data ini?")) return;
-  let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
-  cache=cache.filter(d=>d.id!==id);
+  if(!confirm("Hapus data ini?"))return;
+  let cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]").filter(d=>d.id!==id);
   localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
   render(cache);
 
@@ -263,10 +265,6 @@ async function hapusData(id){
   f.append("action","delete");
   f.append("id",id);
   await fetch(API_URL,{method:"POST",body:f});
-}
-
-function editData(id){
-  alert("Edit ID: "+id);
 }
 
 loadData();
