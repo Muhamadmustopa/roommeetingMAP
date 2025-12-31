@@ -6,6 +6,7 @@
 <title>Jadwal Meeting</title>
 
 <style>
+/* ===== UI TIDAK DIUBAH ===== */
 body{
   margin:0;
   padding:20px;
@@ -15,102 +16,26 @@ body{
     url('citylight.png') no-repeat center/cover;
   color:#fff;
 }
-
 .logo{display:block;width:130px;margin:0 auto 10px}
 h1{text-align:center;margin-bottom:30px}
-
-.top-bar{
-  display:flex;
-  justify-content:flex-end;
-  margin-bottom:10px;
-}
-
-.btn{
-  padding:8px 14px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:600;
-}
+.top-bar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.btn{padding:8px 14px;border:none;border-radius:10px;cursor:pointer;font-weight:600}
 .btn-login{background:#00d4ff;color:#000}
 .btn-logout{background:#ff4d4d;color:#fff}
-
 .container{display:flex;gap:20px;flex-wrap:wrap}
-
-.column{
-  flex:1;
-  background:rgba(255,255,255,.15);
-  padding:16px;
-  border-radius:18px;
-  min-width:260px;
-}
+.column{flex:1;background:rgba(255,255,255,.15);padding:16px;border-radius:18px;min-width:260px}
 .column h3{text-align:center;margin:6px 0 14px}
-
-.booking{
-  background:rgba(255,255,255,.25);
-  padding:14px;
-  border-radius:14px;
-  margin-bottom:12px;
-  cursor:pointer;
-  transition:.25s;
-}
-.booking:hover{
-  transform:scale(1.02);
-  background:rgba(255,255,255,.35);
-}
-
-.icon-btn{
-  background:transparent;
-  border:none;
-  cursor:pointer;
-  font-size:18px;
-  margin-right:8px;
-}
+.booking{background:rgba(255,255,255,.25);padding:14px;border-radius:14px;margin-bottom:12px;cursor:pointer;transition:.25s}
+.booking:hover{transform:scale(1.02);background:rgba(255,255,255,.35)}
+.icon-btn{background:transparent;border:none;cursor:pointer;font-size:18px;margin-right:8px}
 .icon-delete{color:#ff4d4d}
-
-/* tombol + */
-.fab{
-  position:fixed;
-  right:24px;
-  bottom:24px;
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#00d4ff,#0090ff);
-  color:#fff;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  font-size:36px;
-  text-decoration:none;
-}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-.modal-box{
-  background:#fff;
-  color:#111;
-  padding:24px;
-  width:320px;
-  border-radius:18px;
-}
+.fab{position:fixed;right:24px;bottom:24px;width:64px;height:64px;border-radius:50%;
+background:linear-gradient(135deg,#00d4ff,#0090ff);color:#fff;display:none;
+align-items:center;justify-content:center;font-size:36px;text-decoration:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:999}
+.modal-box{background:#fff;color:#111;padding:24px;width:320px;border-radius:18px}
 .close{float:right;cursor:pointer}
-
-input[type=password]{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  margin:10px 0;
-}
+input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin:10px 0}
 </style>
 </head>
 
@@ -130,10 +55,9 @@ input[type=password]{
   <div class="column"><h3>Ruang Gatot Kaca</h3><div id="gatot"></div></div>
 </div>
 
-<!-- tombol + -->
 <a href="daftar.html" class="fab" id="addBtn">+</a>
 
-<!-- MODAL DETAIL -->
+<!-- MODAL -->
 <div class="modal" id="modal" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <span class="close" onclick="closeModal()">✖</span>
@@ -145,7 +69,7 @@ input[type=password]{
   </div>
 </div>
 
-<!-- MODAL LOGIN -->
+<!-- LOGIN -->
 <div class="modal" id="loginModal" onclick="closeLoginModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>Login Admin</h3>
@@ -156,8 +80,7 @@ input[type=password]{
 
 <script>
 /* ================= CONFIG ================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
-const CACHE_KEY = "jadwal_meeting_cache";
+const API_URL = "https://script.google.com/macros/s/AKfycbw0HwCiZGDn4XvB84IvrVe3axYJku2theZGcrJgeaSdICwhiGrQw9nSupkymj37_JON/exec";
 const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
 /* ================= GLOBAL ================= */
@@ -171,93 +94,77 @@ async function sha256(text){
 }
 
 /* ================= LOGIN ================= */
-function openLoginModal(){
-  loginModal.style.display="flex";
-  pinInput.value="";
-}
+function openLoginModal(){ loginModal.style.display="flex"; pinInput.value=""; }
 function closeLoginModal(){ loginModal.style.display="none"; }
 
 async function submitPin(){
-  const hash = await sha256(pinInput.value);
-  if(hash === ADMIN_PIN_HASH){
-    ROLE="admin";
-    localStorage.setItem("role","admin");
-    updateUI();
-    render(GLOBAL_DATA); // 🔥 FIX
-    closeLoginModal();
-  }else{
-    alert("PIN salah");
-  }
+  if(await sha256(pinInput.value) === ADMIN_PIN_HASH){
+    ROLE="admin"; localStorage.setItem("role","admin");
+    updateUI(); render(GLOBAL_DATA); closeLoginModal();
+  } else alert("PIN salah");
 }
-
 function logoutAdmin(){
-  ROLE="user";
-  localStorage.removeItem("role");
-  updateUI();
-  render(GLOBAL_DATA); // 🔥 FIX
+  ROLE="user"; localStorage.removeItem("role");
+  updateUI(); render(GLOBAL_DATA);
 }
-
-/* ================= UI ================= */
 function updateUI(){
-  loginBtn.style.display  = ROLE==="admin" ? "none" : "inline-block";
-  logoutBtn.style.display = ROLE==="admin" ? "inline-block" : "none";
-  addBtn.style.display    = ROLE==="admin" ? "flex" : "none";
+  loginBtn.style.display = ROLE==="admin"?"none":"inline-block";
+  logoutBtn.style.display = ROLE==="admin"?"inline-block":"none";
+  addBtn.style.display = ROLE==="admin"?"flex":"none";
 }
 updateUI();
 
-/* ================= FORMAT ================= */
-function formatTanggal(t){
-  const [y,m,d]=t.split("-");
-  return new Date(y,m-1,d).toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
+/* ================= FORMAT AMAN ================= */
+function formatTanggal(v){
+  if(!v) return "-";
+  const d=new Date(v); if(isNaN(d)) return "-";
+  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
 }
-const formatJam=j=>j?j.slice(0,5):"-";
+function formatJam(v){
+  if(!v) return "-";
+  const d=new Date(v); if(isNaN(d)) return "-";
+  return d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+}
 
-/* ================= LOAD DATA ================= */
+/* ================= LOAD REAL-TIME ================= */
 async function loadData(){
-  let data = JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
-
-  if(!data.length){
-    const res = await fetch(API_URL);
-    data = await res.json();
-    data.forEach(d=>d.id=d.id||crypto.randomUUID());
-    localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-  }
-
-  data.sort((a,b)=>{
-    const t=a.tanggal.localeCompare(b.tanggal);
-    return t!==0?t:(a.mulai||"").localeCompare(b.mulai||"");
-  });
-
-  GLOBAL_DATA = data;
+  const res = await fetch(API_URL + "?t=" + Date.now());
+  GLOBAL_DATA = await res.json();
   render(GLOBAL_DATA);
 }
 
 /* ================= RENDER ================= */
 function render(data){
   arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
-
   data.forEach(d=>{
     const el=document.createElement("div");
     el.className="booking";
     el.onclick=()=>openModal(d);
-
     el.innerHTML=`
       <b>${d.agenda}</b><br>
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}<br><br>
       ${ROLE==="admin"?`
-      <button class="icon-btn icon-delete"
-        onclick="event.stopPropagation();hapusData('${d.id}')">
-        🗑️ Hapus
-      </button>`:""}
+        <button class="icon-btn icon-delete"
+        onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`:""}
     `;
-
     const r=d.ruangan.toLowerCase();
     if(r.includes("arjuna")) arjuna.appendChild(el);
     if(r.includes("srikandi")) srikandi.appendChild(el);
     if(r.includes("gatot")) gatot.appendChild(el);
   });
+}
+
+/* ================= DELETE REAL-TIME ================= */
+async function hapusData(id){
+  if(!confirm("Hapus data ini?")) return;
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ action:"delete", id })
+  });
+  loadData();
 }
 
 /* ================= MODAL ================= */
@@ -271,19 +178,9 @@ function openModal(d){
 }
 function closeModal(){ modal.style.display="none"; }
 
-/* ================= DELETE ================= */
-function hapusData(id){
-  if(!confirm("Hapus dari tampilan saja?")) return;
-
-  GLOBAL_DATA = GLOBAL_DATA.filter(d=>d.id!==id);
-  localStorage.setItem(CACHE_KEY,JSON.stringify(GLOBAL_DATA));
-  render(GLOBAL_DATA);
-
-  alert("Data dihapus dari tampilan.\nGoogle Sheet tetap aman.");
-}
-
 /* ================= INIT ================= */
 loadData();
+setInterval(loadData, 10000); // 🔥 real-time semua device
 </script>
 
 </body>
