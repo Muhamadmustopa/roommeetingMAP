@@ -8,7 +8,7 @@
 <style>
 body{
   margin:0;
-  padding:20px; 
+  padding:20px;
   font-family:'Segoe UI',sans-serif;
   background:
     linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,.55)),
@@ -28,14 +28,29 @@ h1{text-align:center;margin-bottom:30px}
 .booking:hover{transform:scale(1.02);background:rgba(255,255,255,.35)}
 .icon-btn{background:transparent;border:none;cursor:pointer;font-size:16px;margin-top:8px}
 .icon-delete{color:#ff4d4d}
-.fab{position:fixed;right:24px;bottom:24px;width:64px;height:64px;border-radius:50%;
-background:linear-gradient(135deg,#00d4ff,#0090ff);color:#fff;display:none;
-align-items:center;justify-content:center;font-size:36px;text-decoration:none}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:999}
-.modal-box{background:#fff;color:#111;padding:24px;width:320px;border-radius:18px}
+.fab{
+  position:fixed;right:24px;bottom:24px;
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,#00d4ff,#0090ff);
+  color:#fff;display:none;
+  align-items:center;justify-content:center;
+  font-size:36px;text-decoration:none
+}
+.modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;align-items:center;justify-content:center;
+  z-index:999
+}
+.modal-box{
+  background:#fff;color:#111;
+  padding:24px;width:320px;border-radius:18px
+}
 .close{float:right;cursor:pointer}
-input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin:10px 0}
-
+input[type=password]{
+  width:100%;padding:10px;
+  border-radius:8px;border:1px solid #ccc;margin:10px 0
+}
 #clock{
   margin-right:auto;
   font-weight:600;
@@ -89,7 +104,7 @@ input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid 
 
 <script>
 /* ================= CONFIG ================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwJMXz4qSMCMltVgsoobVcuVYnkSnKxS0ycNayHPk1-TeecDxpGs3HgRhMNJOFtu9XQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwmxyvYGsTFLgqynB8uhZmJLsOhKCGA5bgy0TKCWscL29-4TVlD0Vr2JSYR0Le0MqPg/exec";
 const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
 /* ================= GLOBAL ================= */
@@ -121,19 +136,21 @@ function updateUI(){
 }
 updateUI();
 
-/* ================= FORMAT FINAL (ANTI 1899) ================= */
+/* ================= FORMAT AMAN ================= */
 function formatTanggal(v){
   if(!v) return "-";
-  const d = new Date(v);
-  if(isNaN(d)) return "-";
-  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
+  return new Date(v).toLocaleDateString("id-ID",{
+    day:"2-digit",month:"long",year:"numeric"
+  });
 }
 
+// POTONG STRING SAJA (TIDAK Date!)
 function formatJam(v){
-  if(typeof v === "string" && v.includes(":")){
-    return v.slice(0,5); // 11:00
+  if(!v) return "-";
+  if(v.includes("AM") || v.includes("PM")){
+    return v.split(":").slice(0,2).join(":");
   }
-  return "-";
+  return v.substring(0,5);
 }
 
 /* ================= LOAD DATA ================= */
@@ -159,7 +176,8 @@ function render(data){
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}
-      ${ROLE==="admin"?`<br><button class="icon-btn icon-delete"
+      ${ROLE==="admin"?`<br>
+        <button class="icon-btn icon-delete"
         onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`:""}
     `;
     const r=d.ruangan.toLowerCase();
