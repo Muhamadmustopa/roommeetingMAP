@@ -42,7 +42,7 @@ input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid 
 <body>
 
 <div class="top-bar">
-  <button id="loginBtn" class="btn btn-login" onclick="openLoginModal()">Admin</button>
+  <button id="loginBtn" class="btn btn-login" onclick="openLoginModal()">@</button>
   <button id="logoutBtn" class="btn btn-logout" onclick="logoutAdmin()" style="display:none">Logout</button>
 </div>
 
@@ -57,7 +57,7 @@ input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid 
 
 <a href="daftar.html" class="fab" id="addBtn">+</a>
 
-<!-- MODAL -->
+<!-- MODAL DETAIL -->
 <div class="modal" id="modal" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <span class="close" onclick="closeModal()">✖</span>
@@ -80,12 +80,13 @@ input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid 
 
 <script>
 /* ================= CONFIG ================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbw0HwCiZGDn4XvB84IvrVe3axYJku2theZGcrJgeaSdICwhiGrQw9nSupkymj37_JON/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwJMXz4qSMCMltVgsoobVcuVYnkSnKxS0ycNayHPk1-TeecDxpGs3HgRhMNJOFtu9XQ/exec";
 const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
 /* ================= GLOBAL ================= */
 let ROLE = localStorage.getItem("role") || "user";
 let GLOBAL_DATA = [];
+let LAST_HASH = "";
 
 /* ================= HASH ================= */
 async function sha256(text){
@@ -114,23 +115,29 @@ function updateUI(){
 }
 updateUI();
 
-/* ================= FORMAT AMAN ================= */
+/* ================= FORMAT ================= */
 function formatTanggal(v){
   if(!v) return "-";
-  const d=new Date(v); if(isNaN(d)) return "-";
-  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
+  return new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
 }
 function formatJam(v){
   if(!v) return "-";
-  const d=new Date(v); if(isNaN(d)) return "-";
-  return d.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
+  return v.toString().slice(0,5);
 }
 
-/* ================= LOAD REAL-TIME ================= */
+/* ================= LOAD DATA (SMART REALTIME) ================= */
 async function loadData(){
-  const res = await fetch(API_URL + "?t=" + Date.now());
-  GLOBAL_DATA = await res.json();
-  render(GLOBAL_DATA);
+  try{
+    const res = await fetch(API_URL + "?t=" + Date.now());
+    const data = await res.json();
+    const hash = JSON.stringify(data);
+    if(hash === LAST_HASH) return;
+    LAST_HASH = hash;
+    GLOBAL_DATA = data;
+    render(GLOBAL_DATA);
+  }catch(e){
+    console.warn("Sync gagal", e);
+  }
 }
 
 /* ================= RENDER ================= */
@@ -156,14 +163,13 @@ function render(data){
   });
 }
 
-/* ================= DELETE REAL-TIME ================= */
+/* ================= DELETE REAL TIME ================= */
 async function hapusData(id){
   if(!confirm("Hapus data ini?")) return;
-  await fetch(API_URL,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ action:"delete", id })
-  });
+  const form = new FormData();
+  form.append("action","delete");
+  form.append("id",id);
+  await fetch(API_URL,{ method:"POST", body:form });
   loadData();
 }
 
@@ -178,9 +184,11 @@ function openModal(d){
 }
 function closeModal(){ modal.style.display="none"; }
 
-/* ================= INIT ================= */
+/* ================= AUTO SYNC ================= */
 loadData();
-setInterval(loadData, 10000); // 🔥 real-time semua device
+setInterval(loadData, 2000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) loadData(); });
+window.addEventListener("focus", loadData);
 </script>
 
 </body>
