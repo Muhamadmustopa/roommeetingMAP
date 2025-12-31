@@ -66,7 +66,6 @@ h1{text-align:center;margin-bottom:30px}
   font-size:18px;
   margin-right:8px;
 }
-.icon-edit{color:#00d4ff}
 .icon-delete{color:#ff4d4d}
 
 /* tombol + */
@@ -118,7 +117,7 @@ input[type=password]{
 <body>
 
 <div class="top-bar">
-  <button id="loginBtn" class="btn btn-login" onclick="openLoginModal()">.</button>
+  <button id="loginBtn" class="btn btn-login" onclick="openLoginModal()">Admin</button>
   <button id="logoutBtn" class="btn btn-logout" onclick="logoutAdmin()" style="display:none">Logout</button>
 </div>
 
@@ -131,7 +130,7 @@ input[type=password]{
   <div class="column"><h3>Ruang Gatot Kaca</h3><div id="gatot"></div></div>
 </div>
 
-<!-- tombol + hanya admin -->
+<!-- tombol + -->
 <a href="daftar.html" class="fab" id="addBtn">+</a>
 
 <!-- MODAL DETAIL -->
@@ -161,8 +160,9 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsT
 const CACHE_KEY = "jadwal_meeting_cache";
 const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
-/* ================= ROLE ================= */
+/* ================= GLOBAL ================= */
 let ROLE = localStorage.getItem("role") || "user";
+let GLOBAL_DATA = [];
 
 /* ================= HASH ================= */
 async function sha256(text){
@@ -175,24 +175,26 @@ function openLoginModal(){
   loginModal.style.display="flex";
   pinInput.value="";
 }
-function closeLoginModal(){
-  loginModal.style.display="none";
-}
+function closeLoginModal(){ loginModal.style.display="none"; }
+
 async function submitPin(){
   const hash = await sha256(pinInput.value);
   if(hash === ADMIN_PIN_HASH){
     ROLE="admin";
     localStorage.setItem("role","admin");
     updateUI();
+    render(GLOBAL_DATA); // 🔥 FIX
     closeLoginModal();
   }else{
     alert("PIN salah");
   }
 }
+
 function logoutAdmin(){
   ROLE="user";
   localStorage.removeItem("role");
   updateUI();
+  render(GLOBAL_DATA); // 🔥 FIX
 }
 
 /* ================= UI ================= */
@@ -204,17 +206,11 @@ function updateUI(){
 updateUI();
 
 /* ================= FORMAT ================= */
-function formatTanggal(tgl){
-  const [y,m,d] = tgl.split("-");
-  return new Date(y, m-1, d).toLocaleDateString("id-ID",{
-    day:"2-digit",
-    month:"long",
-    year:"numeric"
-  });
+function formatTanggal(t){
+  const [y,m,d]=t.split("-");
+  return new Date(y,m-1,d).toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
 }
-function formatJam(jam){
-  return jam ? jam.slice(0,5) : "-";
-}
+const formatJam=j=>j?j.slice(0,5):"-";
 
 /* ================= LOAD DATA ================= */
 async function loadData(){
@@ -227,14 +223,13 @@ async function loadData(){
     localStorage.setItem(CACHE_KEY,JSON.stringify(data));
   }
 
-  /* SORT AMAN SEMUA DEVICE */
   data.sort((a,b)=>{
-    const t = a.tanggal.localeCompare(b.tanggal);
-    if(t !== 0) return t;
-    return (a.mulai||"").localeCompare(b.mulai||"");
+    const t=a.tanggal.localeCompare(b.tanggal);
+    return t!==0?t:(a.mulai||"").localeCompare(b.mulai||"");
   });
 
-  render(data);
+  GLOBAL_DATA = data;
+  render(GLOBAL_DATA);
 }
 
 /* ================= RENDER ================= */
@@ -251,12 +246,11 @@ function render(data){
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}<br><br>
-
       ${ROLE==="admin"?`
-        <button class="icon-btn icon-delete"
-          onclick="event.stopPropagation();hapusData('${d.id}')">
-          🗑️ hapus
-        </button>`:""}
+      <button class="icon-btn icon-delete"
+        onclick="event.stopPropagation();hapusData('${d.id}')">
+        🗑️ Hapus
+      </button>`:""}
     `;
 
     const r=d.ruangan.toLowerCase();
@@ -277,15 +271,13 @@ function openModal(d){
 }
 function closeModal(){ modal.style.display="none"; }
 
-/* ================= DELETE (UI ONLY) ================= */
+/* ================= DELETE ================= */
 function hapusData(id){
   if(!confirm("Hapus dari tampilan saja?")) return;
 
-  const data = JSON.parse(localStorage.getItem(CACHE_KEY)||"[]")
-    .filter(d=>d.id!==id);
-
-  localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-  render(data);
+  GLOBAL_DATA = GLOBAL_DATA.filter(d=>d.id!==id);
+  localStorage.setItem(CACHE_KEY,JSON.stringify(GLOBAL_DATA));
+  render(GLOBAL_DATA);
 
   alert("Data dihapus dari tampilan.\nGoogle Sheet tetap aman.");
 }
