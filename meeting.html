@@ -36,7 +36,6 @@ align-items:center;justify-content:center;font-size:36px;text-decoration:none}
 .close{float:right;cursor:pointer}
 input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin:10px 0}
 
-/* CLOCK */
 #clock{
   margin-right:auto;
   font-weight:600;
@@ -67,7 +66,7 @@ input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid 
 
 <a href="daftar.html" class="fab" id="addBtn">+</a>
 
-<!-- MODAL -->
+<!-- MODAL DETAIL -->
 <div class="modal" id="modal" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <span class="close" onclick="closeModal()">✖</span>
@@ -103,7 +102,7 @@ async function sha256(text){
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
 }
-function openLoginModal(){ loginModal.style.display="flex"; pinInput.value=""; }
+function openLoginModal(){ loginModal.style.display="flex"; }
 function closeLoginModal(){ loginModal.style.display="none"; }
 async function submitPin(){
   if(await sha256(pinInput.value) === ADMIN_PIN_HASH){
@@ -122,43 +121,18 @@ function updateUI(){
 }
 updateUI();
 
-/* ================= FORMAT AMAN (FINAL) ================= */
+/* ================= FORMAT FINAL (ANTI 1899) ================= */
 function formatTanggal(v){
   if(!v) return "-";
-
   const d = new Date(v);
   if(isNaN(d)) return "-";
-
-  return d.toLocaleDateString("id-ID",{
-    day:"2-digit",
-    month:"long",
-    year:"numeric"
-  });
+  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
 }
 
 function formatJam(v){
-  if(!v) return "-";
-
-  // STRING: "11:00" / "11:00:00"
-  if(typeof v === "string"){
-    return v.substring(0,5);
+  if(typeof v === "string" && v.includes(":")){
+    return v.slice(0,5); // 11:00
   }
-
-  // DATE dari Google Sheet (1899-12-30 xx:xx)
-  if(v instanceof Date){
-    const h = String(v.getHours()).padStart(2,"0");
-    const m = String(v.getMinutes()).padStart(2,"0");
-    return `${h}:${m}`;
-  }
-
-  // NUMBER serial time Google Sheet
-  if(typeof v === "number"){
-    const totalMinutes = Math.round(v * 24 * 60);
-    const h = String(Math.floor(totalMinutes / 60)).padStart(2,"0");
-    const m = String(totalMinutes % 60).padStart(2,"0");
-    return `${h}:${m}`;
-  }
-
   return "-";
 }
 
@@ -167,7 +141,7 @@ async function loadData(){
   const res = await fetch(API_URL + "?_=" + Date.now(),{cache:"no-store"});
   const data = await res.json();
   const hash = JSON.stringify(data);
-  if(hash===LAST_HASH) return;
+  if(hash === LAST_HASH) return;
   LAST_HASH = hash;
   GLOBAL_DATA = data;
   render(data);
@@ -186,7 +160,7 @@ function render(data){
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
       👤 ${d.nama}
       ${ROLE==="admin"?`<br><button class="icon-btn icon-delete"
-      onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`:""}
+        onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`:""}
     `;
     const r=d.ruangan.toLowerCase();
     if(r.includes("arjuna")) arjuna.appendChild(el);
@@ -216,13 +190,13 @@ function openModal(d){
 }
 function closeModal(){ modal.style.display="none"; }
 
-/* ================= CLOCK REALTIME ================= */
+/* ================= CLOCK ================= */
 function updateClock(){
-  const now=new Date();
+  const n=new Date();
   clock.textContent =
-    now.toLocaleDateString("id-ID",{weekday:"long",day:"2-digit",month:"long",year:"numeric"}) +
-    " • " +
-    now.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    n.toLocaleDateString("id-ID",{weekday:"long",day:"2-digit",month:"long",year:"numeric"})+
+    " • "+
+    n.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 }
 setInterval(updateClock,1000);
 updateClock();
