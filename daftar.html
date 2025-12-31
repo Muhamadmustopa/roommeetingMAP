@@ -17,8 +17,6 @@ body{
   align-items:center;
   height:100vh;
 }
-
-/* BACK BUTTON */
 .back-btn{
   position:fixed;
   top:20px;
@@ -31,8 +29,6 @@ body{
   font-weight:600;
   box-shadow:0 6px 18px rgba(0,0,0,.3);
 }
-
-/* FORM */
 .form-box{
   background:rgba(255,255,255,.95);
   padding:30px;
@@ -40,10 +36,8 @@ body{
   border-radius:16px;
   box-shadow:0 10px 30px rgba(0,0,0,.35);
 }
-
 h2{text-align:center;margin-top:0}
 label{font-weight:600;margin-top:10px;display:block}
-
 input,select{
   width:100%;
   padding:10px;
@@ -52,7 +46,6 @@ input,select{
   border:1px solid #ccc;
   font-size:16px;
 }
-
 button{
   width:100%;
   margin-top:20px;
@@ -64,11 +57,7 @@ button{
   font-size:16px;
   cursor:pointer;
 }
-button:disabled{
-  opacity:.6;
-}
-
-/* TOAST */
+button:disabled{opacity:.6}
 #toast{
   position:fixed;
   bottom:20px;
@@ -120,27 +109,18 @@ button:disabled{
 <div id="toast"></div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwvaT_ykgkuiK-JBMMNSLsTdJiukaytjt525HmXLrxmbveuScMjrLA8U1KVsnoWtnuO/exec";
-const CACHE_KEY = "jadwal_meeting_cache";
+const API_URL = "https://script.google.com/macros/s/AKfycbwJMXz4qSMCMltVgsoobVcuVYnkSnKxS0ycNayHPk1-TeecDxpGs3HgRhMNJOFtu9XQ/exec";
 
 /* ===== TOAST ===== */
 function toast(msg){
   const t=document.getElementById("toast");
   t.textContent=msg;
   t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),2000);
+  setTimeout(()=>t.classList.remove("show"),2500);
 }
 
-/* ===== AUTO NEXT INPUT ===== */
-const fields=[nama,agenda,ruangan,tanggal,mulai,selesai];
-fields.forEach((f,i)=>{
-  f.addEventListener("change",()=>{
-    fields[i+1]?.focus();
-  });
-});
-
 /* ===== SIMPAN ===== */
-function simpan(){
+async function simpan(){
   if(!nama.value||!agenda.value||!tanggal.value||!mulai.value||!selesai.value){
     toast("Lengkapi semua data");
     navigator.vibrate?.(100);
@@ -155,7 +135,8 @@ function simpan(){
 
   btn.disabled=true;
 
-  const data={
+  const body = new URLSearchParams({
+    action:"add",
     id:Date.now().toString(),
     nama:nama.value,
     agenda:agenda.value,
@@ -163,26 +144,32 @@ function simpan(){
     tanggal:tanggal.value,
     mulai:mulai.value,
     selesai:selesai.value
-  };
-
-  /* SIMPAN CACHE */
-  const cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"[]");
-  cache.push(data);
-  localStorage.setItem(CACHE_KEY,JSON.stringify(cache));
-
-  toast("Jadwal disimpan");
-  navigator.vibrate?.(50);
-
-  /* PINDAH HALAMAN */
-  setTimeout(()=>{
-    location.href="meeting.html";
-  },300);
-
-  /* SYNC BACKGROUND */
-  const body=new URLSearchParams({action:"add",...data});
-  fetch(API_URL,{method:"POST",body}).catch(()=>{
-    console.warn("Sync gagal");
   });
+
+  try{
+    const res = await fetch(API_URL,{ method:"POST", body });
+    const json = await res.json();
+
+    /* ❌ BENTROK */
+    if(json.error){
+      toast("⛔ " + json.error);
+      navigator.vibrate?.([100,50,100]);
+      btn.disabled=false;
+      return;
+    }
+
+    /* ✅ BERHASIL */
+    toast("✅ Jadwal berhasil disimpan");
+    navigator.vibrate?.(50);
+
+    setTimeout(()=>{
+      location.href="meeting.html";
+    },400);
+
+  }catch(e){
+    toast("⚠️ Gagal koneksi server");
+    btn.disabled=false;
+  }
 }
 </script>
 
