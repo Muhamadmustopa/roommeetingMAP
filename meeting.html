@@ -27,7 +27,7 @@ h1{text-align:center;margin-bottom:30px}
 .column h3{text-align:center;margin:6px 0 14px}
 .booking{background:rgba(255,255,255,.25);padding:14px;border-radius:14px;margin-bottom:12px;cursor:pointer;transition:.25s}
 .booking:hover{transform:scale(1.02);background:rgba(255,255,255,.35)}
-.icon-btn{background:transparent;border:none;cursor:pointer;font-size:18px;margin-right:8px}
+.icon-btn{background:transparent;border:none;cursor:pointer;font-size:16px;margin-top:8px}
 .icon-delete{color:#ff4d4d}
 .fab{position:fixed;right:24px;bottom:24px;width:64px;height:64px;border-radius:50%;
 background:linear-gradient(135deg,#00d4ff,#0090ff);color:#fff;display:none;
@@ -74,7 +74,7 @@ input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid 
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>Login Admin</h3>
     <input type="password" id="pinInput" placeholder="Masukkan PIN">
-    <button class="btn btn-login" style="width:100%" onclick="submitPin()">Login</button>
+    <button class="btn btn-login" reminding="width:100%" onclick="submitPin()">Login</button>
   </div>
 </div>
 
@@ -115,20 +115,38 @@ function updateUI(){
 }
 updateUI();
 
-/* ================= FORMAT ================= */
+/* ================= FORMAT (FIX JAM 1899) ================= */
 function formatTanggal(v){
   if(!v) return "-";
-  return new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
-}
-function formatJam(v){
-  if(!v) return "-";
-  return v.toString().slice(0,5);
+  const d = new Date(v);
+  if(isNaN(d)) return "-";
+  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
 }
 
-/* ================= LOAD DATA (SMART REALTIME) ================= */
+function formatJam(v){
+  if(!v) return "-";
+
+  // jika string "11:00" atau "11:00:00"
+  if(typeof v === "string"){
+    return v.substring(0,5);
+  }
+
+  // jika Date dari Google Sheet
+  if(v instanceof Date){
+    return v.toLocaleTimeString("id-ID",{
+      hour:"2-digit",
+      minute:"2-digit",
+      hour12:false
+    });
+  }
+
+  return "-";
+}
+
+/* ================= LOAD DATA REALTIME < 3 DETIK ================= */
 async function loadData(){
   try{
-    const res = await fetch(API_URL + "?t=" + Date.now());
+    const res = await fetch(API_URL + "?_=" + Date.now(), { cache:"no-store" });
     const data = await res.json();
     const hash = JSON.stringify(data);
     if(hash === LAST_HASH) return;
@@ -151,10 +169,11 @@ function render(data){
       <b>${d.agenda}</b><br>
       📅 ${formatTanggal(d.tanggal)}<br>
       ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
-      👤 ${d.nama}<br><br>
-      ${ROLE==="admin"?`
-        <button class="icon-btn icon-delete"
-        onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`:""}
+      👤 ${d.nama}
+      ${ROLE==="admin"
+        ? `<br><button class="icon-btn icon-delete"
+           onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`
+        : ``}
     `;
     const r=d.ruangan.toLowerCase();
     if(r.includes("arjuna")) arjuna.appendChild(el);
@@ -163,7 +182,7 @@ function render(data){
   });
 }
 
-/* ================= DELETE REAL TIME ================= */
+/* ================= DELETE REALTIME ================= */
 async function hapusData(id){
   if(!confirm("Hapus data ini?")) return;
   const form = new FormData();
