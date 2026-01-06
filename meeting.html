@@ -6,7 +6,6 @@
 <title>Jadwal Meeting</title>
 
 <style>
-/* === TIDAK DIUBAH === */
 body{
   margin:0;
   padding:20px;
@@ -68,8 +67,8 @@ input,select{
 
 <div class="top-bar">
   <div id="clock">--</div>
-  <button id="loginBtn" class="btn btn-login" onclick="openLoginModal()">@</button>
-  <button id="logoutBtn" class="btn btn-logout" onclick="logoutAdmin()" style="display:none">Logout</button>
+  <button id="loginBtn" class="btn btn-login">@</button>
+  <button id="logoutBtn" class="btn btn-logout" style="display:none">Logout</button>
 </div>
 
 <img src="map-log.png" class="logo">
@@ -83,10 +82,10 @@ input,select{
 
 <a href="daftar.html" class="fab" id="addBtn">+</a>
 
-<!-- DETAIL -->
-<div class="modal" id="modal" onclick="closeModal()">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <span class="close" onclick="closeModal()">✖</span>
+<!-- MODAL DETAIL -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <span class="close" id="closeDetail">✖</span>
     <h3 id="mAgenda"></h3>
     <p>📍 <span id="mRuangan"></span></p>
     <p>📅 <span id="mTanggal"></span></p>
@@ -95,9 +94,18 @@ input,select{
   </div>
 </div>
 
-<!-- EDIT -->
-<div class="modal" id="editModal" onclick="closeEdit()">
-  <div class="modal-box" onclick="event.stopPropagation()">
+<!-- MODAL LOGIN -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <h3>Login Admin</h3>
+    <input type="password" id="pinInput" placeholder="Masukkan PIN">
+    <button class="btn btn-login" style="width:100%" id="loginSubmit">Login</button>
+  </div>
+</div>
+
+<!-- MODAL EDIT -->
+<div class="modal" id="editModal">
+  <div class="modal-box">
     <h3>Edit Jadwal</h3>
     <input type="hidden" id="eId">
     <input id="eRuangan">
@@ -106,16 +114,7 @@ input,select{
     <input type="time" id="eMulai">
     <input type="time" id="eSelesai">
     <input id="eNama">
-    <button class="btn btn-login" style="width:100%" onclick="submitEdit()">Simpan</button>
-  </div>
-</div>
-
-<!-- LOGIN -->
-<div class="modal" id="loginModal" onclick="closeLoginModal()">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <h3>Login Admin</h3>
-    <input type="password" id="pinInput">
-    <button class="btn btn-login" style="width:100%" onclick="submitPin()">Login</button>
+    <button class="btn btn-login" style="width:100%" id="editSubmit">Simpan</button>
   </div>
 </div>
 
@@ -125,66 +124,77 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxEiCxQVwxH3DEtTjKWQQ5c
 const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
 let ROLE = localStorage.getItem("role") || "user";
-let GLOBAL_DATA=[];
+let DATA = [];
 
 /* ================= LOGIN ================= */
-  function openLoginModal(){
-  loginModal.style.display = "flex";
-}
-function closeLoginModal(){
-  loginModal.style.display = "none";
-}
+loginBtn.onclick = () => loginModal.style.display = "flex";
+logoutBtn.onclick = () => {
+  ROLE="user";
+  localStorage.removeItem("role");
+  updateUI();
+  render();
+};
+loginSubmit.onclick = async () => {
+  const hash = await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pinInput.value));
+  const pin = [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  if(pin === ADMIN_PIN_HASH){
+    ROLE="admin";
+    localStorage.setItem("role","admin");
+    loginModal.style.display="none";
+    updateUI();
+    render();
+  } else alert("PIN salah");
+};
 
-async function sha256(t){
-  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));
-  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
-}
-function submitPin(){
-  sha256(pinInput.value).then(h=>{
-    if(h===ADMIN_PIN_HASH){
-      ROLE="admin";localStorage.setItem("role","admin");
-      updateUI();render(GLOBAL_DATA);loginModal.style.display="none";
-    }else alert("PIN salah");
-  });
-}
-function logoutAdmin(){
-  ROLE="user";localStorage.removeItem("role");
-  updateUI();render(GLOBAL_DATA);
-}
 function updateUI(){
-  loginBtn.style.display=ROLE==="admin"?"none":"inline";
-  logoutBtn.style.display=ROLE==="admin"?"inline":"none";
-  addBtn.style.display=ROLE==="admin"?"flex":"none";
+  loginBtn.style.display = ROLE==="admin"?"none":"inline-block";
+  logoutBtn.style.display = ROLE==="admin"?"inline-block":"none";
+  addBtn.style.display = ROLE==="admin"?"flex":"none";
 }
-updateUI();
 
 /* ================= DATA ================= */
 async function loadData(){
-  const r=await fetch(API_URL+"?_="+Date.now());
-  GLOBAL_DATA=await r.json();
-  render(GLOBAL_DATA);
+  const r = await fetch(API_URL+"?_="+Date.now());
+  DATA = await r.json();
+  render();
 }
-function render(data){
+
+function render(){
   arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
-  data.forEach(d=>{
+  DATA.forEach(d=>{
     const el=document.createElement("div");
     el.className="booking";
-    el.onclick=()=>openModal(d);
     el.innerHTML=`
       <b>${d.agenda}</b><br>
       📅 ${d.tanggal}<br>
       ⏰ ${d.mulai} - ${d.selesai}<br>
       👤 ${d.nama}
       ${ROLE==="admin"?`
-      <br>
-      <button class="icon-btn icon-edit" onclick="event.stopPropagation();openEdit(${JSON.stringify(d)})">✏️ Edit</button>
-      <button class="icon-btn icon-delete" onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`:""}
+        <br>
+        <button class="icon-btn icon-edit">✏️ Edit</button>
+        <button class="icon-btn icon-delete">🗑️ Hapus</button>`:""}
     `;
+    el.onclick=()=>openDetail(d);
+    if(ROLE==="admin"){
+      el.querySelector(".icon-edit").onclick=(e)=>{e.stopPropagation();openEdit(d)};
+      el.querySelector(".icon-delete").onclick=(e)=>{e.stopPropagation();hapus(d.id)};
+    }
     d.ruangan.toLowerCase().includes("arjuna")&&arjuna.appendChild(el);
     d.ruangan.toLowerCase().includes("srikandi")&&srikandi.appendChild(el);
     d.ruangan.toLowerCase().includes("gatot")&&gatot.appendChild(el);
   });
 }
+
+/* ================= DETAIL ================= */
+function openDetail(d){
+  mAgenda.textContent=d.agenda;
+  mRuangan.textContent=d.ruangan;
+  mTanggal.textContent=d.tanggal;
+  mJam.textContent=d.mulai+" - "+d.selesai;
+  mNama.textContent=d.nama;
+  modal.style.display="flex";
+}
+closeDetail.onclick=()=>modal.style.display="none";
 
 /* ================= EDIT ================= */
 function openEdit(d){
@@ -197,18 +207,18 @@ function openEdit(d){
   eNama.value=d.nama;
   editModal.style.display="flex";
 }
-function closeEdit(){editModal.style.display="none";}
-async function submitEdit(){
+editSubmit.onclick=async()=>{
   const f=new FormData();
   f.append("action","edit");
   ["id","ruangan","agenda","tanggal","mulai","selesai","nama"]
   .forEach(k=>f.append(k,document.getElementById("e"+k.charAt(0).toUpperCase()+k.slice(1)).value));
   await fetch(API_URL,{method:"POST",body:f});
-  closeEdit();loadData();
-}
+  editModal.style.display="none";
+  loadData();
+};
 
 /* ================= DELETE ================= */
-async function hapusData(id){
+async function hapus(id){
   if(!confirm("Hapus data?"))return;
   const f=new FormData();
   f.append("action","delete");
@@ -219,7 +229,11 @@ async function hapusData(id){
 
 /* ================= CLOCK ================= */
 setInterval(()=>clock.textContent=new Date().toLocaleString("id-ID"),1000);
+
+/* ================= INIT ================= */
+updateUI();
 loadData();
 </script>
+
 </body>
 </html>
