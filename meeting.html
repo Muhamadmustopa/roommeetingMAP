@@ -6,6 +6,7 @@
 <title>Jadwal Meeting</title>
 
 <style>
+/* === TIDAK DIUBAH === */
 body{
   margin:0;
   padding:20px;
@@ -28,6 +29,7 @@ h1{text-align:center;margin-bottom:30px}
 .booking:hover{transform:scale(1.02);background:rgba(255,255,255,.35)}
 .icon-btn{background:transparent;border:none;cursor:pointer;font-size:16px;margin-top:8px}
 .icon-delete{color:#ff4d4d}
+.icon-edit{color:#00d4ff}
 .fab{
   position:fixed;right:24px;bottom:24px;
   width:64px;height:64px;border-radius:50%;
@@ -47,9 +49,9 @@ h1{text-align:center;margin-bottom:30px}
   padding:24px;width:320px;border-radius:18px
 }
 .close{float:right;cursor:pointer}
-input[type=password]{
+input,select{
   width:100%;padding:10px;
-  border-radius:8px;border:1px solid #ccc;margin:10px 0
+  border-radius:8px;border:1px solid #ccc;margin:6px 0
 }
 #clock{
   margin-right:auto;
@@ -81,7 +83,7 @@ input[type=password]{
 
 <a href="daftar.html" class="fab" id="addBtn">+</a>
 
-<!-- MODAL DETAIL -->
+<!-- DETAIL -->
 <div class="modal" id="modal" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <span class="close" onclick="closeModal()">✖</span>
@@ -93,78 +95,68 @@ input[type=password]{
   </div>
 </div>
 
+<!-- EDIT -->
+<div class="modal" id="editModal" onclick="closeEdit()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <h3>Edit Jadwal</h3>
+    <input type="hidden" id="eId">
+    <input id="eRuangan">
+    <input id="eAgenda">
+    <input type="date" id="eTanggal">
+    <input type="time" id="eMulai">
+    <input type="time" id="eSelesai">
+    <input id="eNama">
+    <button class="btn btn-login" style="width:100%" onclick="submitEdit()">Simpan</button>
+  </div>
+</div>
+
 <!-- LOGIN -->
 <div class="modal" id="loginModal" onclick="closeLoginModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>Login Admin</h3>
-    <input type="password" id="pinInput" placeholder="Masukkan PIN">
+    <input type="password" id="pinInput">
     <button class="btn btn-login" style="width:100%" onclick="submitPin()">Login</button>
   </div>
 </div>
 
 <script>
 /* ================= CONFIG ================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwmxyvYGsTFLgqynB8uhZmJLsOhKCGA5bgy0TKCWscL29-4TVlD0Vr2JSYR0Le0MqPg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxEiCxQVwxH3DEtTjKWQQ5cPIL4prNSHTkZwPv8MJN4o75Hr0wP5YbNYGEfHQzzZtMr/exec";
 const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
-/* ================= GLOBAL ================= */
 let ROLE = localStorage.getItem("role") || "user";
-let GLOBAL_DATA = [];
-let LAST_HASH = "";
+let GLOBAL_DATA=[];
 
 /* ================= LOGIN ================= */
-async function sha256(text){
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+async function sha256(t){
+  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
 }
-function openLoginModal(){ loginModal.style.display="flex"; }
-function closeLoginModal(){ loginModal.style.display="none"; }
-async function submitPin(){
-  if(await sha256(pinInput.value) === ADMIN_PIN_HASH){
-    ROLE="admin"; localStorage.setItem("role","admin");
-    updateUI(); render(GLOBAL_DATA); closeLoginModal();
-  } else alert("PIN salah");
+function submitPin(){
+  sha256(pinInput.value).then(h=>{
+    if(h===ADMIN_PIN_HASH){
+      ROLE="admin";localStorage.setItem("role","admin");
+      updateUI();render(GLOBAL_DATA);loginModal.style.display="none";
+    }else alert("PIN salah");
+  });
 }
 function logoutAdmin(){
-  ROLE="user"; localStorage.removeItem("role");
-  updateUI(); render(GLOBAL_DATA);
+  ROLE="user";localStorage.removeItem("role");
+  updateUI();render(GLOBAL_DATA);
 }
 function updateUI(){
-  loginBtn.style.display = ROLE==="admin"?"none":"inline-block";
-  logoutBtn.style.display = ROLE==="admin"?"inline-block":"none";
-  addBtn.style.display = ROLE==="admin"?"flex":"none";
+  loginBtn.style.display=ROLE==="admin"?"none":"inline";
+  logoutBtn.style.display=ROLE==="admin"?"inline":"none";
+  addBtn.style.display=ROLE==="admin"?"flex":"none";
 }
 updateUI();
 
-/* ================= FORMAT AMAN ================= */
-function formatTanggal(v){
-  if(!v) return "-";
-  return new Date(v).toLocaleDateString("id-ID",{
-    day:"2-digit",month:"long",year:"numeric"
-  });
-}
-
-// POTONG STRING SAJA (TIDAK Date!)
-function formatJam(v){
-  if(!v) return "-";
-  if(v.includes("AM") || v.includes("PM")){
-    return v.split(":").slice(0,2).join(":");
-  }
-  return v.substring(0,5);
-}
-
-/* ================= LOAD DATA ================= */
+/* ================= DATA ================= */
 async function loadData(){
-  const res = await fetch(API_URL + "?_=" + Date.now(),{cache:"no-store"});
-  const data = await res.json();
-  const hash = JSON.stringify(data);
-  if(hash === LAST_HASH) return;
-  LAST_HASH = hash;
-  GLOBAL_DATA = data;
-  render(data);
+  const r=await fetch(API_URL+"?_="+Date.now());
+  GLOBAL_DATA=await r.json();
+  render(GLOBAL_DATA);
 }
-
-/* ================= RENDER ================= */
 function render(data){
   arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
   data.forEach(d=>{
@@ -173,23 +165,44 @@ function render(data){
     el.onclick=()=>openModal(d);
     el.innerHTML=`
       <b>${d.agenda}</b><br>
-      📅 ${formatTanggal(d.tanggal)}<br>
-      ⏰ ${formatJam(d.mulai)} - ${formatJam(d.selesai)}<br>
+      📅 ${d.tanggal}<br>
+      ⏰ ${d.mulai} - ${d.selesai}<br>
       👤 ${d.nama}
-      ${ROLE==="admin"?`<br>
-        <button class="icon-btn icon-delete"
-        onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`:""}
+      ${ROLE==="admin"?`
+      <br>
+      <button class="icon-btn icon-edit" onclick="event.stopPropagation();openEdit(${JSON.stringify(d)})">✏️ Edit</button>
+      <button class="icon-btn icon-delete" onclick="event.stopPropagation();hapusData('${d.id}')">🗑️ Hapus</button>`:""}
     `;
-    const r=d.ruangan.toLowerCase();
-    if(r.includes("arjuna")) arjuna.appendChild(el);
-    if(r.includes("srikandi")) srikandi.appendChild(el);
-    if(r.includes("gatot")) gatot.appendChild(el);
+    d.ruangan.toLowerCase().includes("arjuna")&&arjuna.appendChild(el);
+    d.ruangan.toLowerCase().includes("srikandi")&&srikandi.appendChild(el);
+    d.ruangan.toLowerCase().includes("gatot")&&gatot.appendChild(el);
   });
+}
+
+/* ================= EDIT ================= */
+function openEdit(d){
+  eId.value=d.id;
+  eRuangan.value=d.ruangan;
+  eAgenda.value=d.agenda;
+  eTanggal.value=d.tanggal;
+  eMulai.value=d.mulai;
+  eSelesai.value=d.selesai;
+  eNama.value=d.nama;
+  editModal.style.display="flex";
+}
+function closeEdit(){editModal.style.display="none";}
+async function submitEdit(){
+  const f=new FormData();
+  f.append("action","edit");
+  ["id","ruangan","agenda","tanggal","mulai","selesai","nama"]
+  .forEach(k=>f.append(k,document.getElementById("e"+k.charAt(0).toUpperCase()+k.slice(1)).value));
+  await fetch(API_URL,{method:"POST",body:f});
+  closeEdit();loadData();
 }
 
 /* ================= DELETE ================= */
 async function hapusData(id){
-  if(!confirm("Hapus data ini?")) return;
+  if(!confirm("Hapus data?"))return;
   const f=new FormData();
   f.append("action","delete");
   f.append("id",id);
@@ -197,32 +210,9 @@ async function hapusData(id){
   loadData();
 }
 
-/* ================= MODAL ================= */
-function openModal(d){
-  mAgenda.textContent=d.agenda;
-  mRuangan.textContent=d.ruangan;
-  mTanggal.textContent=formatTanggal(d.tanggal);
-  mJam.textContent=formatJam(d.mulai)+" - "+formatJam(d.selesai);
-  mNama.textContent=d.nama;
-  modal.style.display="flex";
-}
-function closeModal(){ modal.style.display="none"; }
-
 /* ================= CLOCK ================= */
-function updateClock(){
-  const n=new Date();
-  clock.textContent =
-    n.toLocaleDateString("id-ID",{weekday:"long",day:"2-digit",month:"long",year:"numeric"})+
-    " • "+
-    n.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-}
-setInterval(updateClock,1000);
-updateClock();
-
-/* ================= AUTO SYNC ================= */
+setInterval(()=>clock.textContent=new Date().toLocaleString("id-ID"),1000);
 loadData();
-setInterval(loadData,2000);
 </script>
-
 </body>
 </html>
