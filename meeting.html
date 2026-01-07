@@ -48,7 +48,7 @@ h1{text-align:center;margin-bottom:30px}
   padding:24px;width:320px;border-radius:18px
 }
 .close{float:right;cursor:pointer}
-input,select{
+input{
   width:100%;padding:10px;
   border-radius:8px;border:1px solid #ccc;margin:6px 0
 }
@@ -82,7 +82,7 @@ input,select{
 
 <a href="daftar.html" class="fab" id="addBtn">+</a>
 
-<!-- MODAL DETAIL -->
+<!-- DETAIL -->
 <div class="modal" id="modal">
   <div class="modal-box">
     <span class="close" id="closeDetail">✖</span>
@@ -94,7 +94,7 @@ input,select{
   </div>
 </div>
 
-<!-- MODAL LOGIN -->
+<!-- LOGIN -->
 <div class="modal" id="loginModal">
   <div class="modal-box">
     <h3>Login Admin</h3>
@@ -103,7 +103,7 @@ input,select{
   </div>
 </div>
 
-<!-- MODAL EDIT -->
+<!-- EDIT -->
 <div class="modal" id="editModal">
   <div class="modal-box">
     <h3>Edit Jadwal</h3>
@@ -119,46 +119,59 @@ input,select{
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbxEiCxQVwxH3DEtTjKWQQ5cPIL4prNSHTkZwPv8MJN4o75Hr0wP5YbNYGEfHQzzZtMr/exec";
-const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+const API_URL="https://script.google.com/macros/s/AKfycbxEiCxQVwxH3DEtTjKWQQ5cPIL4prNSHTkZwPv8MJN4o75Hr0wP5YbNYGEfHQzzZtMr/exec";
+const ADMIN_PIN_HASH="8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
-let ROLE = localStorage.getItem("role") || "user";
-let DATA = [];
+let ROLE=localStorage.getItem("role")||"user";
+let DATA=[];
 
-/* ================= LOGIN ================= */
-loginBtn.onclick = () => loginModal.style.display = "flex";
-logoutBtn.onclick = () => {
+/* ===== FORMAT TANGGAL ===== */
+function formatTanggalIndo(t){
+  const d=new Date(t+"T00:00:00");
+  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
+}
+
+/* ===== LOGIN ===== */
+loginBtn.onclick=()=>loginModal.style.display="flex";
+logoutBtn.onclick=()=>{
   ROLE="user";
   localStorage.removeItem("role");
   updateUI();
   render();
 };
-loginSubmit.onclick = async () => {
-  const hash = await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pinInput.value));
-  const pin = [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,"0")).join("");
-  if(pin === ADMIN_PIN_HASH){
+loginSubmit.onclick=async()=>{
+  const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pinInput.value));
+  const pin=[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  if(pin===ADMIN_PIN_HASH){
     ROLE="admin";
     localStorage.setItem("role","admin");
     loginModal.style.display="none";
     updateUI();
     render();
-  } else alert("PIN salah");
+  }else alert("PIN salah");
 };
 
 function updateUI(){
-  loginBtn.style.display = ROLE==="admin"?"none":"inline-block";
-  logoutBtn.style.display = ROLE==="admin"?"inline-block":"none";
-  addBtn.style.display = ROLE==="admin"?"flex":"none";
+  loginBtn.style.display=ROLE==="admin"?"none":"inline-block";
+  logoutBtn.style.display=ROLE==="admin"?"inline-block":"none";
+  addBtn.style.display=ROLE==="admin"?"flex":"none";
 }
 
-/* ================= DATA ================= */
+/* ===== LOAD & SORT DATA ===== */
 async function loadData(){
-  const r = await fetch(API_URL+"?_="+Date.now());
-  DATA = await r.json();
+  const r=await fetch(API_URL+"?_="+Date.now());
+  DATA=await r.json();
+
+  DATA.sort((a,b)=>{
+    const da=new Date(a.tanggal+"T"+a.mulai);
+    const db=new Date(b.tanggal+"T"+b.mulai);
+    return da-db;
+  });
+
   render();
 }
 
+/* ===== RENDER ===== */
 function render(){
   arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
   DATA.forEach(d=>{
@@ -166,7 +179,7 @@ function render(){
     el.className="booking";
     el.innerHTML=`
       <b>${d.agenda}</b><br>
-      📅 ${d.tanggal}<br>
+      📅 ${formatTanggalIndo(d.tanggal)}<br>
       ⏰ ${d.mulai} - ${d.selesai}<br>
       👤 ${d.nama}
       ${ROLE==="admin"?`
@@ -176,8 +189,8 @@ function render(){
     `;
     el.onclick=()=>openDetail(d);
     if(ROLE==="admin"){
-      el.querySelector(".icon-edit").onclick=(e)=>{e.stopPropagation();openEdit(d)};
-      el.querySelector(".icon-delete").onclick=(e)=>{e.stopPropagation();hapus(d.id)};
+      el.querySelector(".icon-edit").onclick=e=>{e.stopPropagation();openEdit(d)};
+      el.querySelector(".icon-delete").onclick=e=>{e.stopPropagation();hapus(d.id)};
     }
     d.ruangan.toLowerCase().includes("arjuna")&&arjuna.appendChild(el);
     d.ruangan.toLowerCase().includes("srikandi")&&srikandi.appendChild(el);
@@ -185,18 +198,18 @@ function render(){
   });
 }
 
-/* ================= DETAIL ================= */
+/* ===== DETAIL ===== */
 function openDetail(d){
   mAgenda.textContent=d.agenda;
   mRuangan.textContent=d.ruangan;
-  mTanggal.textContent=d.tanggal;
+  mTanggal.textContent=formatTanggalIndo(d.tanggal);
   mJam.textContent=d.mulai+" - "+d.selesai;
   mNama.textContent=d.nama;
   modal.style.display="flex";
 }
 closeDetail.onclick=()=>modal.style.display="none";
 
-/* ================= EDIT ================= */
+/* ===== EDIT ===== */
 function openEdit(d){
   eId.value=d.id;
   eRuangan.value=d.ruangan;
@@ -217,7 +230,7 @@ editSubmit.onclick=async()=>{
   loadData();
 };
 
-/* ================= DELETE ================= */
+/* ===== DELETE ===== */
 async function hapus(id){
   if(!confirm("Hapus data?"))return;
   const f=new FormData();
@@ -227,10 +240,9 @@ async function hapus(id){
   loadData();
 }
 
-/* ================= CLOCK ================= */
+/* ===== CLOCK ===== */
 setInterval(()=>clock.textContent=new Date().toLocaleString("id-ID"),1000);
 
-/* ================= INIT ================= */
 updateUI();
 loadData();
 </script>
