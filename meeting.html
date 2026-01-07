@@ -157,15 +157,27 @@ function updateUI(){
   addBtn.style.display=ROLE==="admin"?"flex":"none";
 }
 
-/* ===== LOAD & SORT DATA ===== */
+/* ===== LOAD & SORT DATA (UPDATED) ===== */
 async function loadData(){
   const r=await fetch(API_URL+"?_="+Date.now());
   DATA=await r.json();
 
+  const now=new Date();
+  const today=new Date(now.toDateString());
+
   DATA.sort((a,b)=>{
-    const da=new Date(a.tanggal+"T"+a.mulai);
-    const db=new Date(b.tanggal+"T"+b.mulai);
-    return da-db;
+    const da=new Date(a.tanggal+"T"+(a.mulai||"00:00"));
+    const db=new Date(b.tanggal+"T"+(b.mulai||"00:00"));
+
+    const aIsPast = da < today;
+    const bIsPast = db < today;
+
+    // 🔥 booking hari ini & masa depan selalu di atas
+    if(aIsPast && !bIsPast) return 1;
+    if(!aIsPast && bIsPast) return -1;
+
+    // 🔥 kalau sama-sama future / sama-sama past → urut tanggal & jam
+    return da - db;
   });
 
   render();
@@ -246,6 +258,5 @@ setInterval(()=>clock.textContent=new Date().toLocaleString("id-ID"),1000);
 updateUI();
 loadData();
 </script>
-
 </body>
 </html>
