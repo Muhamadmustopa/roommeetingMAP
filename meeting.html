@@ -157,27 +157,32 @@ function updateUI(){
   addBtn.style.display=ROLE==="admin"?"flex":"none";
 }
 
-/* ===== LOAD & SORT DATA (UPDATED) ===== */
+/* ===== LOAD & SORT DATA (NEAREST FIRST) ===== */
 async function loadData(){
-  const r=await fetch(API_URL+"?_="+Date.now());
-  DATA=await r.json();
+  const r = await fetch(API_URL+"?_="+Date.now());
+  DATA = await r.json();
 
-  const now=new Date();
-  const today=new Date(now.toDateString());
+  const now = new Date();
 
   DATA.sort((a,b)=>{
-    const da=new Date(a.tanggal+"T"+(a.mulai||"00:00"));
-    const db=new Date(b.tanggal+"T"+(b.mulai||"00:00"));
+    const da = new Date(a.tanggal + "T" + (a.mulai || "00:00"));
+    const db = new Date(b.tanggal + "T" + (b.mulai || "00:00"));
 
-    const aIsPast = da < today;
-    const bIsPast = db < today;
+    const diffA = da - now;
+    const diffB = db - now;
 
-    // 🔥 booking hari ini & masa depan selalu di atas
-    if(aIsPast && !bIsPast) return 1;
-    if(!aIsPast && bIsPast) return -1;
+    const aFuture = diffA >= 0;
+    const bFuture = diffB >= 0;
 
-    // 🔥 kalau sama-sama future / sama-sama past → urut tanggal & jam
-    return da - db;
+    // 🔥 future selalu di atas
+    if (aFuture && !bFuture) return -1;
+    if (!aFuture && bFuture) return 1;
+
+    // 🔥 sama-sama future → yang paling dekat sekarang
+    if (aFuture && bFuture) return diffA - diffB;
+
+    // 🔥 sama-sama past → yang paling baru lewat
+    return diffB - diffA;
   });
 
   render();
