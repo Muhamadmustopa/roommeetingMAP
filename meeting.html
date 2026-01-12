@@ -17,41 +17,101 @@ body{
 }
 .logo{display:block;width:130px;margin:0 auto 10px}
 h1{text-align:center;margin-bottom:30px}
-.top-bar{display:flex;align-items:center;margin-bottom:10px}
-.btn{padding:8px 14px;border:none;border-radius:10px;cursor:pointer;font-weight:600}
+
+.top-bar{
+  display:flex;
+  align-items:center;
+  margin-bottom:10px
+}
+.btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600
+}
 .btn-login{background:#00d4ff;color:#000}
 .btn-logout{background:#ff4d4d;color:#fff}
-.container{display:flex;gap:20px;flex-wrap:wrap}
-.column{flex:1;background:rgba(255,255,255,.15);padding:16px;border-radius:18px;min-width:260px}
+
+.container{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap
+}
+.column{
+  flex:1;
+  background:rgba(255,255,255,.15);
+  padding:16px;
+  border-radius:18px;
+  min-width:260px
+}
 .column h3{text-align:center;margin:6px 0 14px}
-.booking{background:rgba(255,255,255,.25);padding:14px;border-radius:14px;margin-bottom:12px;cursor:pointer;transition:.25s}
-.booking:hover{transform:scale(1.02);background:rgba(255,255,255,.35)}
-.icon-btn{background:transparent;border:none;cursor:pointer;font-size:16px;margin-top:8px}
+
+.booking{
+  background:rgba(255,255,255,.25);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:.25s
+}
+.booking:hover{
+  transform:scale(1.02);
+  background:rgba(255,255,255,.35)
+}
+
+.icon-btn{
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+  margin-right:6px
+}
 .icon-delete{color:#ff4d4d}
 .icon-edit{color:#00d4ff}
+
 .fab{
-  position:fixed;right:24px;bottom:24px;
-  width:64px;height:64px;border-radius:50%;
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  width:64px;
+  height:64px;
+  border-radius:50%;
   background:linear-gradient(135deg,#00d4ff,#0090ff);
-  color:#fff;display:none;
-  align-items:center;justify-content:center;
-  font-size:36px;text-decoration:none
+  color:#fff;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  text-decoration:none
 }
+
 .modal{
-  position:fixed;inset:0;
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.6);
-  display:none;align-items:center;justify-content:center;
+  display:none;
+  align-items:center;
+  justify-content:center;
   z-index:999
 }
 .modal-box{
-  background:#fff;color:#111;
-  padding:24px;width:320px;border-radius:18px
+  background:#fff;
+  color:#111;
+  padding:24px;
+  width:320px;
+  border-radius:18px
 }
 .close{float:right;cursor:pointer}
+
 input{
-  width:100%;padding:10px;
-  border-radius:8px;border:1px solid #ccc;margin:6px 0
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  margin:6px 0
 }
+
 #clock{
   margin-right:auto;
   font-weight:600;
@@ -72,12 +132,25 @@ input{
 </div>
 
 <img src="map-log.png" class="logo">
-<h1>Jadwal Peminjaman Ruang Meeting<br>PT Mitra Asa Pratama</h1>
+
+<h1>
+  Jadwal Peminjaman Ruang Meeting<br>
+  PT Mitra Asa Pratama
+</h1>
 
 <div class="container">
-  <div class="column"><h3>Ruang Arjuna</h3><div id="arjuna"></div></div>
-  <div class="column"><h3>Ruang Srikandi</h3><div id="srikandi"></div></div>
-  <div class="column"><h3>Ruang Gatot Kaca</h3><div id="gatot"></div></div>
+  <div class="column">
+    <h3>Ruang Arjuna</h3>
+    <div id="arjuna"></div>
+  </div>
+  <div class="column">
+    <h3>Ruang Srikandi</h3>
+    <div id="srikandi"></div>
+  </div>
+  <div class="column">
+    <h3>Ruang Gatot Kaca</h3>
+    <div id="gatot"></div>
+  </div>
 </div>
 
 <a href="daftar.html" class="fab" id="addBtn">+</a>
@@ -99,7 +172,9 @@ input{
   <div class="modal-box">
     <h3>Login Admin</h3>
     <input type="password" id="pinInput" placeholder="Masukkan PIN">
-    <button class="btn btn-login" style="width:100%" id="loginSubmit">Login</button>
+    <button class="btn btn-login" style="width:100%" id="loginSubmit">
+      Login
+    </button>
   </div>
 </div>
 
@@ -114,62 +189,81 @@ input{
     <input type="time" id="eMulai">
     <input type="time" id="eSelesai">
     <input id="eNama">
-    <button class="btn btn-login" style="width:100%" id="editSubmit">Simpan</button>
+    <button class="btn btn-login" style="width:100%" id="editSubmit">
+      Simpan
+    </button>
   </div>
 </div>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbwZCzBYe3fLiYKj9qruwqibpoJ4TqFl53HAK-FabTbu31uksygAh6vjZEMbdnnHjjLJ/exec";
-const ADMIN_PIN_HASH="8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+const API_URL = "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
+const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
-let ROLE=localStorage.getItem("role")||"user";
-let DATA=[];
+let ROLE = localStorage.getItem("role") || "user";
+let DATA = [];
+
+/* ===== FORMAT TANGGAL ===== */
+function formatTanggalIndo(t){
+  const d = new Date(t + "T00:00:00");
+  return d.toLocaleDateString("id-ID", {
+    day:"2-digit", month:"long", year:"numeric"
+  });
+}
 
 /* ===== LOGIN ===== */
-loginBtn.onclick=()=>loginModal.style.display="flex";
-logoutBtn.onclick=()=>{
-  ROLE="user";
+loginBtn.onclick = () => loginModal.style.display = "flex";
+
+logoutBtn.onclick = () => {
+  ROLE = "user";
   localStorage.removeItem("role");
   updateUI();
   render();
 };
-loginSubmit.onclick=async()=>{
-  const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pinInput.value));
-  const pin=[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,"0")).join("");
-  if(pin===ADMIN_PIN_HASH){
-    ROLE="admin";
+
+loginSubmit.onclick = async () => {
+  const h = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(pinInput.value)
+  );
+  const pin = [...new Uint8Array(h)]
+    .map(b => b.toString(16).padStart(2,"0"))
+    .join("");
+
+  if(pin === ADMIN_PIN_HASH){
+    ROLE = "admin";
     localStorage.setItem("role","admin");
-    loginModal.style.display="none";
+    loginModal.style.display = "none";
     updateUI();
     render();
-  }else alert("PIN salah");
+  } else {
+    alert("PIN salah");
+  }
 };
 
 function updateUI(){
-  loginBtn.style.display=ROLE==="admin"?"none":"inline-block";
-  logoutBtn.style.display=ROLE==="admin"?"inline-block":"none";
-  addBtn.style.display=ROLE==="admin"?"flex":"none";
+  loginBtn.style.display  = ROLE==="admin" ? "none" : "inline-block";
+  logoutBtn.style.display = ROLE==="admin" ? "inline-block" : "none";
+  addBtn.style.display    = ROLE==="admin" ? "flex" : "none";
 }
 
-/* ===== LOAD & SORT (NEAREST FIRST - FIX FINAL) ===== */
+/* ===== LOAD & SORT ===== */
 async function loadData(){
-  const r = await fetch(API_URL+"?_="+Date.now());
+  const r = await fetch(API_URL + "?_=" + Date.now());
   DATA = await r.json();
 
-  const now = new Date();
+  const today = new Date();
+  today.setHours(0,0,0,0);
 
   DATA.sort((a,b)=>{
-    const da = new Date(`${a.tanggal}T${a.mulai || "00:00"}`);
-    const db = new Date(`${b.tanggal}T${b.mulai || "00:00"}`);
+    const da = new Date(a.tanggal+"T"+(a.mulai||"00:00"));
+    const db = new Date(b.tanggal+"T"+(b.mulai||"00:00"));
 
-    const aFuture = da >= now;
-    const bFuture = db >= now;
+    const aPast = da < today;
+    const bPast = db < today;
 
-    if (aFuture && !bFuture) return -1;
-    if (!aFuture && bFuture) return 1;
-
-    if (aFuture && bFuture) return da - db;
-    return db - da;
+    if(aPast && !bPast) return 1;
+    if(!aPast && bPast) return -1;
+    return da - db;
   });
 
   render();
@@ -177,58 +271,77 @@ async function loadData(){
 
 /* ===== RENDER ===== */
 function render(){
-  arjuna.innerHTML=srikandi.innerHTML=gatot.innerHTML="";
+  arjuna.innerHTML = "";
+  srikandi.innerHTML = "";
+  gatot.innerHTML = "";
+
   DATA.forEach(d=>{
-    const el=document.createElement("div");
-    el.className="booking";
-    el.innerHTML=`
+    const el = document.createElement("div");
+    el.className = "booking";
+
+    el.innerHTML = `
       <b>${d.agenda}</b><br>
-      📅 ${d.tanggal}<br>
+      📅 ${formatTanggalIndo(d.tanggal)}<br>
       ⏰ ${d.mulai} - ${d.selesai}<br>
       👤 ${d.nama}
-      ${ROLE==="admin"?`
+      ${ROLE==="admin" ? `
         <br>
         <button class="icon-btn icon-edit">✏️ Edit</button>
-        <button class="icon-btn icon-delete">🗑️ Hapus</button>`:""}
+        <button class="icon-btn icon-delete">🗑️ Hapus</button>
+      ` : ""}
     `;
-    el.onclick=()=>openDetail(d);
+
+    el.onclick = () => openDetail(d);
+
     if(ROLE==="admin"){
-      el.querySelector(".icon-edit").onclick=e=>{e.stopPropagation();openEdit(d)};
-      el.querySelector(".icon-delete").onclick=e=>{e.stopPropagation();hapus(d.id)};
+      el.querySelector(".icon-edit").onclick = e => {
+        e.stopPropagation(); openEdit(d);
+      };
+      el.querySelector(".icon-delete").onclick = e => {
+        e.stopPropagation(); hapus(d.id);
+      };
     }
-    d.ruangan.toLowerCase().includes("arjuna")&&arjuna.appendChild(el);
-    d.ruangan.toLowerCase().includes("srikandi")&&srikandi.appendChild(el);
-    d.ruangan.toLowerCase().includes("gatot")&&gatot.appendChild(el);
+
+    const r = d.ruangan.toLowerCase();
+    if(r.includes("arjuna")) arjuna.appendChild(el);
+    if(r.includes("srikandi")) srikandi.appendChild(el);
+    if(r.includes("gatot")) gatot.appendChild(el);
   });
 }
 
 /* ===== DETAIL ===== */
 function openDetail(d){
-  mAgenda.textContent=d.agenda;
-  mRuangan.textContent=d.ruangan;
-  mTanggal.textContent=d.tanggal;
-  mJam.textContent=d.mulai+" - "+d.selesai;
-  mNama.textContent=d.nama;
-  modal.style.display="flex";
+  mAgenda.textContent = d.agenda;
+  mRuangan.textContent = d.ruangan;
+  mTanggal.textContent = formatTanggalIndo(d.tanggal);
+  mJam.textContent = d.mulai+" - "+d.selesai;
+  mNama.textContent = d.nama;
+  modal.style.display = "flex";
 }
-closeDetail.onclick=()=>modal.style.display="none";
+closeDetail.onclick = () => modal.style.display = "none";
 
 /* ===== EDIT ===== */
 function openEdit(d){
-  eId.value=d.id;
-  eRuangan.value=d.ruangan;
-  eAgenda.value=d.agenda;
-  eTanggal.value=d.tanggal;
-  eMulai.value=d.mulai;
-  eSelesai.value=d.selesai;
-  eNama.value=d.nama;
-  editModal.style.display="flex";
+  eId.value = d.id;
+  eRuangan.value = d.ruangan;
+  eAgenda.value = d.agenda;
+  eTanggal.value = d.tanggal;
+  eMulai.value = d.mulai;
+  eSelesai.value = d.selesai;
+  eNama.value = d.nama;
+  editModal.style.display = "flex";
 }
-editSubmit.onclick=async()=>{
-  const f=new FormData();
+
+editSubmit.onclick = async () => {
+  const f = new FormData();
   f.append("action","edit");
   ["id","ruangan","agenda","tanggal","mulai","selesai","nama"]
-    .forEach(k=>f.append(k,document.getElementById("e"+k.charAt(0).toUpperCase()+k.slice(1)).value));
+    .forEach(k=>{
+      f.append(
+        k,
+        document.getElementById("e"+k.charAt(0).toUpperCase()+k.slice(1)).value
+      );
+    });
   await fetch(API_URL,{method:"POST",body:f});
   editModal.style.display="none";
   loadData();
@@ -236,8 +349,8 @@ editSubmit.onclick=async()=>{
 
 /* ===== DELETE ===== */
 async function hapus(id){
-  if(!confirm("Hapus data?"))return;
-  const f=new FormData();
+  if(!confirm("Hapus data?")) return;
+  const f = new FormData();
   f.append("action","delete");
   f.append("id",id);
   await fetch(API_URL,{method:"POST",body:f});
@@ -245,10 +358,13 @@ async function hapus(id){
 }
 
 /* ===== CLOCK ===== */
-setInterval(()=>clock.textContent=new Date().toLocaleString("id-ID"),1000);
+setInterval(()=>{
+  clock.textContent = new Date().toLocaleString("id-ID");
+},1000);
 
 updateUI();
 loadData();
 </script>
+
 </body>
 </html>
