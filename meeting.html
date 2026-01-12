@@ -125,10 +125,20 @@ const ADMIN_PIN_HASH="8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923a
 let ROLE=localStorage.getItem("role")||"user";
 let DATA=[];
 
+/* ===== PARSE TANGGAL INDONESIA (FIX UTAMA) ===== */
+function parseTanggalIndo(tanggal, jam="00:00"){
+  const bulan={
+    januari:0,februari:1,maret:2,april:3,mei:4,juni:5,
+    juli:6,agustus:7,september:8,oktober:9,november:10,desember:11
+  };
+  const [tgl,bln,thn]=tanggal.toLowerCase().split(" ");
+  const [h,m]=jam.split(":");
+  return new Date(thn,bulan[bln],tgl,h||0,m||0);
+}
+
 /* ===== FORMAT TANGGAL ===== */
 function formatTanggalIndo(t){
-  const d=new Date(t+"T00:00:00");
-  return d.toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
+  return t;
 }
 
 /* ===== LOGIN ===== */
@@ -157,32 +167,25 @@ function updateUI(){
   addBtn.style.display=ROLE==="admin"?"flex":"none";
 }
 
-/* ===== LOAD & SORT DATA (NEAREST FIRST) ===== */
+/* ===== LOAD & SORT (NEAREST FIRST) ===== */
 async function loadData(){
-  const r = await fetch(API_URL+"?_="+Date.now());
-  DATA = await r.json();
+  const r=await fetch(API_URL+"?_="+Date.now());
+  DATA=await r.json();
 
-  const now = new Date();
+  const now=new Date();
 
   DATA.sort((a,b)=>{
-    const da = new Date(a.tanggal + "T" + (a.mulai || "00:00"));
-    const db = new Date(b.tanggal + "T" + (b.mulai || "00:00"));
+    const da=parseTanggalIndo(a.tanggal,a.mulai);
+    const db=parseTanggalIndo(b.tanggal,b.mulai);
 
-    const diffA = da - now;
-    const diffB = db - now;
+    const aFuture=da>=now;
+    const bFuture=db>=now;
 
-    const aFuture = diffA >= 0;
-    const bFuture = diffB >= 0;
+    if(aFuture && !bFuture) return -1;
+    if(!aFuture && bFuture) return 1;
 
-    // 🔥 future selalu di atas
-    if (aFuture && !bFuture) return -1;
-    if (!aFuture && bFuture) return 1;
-
-    // 🔥 sama-sama future → yang paling dekat sekarang
-    if (aFuture && bFuture) return diffA - diffB;
-
-    // 🔥 sama-sama past → yang paling baru lewat
-    return diffB - diffA;
+    if(aFuture && bFuture) return da-db;
+    return db-da;
   });
 
   render();
@@ -196,7 +199,7 @@ function render(){
     el.className="booking";
     el.innerHTML=`
       <b>${d.agenda}</b><br>
-      📅 ${formatTanggalIndo(d.tanggal)}<br>
+      📅 ${d.tanggal}<br>
       ⏰ ${d.mulai} - ${d.selesai}<br>
       👤 ${d.nama}
       ${ROLE==="admin"?`
@@ -219,7 +222,7 @@ function render(){
 function openDetail(d){
   mAgenda.textContent=d.agenda;
   mRuangan.textContent=d.ruangan;
-  mTanggal.textContent=formatTanggalIndo(d.tanggal);
+  mTanggal.textContent=d.tanggal;
   mJam.textContent=d.mulai+" - "+d.selesai;
   mNama.textContent=d.nama;
   modal.style.display="flex";
