@@ -125,22 +125,6 @@ const ADMIN_PIN_HASH="8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923a
 let ROLE=localStorage.getItem("role")||"user";
 let DATA=[];
 
-/* ===== PARSE TANGGAL INDONESIA (FIX UTAMA) ===== */
-function parseTanggalIndo(tanggal, jam="00:00"){
-  const bulan={
-    januari:0,februari:1,maret:2,april:3,mei:4,juni:5,
-    juli:6,agustus:7,september:8,oktober:9,november:10,desember:11
-  };
-  const [tgl,bln,thn]=tanggal.toLowerCase().split(" ");
-  const [h,m]=jam.split(":");
-  return new Date(thn,bulan[bln],tgl,h||0,m||0);
-}
-
-/* ===== FORMAT TANGGAL ===== */
-function formatTanggalIndo(t){
-  return t;
-}
-
 /* ===== LOGIN ===== */
 loginBtn.onclick=()=>loginModal.style.display="flex";
 logoutBtn.onclick=()=>{
@@ -167,25 +151,25 @@ function updateUI(){
   addBtn.style.display=ROLE==="admin"?"flex":"none";
 }
 
-/* ===== LOAD & SORT (NEAREST FIRST) ===== */
+/* ===== LOAD & SORT (NEAREST FIRST - FIX FINAL) ===== */
 async function loadData(){
-  const r=await fetch(API_URL+"?_="+Date.now());
-  DATA=await r.json();
+  const r = await fetch(API_URL+"?_="+Date.now());
+  DATA = await r.json();
 
-  const now=new Date();
+  const now = new Date();
 
   DATA.sort((a,b)=>{
-    const da=parseTanggalIndo(a.tanggal,a.mulai);
-    const db=parseTanggalIndo(b.tanggal,b.mulai);
+    const da = new Date(`${a.tanggal}T${a.mulai || "00:00"}`);
+    const db = new Date(`${b.tanggal}T${b.mulai || "00:00"}`);
 
-    const aFuture=da>=now;
-    const bFuture=db>=now;
+    const aFuture = da >= now;
+    const bFuture = db >= now;
 
-    if(aFuture && !bFuture) return -1;
-    if(!aFuture && bFuture) return 1;
+    if (aFuture && !bFuture) return -1;
+    if (!aFuture && bFuture) return 1;
 
-    if(aFuture && bFuture) return da-db;
-    return db-da;
+    if (aFuture && bFuture) return da - db;
+    return db - da;
   });
 
   render();
@@ -244,7 +228,7 @@ editSubmit.onclick=async()=>{
   const f=new FormData();
   f.append("action","edit");
   ["id","ruangan","agenda","tanggal","mulai","selesai","nama"]
-  .forEach(k=>f.append(k,document.getElementById("e"+k.charAt(0).toUpperCase()+k.slice(1)).value));
+    .forEach(k=>f.append(k,document.getElementById("e"+k.charAt(0).toUpperCase()+k.slice(1)).value));
   await fetch(API_URL,{method:"POST",body:f});
   editModal.style.display="none";
   loadData();
