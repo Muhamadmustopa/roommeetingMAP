@@ -63,14 +63,12 @@ h1{
   margin:6px 0 14px;
 }
 
-/* ✅ LIST BOOKING SCROLL AREA */
+/* ✅ SCROLL AREA */
 .booking-list{
   max-height:420px;
   overflow-y:auto;
   cursor:grab;
   padding-right:6px;
-
-  /* penting agar drag smooth */
   user-select:none;
 }
 
@@ -78,7 +76,6 @@ h1{
   cursor:grabbing;
 }
 
-/* scrollbar */
 .booking-list::-webkit-scrollbar{
   width:6px;
 }
@@ -108,7 +105,6 @@ h1{
   font-size:16px;
   margin-right:6px;
 }
-
 .icon-delete{color:#ff4d4d;}
 .icon-edit{color:#00d4ff;}
 
@@ -220,13 +216,45 @@ input{
   </div>
 </div>
 
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <h3>Login Admin</h3>
+    <input type="password" id="pinInput" placeholder="Masukkan PIN">
+    <button class="btn btn-login" style="width:100%" id="loginSubmit">
+      Login
+    </button>
+  </div>
+</div>
+
+<!-- EDIT -->
+<div class="modal" id="editModal">
+  <div class="modal-box">
+    <h3>Edit Jadwal</h3>
+    <input type="hidden" id="eId">
+    <input id="eRuangan">
+    <input id="eAgenda">
+    <input type="date" id="eTanggal">
+    <input type="time" id="eMulai">
+    <input type="time" id="eSelesai">
+    <input id="eNama">
+    <button class="btn btn-login" style="width:100%" id="editSubmit">
+      Simpan
+    </button>
+  </div>
+</div>
+
 <script>
 const API_URL =
 "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
 
+const ADMIN_PIN_HASH =
+"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+
+let ROLE = localStorage.getItem("role") || "user";
 let DATA = [];
 
-/* ===== FORMAT TANGGAL ===== */
+/* FORMAT TANGGAL */
 function formatTanggalIndo(t){
   const d = new Date(t + "T00:00:00");
   return d.toLocaleDateString("id-ID", {
@@ -236,14 +264,51 @@ function formatTanggalIndo(t){
   });
 }
 
-/* ===== LOAD DATA ===== */
+/* LOGIN */
+loginBtn.onclick = () => loginModal.style.display = "flex";
+
+logoutBtn.onclick = () => {
+  ROLE = "user";
+  localStorage.removeItem("role");
+  updateUI();
+  render();
+};
+
+loginSubmit.onclick = async () => {
+  const h = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(pinInput.value)
+  );
+
+  const pin = [...new Uint8Array(h)]
+    .map(b => b.toString(16).padStart(2,"0"))
+    .join("");
+
+  if(pin === ADMIN_PIN_HASH){
+    ROLE = "admin";
+    localStorage.setItem("role","admin");
+    loginModal.style.display = "none";
+    updateUI();
+    render();
+  } else {
+    alert("PIN salah!");
+  }
+};
+
+function updateUI(){
+  loginBtn.style.display  = ROLE==="admin" ? "none" : "inline-block";
+  logoutBtn.style.display = ROLE==="admin" ? "inline-block" : "none";
+  addBtn.style.display    = ROLE==="admin" ? "flex" : "none";
+}
+
+/* LOAD DATA */
 async function loadData(){
   const r = await fetch(API_URL + "?_=" + Date.now());
   DATA = await r.json();
   render();
 }
 
-/* ===== RENDER ===== */
+/* RENDER */
 function render(){
   arjuna.innerHTML = "";
   srikandi.innerHTML = "";
@@ -258,9 +323,25 @@ function render(){
       📅 ${formatTanggalIndo(d.tanggal)}<br>
       ⏰ ${d.mulai} - ${d.selesai}<br>
       👤 ${d.nama}
+      ${ROLE==="admin" ? `
+        <br>
+        <button class="icon-btn icon-edit">✏️ Edit</button>
+        <button class="icon-btn icon-delete">🗑️ Hapus</button>
+      ` : ""}
     `;
 
     el.onclick = () => openDetail(d);
+
+    if(ROLE==="admin"){
+      el.querySelector(".icon-edit").onclick = e => {
+        e.stopPropagation();
+        openEdit(d);
+      };
+      el.querySelector(".icon-delete").onclick = e => {
+        e.stopPropagation();
+        hapus(d.id);
+      };
+    }
 
     const r = d.ruangan.toLowerCase();
     if(r.includes("arjuna")) arjuna.appendChild(el);
@@ -269,7 +350,7 @@ function render(){
   });
 }
 
-/* ===== DETAIL ===== */
+/* DETAIL */
 function openDetail(d){
   mAgenda.textContent = d.agenda;
   mRuangan.textContent = d.ruangan;
@@ -280,12 +361,52 @@ function openDetail(d){
 }
 closeDetail.onclick = () => modal.style.display = "none";
 
-/* ===== CLOCK ===== */
+/* EDIT */
+function openEdit(d){
+  eId.value = d.id;
+  eRuangan.value = d.ruangan;
+  eAgenda.value = d.agenda;
+  eTanggal.value = d.tanggal;
+  eMulai.value = d.mulai;
+  eSelesai.value = d.selesai;
+  eNama.value = d.nama;
+  editModal.style.display = "flex";
+}
+
+editSubmit.onclick = async () => {
+  const f = new FormData();
+  f.append("action","edit");
+  f.append("id", eId.value);
+  f.append("ruangan", eRuangan.value);
+  f.append("agenda", eAgenda.value);
+  f.append("tanggal", eTanggal.value);
+  f.append("mulai", eMulai.value);
+  f.append("selesai", eSelesai.value);
+  f.append("nama", eNama.value);
+
+  await fetch(API_URL,{method:"POST",body:f});
+  editModal.style.display="none";
+  loadData();
+};
+
+/* DELETE */
+async function hapus(id){
+  if(!confirm("Hapus data?")) return;
+
+  const f = new FormData();
+  f.append("action","delete");
+  f.append("id",id);
+
+  await fetch(API_URL,{method:"POST",body:f});
+  loadData();
+}
+
+/* CLOCK */
 setInterval(()=>{
   clock.textContent = new Date().toLocaleString("id-ID");
 },1000);
 
-/* ✅ DRAG SCROLL FIX POINTER EVENT */
+/* ✅ DRAG SCROLL FIX */
 document.querySelectorAll(".booking-list").forEach(list => {
 
   let isDragging = false;
@@ -296,13 +417,11 @@ document.querySelectorAll(".booking-list").forEach(list => {
     isDragging = true;
     startY = e.clientY;
     startScroll = list.scrollTop;
-
     list.setPointerCapture(e.pointerId);
   });
 
   list.addEventListener("pointermove", (e) => {
-    if (!isDragging) return;
-
+    if(!isDragging) return;
     const diff = e.clientY - startY;
     list.scrollTop = startScroll - diff;
   });
@@ -317,6 +436,7 @@ document.querySelectorAll(".booking-list").forEach(list => {
 
 });
 
+updateUI();
 loadData();
 </script>
 
