@@ -41,15 +41,8 @@ h1{
   font-weight:600;
 }
 
-.btn-login{
-  background:#00d4ff;
-  color:#000;
-}
-
-.btn-logout{
-  background:#ff4d4d;
-  color:#fff;
-}
+.btn-login{background:#00d4ff;color:#000;}
+.btn-logout{background:#ff4d4d;color:#fff;}
 
 .container{
   display:flex;
@@ -76,13 +69,16 @@ h1{
   overflow-y:auto;
   cursor:grab;
   padding-right:6px;
+
+  /* penting agar drag smooth */
+  user-select:none;
 }
 
 .booking-list:active{
   cursor:grabbing;
 }
 
-/* Scrollbar kecil */
+/* scrollbar */
 .booking-list::-webkit-scrollbar{
   width:6px;
 }
@@ -224,42 +220,10 @@ input{
   </div>
 </div>
 
-<!-- LOGIN -->
-<div class="modal" id="loginModal">
-  <div class="modal-box">
-    <h3>Login Admin</h3>
-    <input type="password" id="pinInput" placeholder="Masukkan PIN">
-    <button class="btn btn-login" style="width:100%" id="loginSubmit">
-      Login
-    </button>
-  </div>
-</div>
-
-<!-- EDIT -->
-<div class="modal" id="editModal">
-  <div class="modal-box">
-    <h3>Edit Jadwal</h3>
-    <input type="hidden" id="eId">
-    <input id="eRuangan">
-    <input id="eAgenda">
-    <input type="date" id="eTanggal">
-    <input type="time" id="eMulai">
-    <input type="time" id="eSelesai">
-    <input id="eNama">
-    <button class="btn btn-login" style="width:100%" id="editSubmit">
-      Simpan
-    </button>
-  </div>
-</div>
-
 <script>
 const API_URL =
 "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
 
-const ADMIN_PIN_HASH =
-"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
-
-let ROLE = localStorage.getItem("role") || "user";
 let DATA = [];
 
 /* ===== FORMAT TANGGAL ===== */
@@ -272,54 +236,10 @@ function formatTanggalIndo(t){
   });
 }
 
-/* ===== LOGIN ===== */
-loginBtn.onclick = () => loginModal.style.display = "flex";
-
-logoutBtn.onclick = () => {
-  ROLE = "user";
-  localStorage.removeItem("role");
-  updateUI();
-  render();
-};
-
-loginSubmit.onclick = async () => {
-  const h = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(pinInput.value)
-  );
-
-  const pin = [...new Uint8Array(h)]
-    .map(b => b.toString(16).padStart(2,"0"))
-    .join("");
-
-  if(pin === ADMIN_PIN_HASH){
-    ROLE = "admin";
-    localStorage.setItem("role","admin");
-    loginModal.style.display = "none";
-    updateUI();
-    render();
-  } else {
-    alert("PIN salah");
-  }
-};
-
-function updateUI(){
-  loginBtn.style.display  = ROLE==="admin" ? "none" : "inline-block";
-  logoutBtn.style.display = ROLE==="admin" ? "inline-block" : "none";
-  addBtn.style.display    = ROLE==="admin" ? "flex" : "none";
-}
-
 /* ===== LOAD DATA ===== */
 async function loadData(){
   const r = await fetch(API_URL + "?_=" + Date.now());
   DATA = await r.json();
-
-  DATA.sort((a,b)=>{
-    const da = new Date(a.tanggal+"T"+(a.mulai||"00:00"));
-    const db = new Date(b.tanggal+"T"+(b.mulai||"00:00"));
-    return da - db;
-  });
-
   render();
 }
 
@@ -338,25 +258,9 @@ function render(){
       📅 ${formatTanggalIndo(d.tanggal)}<br>
       ⏰ ${d.mulai} - ${d.selesai}<br>
       👤 ${d.nama}
-      ${ROLE==="admin" ? `
-        <br>
-        <button class="icon-btn icon-edit">✏️ Edit</button>
-        <button class="icon-btn icon-delete">🗑️ Hapus</button>
-      ` : ""}
     `;
 
     el.onclick = () => openDetail(d);
-
-    if(ROLE==="admin"){
-      el.querySelector(".icon-edit").onclick = e => {
-        e.stopPropagation();
-        openEdit(d);
-      };
-      el.querySelector(".icon-delete").onclick = e => {
-        e.stopPropagation();
-        hapus(d.id);
-      };
-    }
 
     const r = d.ruangan.toLowerCase();
     if(r.includes("arjuna")) arjuna.appendChild(el);
@@ -376,93 +280,43 @@ function openDetail(d){
 }
 closeDetail.onclick = () => modal.style.display = "none";
 
-/* ===== EDIT ===== */
-function openEdit(d){
-  eId.value = d.id;
-  eRuangan.value = d.ruangan;
-  eAgenda.value = d.agenda;
-  eTanggal.value = d.tanggal;
-  eMulai.value = d.mulai;
-  eSelesai.value = d.selesai;
-  eNama.value = d.nama;
-  editModal.style.display = "flex";
-}
-
-editSubmit.onclick = async () => {
-  const f = new FormData();
-  f.append("action","edit");
-  f.append("id", eId.value);
-  f.append("ruangan", eRuangan.value);
-  f.append("agenda", eAgenda.value);
-  f.append("tanggal", eTanggal.value);
-  f.append("mulai", eMulai.value);
-  f.append("selesai", eSelesai.value);
-  f.append("nama", eNama.value);
-
-  await fetch(API_URL,{method:"POST",body:f});
-  editModal.style.display="none";
-  loadData();
-};
-
-/* ===== DELETE ===== */
-async function hapus(id){
-  if(!confirm("Hapus data?")) return;
-
-  const f = new FormData();
-  f.append("action","delete");
-  f.append("id",id);
-
-  await fetch(API_URL,{method:"POST",body:f});
-  loadData();
-}
-
 /* ===== CLOCK ===== */
 setInterval(()=>{
   clock.textContent = new Date().toLocaleString("id-ID");
 },1000);
 
-/* ===== DRAG SCROLL LIST ONLY ===== */
+/* ✅ DRAG SCROLL FIX POINTER EVENT */
 document.querySelectorAll(".booking-list").forEach(list => {
 
-  let isDown = false;
-  let startY;
-  let scrollTop;
+  let isDragging = false;
+  let startY = 0;
+  let startScroll = 0;
 
-  list.addEventListener("mousedown", (e) => {
-    isDown = true;
-    startY = e.pageY;
-    scrollTop = list.scrollTop;
+  list.addEventListener("pointerdown", (e) => {
+    isDragging = true;
+    startY = e.clientY;
+    startScroll = list.scrollTop;
+
+    list.setPointerCapture(e.pointerId);
   });
 
-  list.addEventListener("mouseup", () => isDown = false);
-  list.addEventListener("mouseleave", () => isDown = false);
+  list.addEventListener("pointermove", (e) => {
+    if (!isDragging) return;
 
-  list.addEventListener("mousemove", (e) => {
-    if(!isDown) return;
-    e.preventDefault();
-
-    const y = e.pageY;
-    const walk = y - startY;
-
-    list.scrollTop = scrollTop - walk;
+    const diff = e.clientY - startY;
+    list.scrollTop = startScroll - diff;
   });
 
-  /* Mobile Touch Support */
-  list.addEventListener("touchstart", (e) => {
-    startY = e.touches[0].pageY;
-    scrollTop = list.scrollTop;
+  list.addEventListener("pointerup", () => {
+    isDragging = false;
   });
 
-  list.addEventListener("touchmove", (e) => {
-    const y = e.touches[0].pageY;
-    const walk = y - startY;
-
-    list.scrollTop = scrollTop - walk;
+  list.addEventListener("pointercancel", () => {
+    isDragging = false;
   });
 
 });
 
-updateUI();
 loadData();
 </script>
 
