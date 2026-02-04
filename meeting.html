@@ -96,6 +96,24 @@
       background: rgba(255, 255, 255, 0.35);
     }
 
+    /* ==================================================
+       ✅ LIVE BOOKING (Glow Hijau Paling Ringan)
+    ================================================== */
+    .booking.live {
+      background: rgba(0, 255, 120, 0.22) !important;
+      border: 2px solid rgba(0, 255, 120, 0.65);
+      box-shadow: 0 0 8px rgba(0, 255, 120, 0.35);
+    }
+
+    .booking.live::before {
+      content: "● LIVE";
+      display: inline-block;
+      font-size: 11px;
+      font-weight: bold;
+      color: rgba(0, 255, 120, 0.9);
+      margin-bottom: 6px;
+    }
+
     .icon-btn {
       background: transparent;
       border: none;
@@ -137,13 +155,9 @@
       justify-content: center;
       z-index: 999;
 
-      /* ✅ BONUS BLUR */
       backdrop-filter: blur(8px);
     }
 
-    /* ==================================================
-       ✅ UPDATED MODAL BOX DETAIL INTERAKTIF + BACKGROUND
-    ================================================== */
     .modal-box {
       background: linear-gradient(
           rgba(0, 0, 0, 0.55),
@@ -217,10 +231,10 @@
 
   <img src="map-log.png" class="logo" />
 
-  <h1>
+  <h2>
     Jadwal Peminjaman Ruang Meeting <br />
     PT Mitra Asa Pratama
-  </h1>
+  </h2>
 
   <!-- ROOM COLUMNS -->
   <div class="container">
@@ -253,7 +267,7 @@
       <p>🏢 Ruangan: <b><span id="mRuangan"></span></b></p>
       <p>📅 Tanggal: <b><span id="mTanggal"></span></b></p>
       <p>⏰ Jam: <b><span id="mJam"></span></b></p>
-      <p>👤 Pemesan: <b><span id="mNama"></span></b></p>
+      <p>👤 Peminjam: <b><span id="mNama"></span></b></p>
     </div>
   </div>
 
@@ -308,6 +322,19 @@
         month: "long",
         year: "numeric",
       });
+    }
+
+    /* ===========================
+       CEK BOOKING SEDANG BERLANGSUNG (LIVE)
+       Sangat ringan, hanya dicek saat load data
+    =========================== */
+    function isLiveBooking(d) {
+      const now = new Date();
+
+      const start = new Date(d.tanggal + "T" + d.mulai);
+      const end = new Date(d.tanggal + "T" + d.selesai);
+
+      return now >= start && now <= end;
     }
 
     /* ===========================
@@ -376,6 +403,11 @@
       DATA.forEach((d) => {
         const el = document.createElement("div");
         el.className = "booking";
+
+        /* ✅ Jika booking sedang berlangsung → tandai LIVE */
+        if (isLiveBooking(d)) {
+          el.classList.add("live");
+        }
 
         el.innerHTML = `
           <b>${d.agenda}</b><br>
