@@ -329,13 +329,32 @@
        Sangat ringan, hanya dicek saat load data
     =========================== */
     function isLiveBooking(d) {
-      const now = new Date();
+  const now = new Date();
 
-      const start = new Date(d.tanggal + "T" + d.mulai);
-      const end = new Date(d.tanggal + "T" + d.selesai);
+  const [y, m, day] = d.tanggal.split("-");
+  const [sh, sm] = d.mulai.split(":");
+  const [eh, em] = d.selesai.split(":");
 
-      return now >= start && now <= end;
-    }
+  const start = new Date(
+    Number(y),
+    Number(m) - 1,
+    Number(day),
+    Number(sh),
+    Number(sm),
+    0
+  );
+
+  const end = new Date(
+    Number(y),
+    Number(m) - 1,
+    Number(day),
+    Number(eh),
+    Number(em),
+    0
+  );
+
+  return now >= start && now <= end;
+}
 
     /* ===========================
        LOGIN SYSTEM
