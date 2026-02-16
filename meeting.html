@@ -398,25 +398,15 @@
     /* ===========================
        LOAD DATA
     =========================== */
-  async function loadData() {
-  const r = await fetch(API_URL + "?_=" + Date.now());
-  DATA = await r.json();
+    async function loadData() {
+      const r = await fetch(API_URL + "?_=" + Date.now());
+      DATA = await r.json();
 
-  const now = new Date();
-
-  DATA.sort((a, b) => {
-    const da = new Date(a.tanggal + "T" + a.mulai);
-    const db = new Date(b.tanggal + "T" + b.mulai);
-
-    const diffA = da - now;
-    const diffB = db - now;
-
-    return diffA - diffB;
-  });
-
-  render();
-}
-
+      DATA.sort((a, b) => {
+        const da = new Date(a.tanggal + "T" + a.mulai);
+        const db = new Date(b.tanggal + "T" + b.mulai);
+        return da - db;
+      });
 
       render();
     }
