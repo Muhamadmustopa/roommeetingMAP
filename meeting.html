@@ -53,15 +53,8 @@
       font-weight: 600;
     }
 
-    .btn-login {
-      background: #00d4ff;
-      color: #000;
-    }
-
-    .btn-logout {
-      background: #ff4d4d;
-      color: #fff;
-    }
+    .btn-login { background: #00d4ff; color: #000; }
+    .btn-logout { background: #ff4d4d; color: #fff; }
 
     .container {
       display: flex;
@@ -96,9 +89,6 @@
       background: rgba(255, 255, 255, 0.35);
     }
 
-    /* ==================================================
-       ✅ LIVE BOOKING (Glow Hijau Paling Ringan)
-    ================================================== */
     .booking.live {
       background: rgba(0, 255, 120, 0.22) !important;
       border: 2px solid rgba(0, 255, 120, 0.65);
@@ -122,13 +112,8 @@
       margin-right: 6px;
     }
 
-    .icon-delete {
-      color: #ff4d4d;
-    }
-
-    .icon-edit {
-      color: #00d4ff;
-    }
+    .icon-delete { color: #ff4d4d; }
+    .icon-edit { color: #00d4ff; }
 
     .fab {
       position: fixed;
@@ -154,7 +139,6 @@
       align-items: center;
       justify-content: center;
       z-index: 999;
-
       backdrop-filter: blur(8px);
     }
 
@@ -164,49 +148,18 @@
           rgba(0, 0, 0, 0.55)
         ),
         url("citylight.png") no-repeat center/cover;
-
       color: #fff;
       padding: 26px;
       width: 360px;
       border-radius: 22px;
-
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(10px);
-
       animation: popup 0.35s ease;
     }
 
     @keyframes popup {
-      from {
-        transform: scale(0.85);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .modal-box h3 {
-      font-size: 20px;
-      margin-bottom: 14px;
-      text-align: center;
-    }
-
-    .modal-box p {
-      font-size: 15px;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .close {
-      float: right;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     input {
@@ -220,323 +173,113 @@
 </head>
 
 <body>
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <div id="clock">--</div>
-    <button id="loginBtn" class="btn btn-login">@</button>
-    <button id="logoutBtn" class="btn btn-logout" style="display: none">
-      Logout
-    </button>
+
+<div class="top-bar">
+  <div id="clock">--</div>
+  <button id="loginBtn" class="btn btn-login">@</button>
+  <button id="logoutBtn" class="btn btn-logout" style="display: none">
+    Logout
+  </button>
+</div>
+
+<img src="map-log.png" class="logo" />
+
+<h1>
+  Jadwal Penggunaan Ruang Meeting <br />
+  PT Mitra Asa Pratama
+</h1>
+
+<div class="container">
+  <div class="column">
+    <h3>Ruang Arjuna</h3>
+    <div id="arjuna"></div>
   </div>
-
-  <img src="map-log.png" class="logo" />
-
-  <h1>
-    Jadwal Penggunaan Ruang Meeting <br />
-    PT Mitra Asa Pratama
-  </h1>
-
-  <!-- ROOM COLUMNS -->
-  <div class="container">
-    <div class="column">
-      <h3>Ruang Arjuna</h3>
-      <div id="arjuna"></div>
-    </div>
-
-    <div class="column">
-      <h3>Ruang Srikandi</h3>
-      <div id="srikandi"></div>
-    </div>
-
-    <div class="column">
-      <h3>Ruang Gatot Kaca</h3>
-      <div id="gatot"></div>
-    </div>
+  <div class="column">
+    <h3>Ruang Srikandi</h3>
+    <div id="srikandi"></div>
   </div>
-
-  <!-- ADD BUTTON -->
-  <a href="daftar.html" class="fab" id="addBtn">+</a>
-
-  <!-- DETAIL MODAL -->
-  <div class="modal" id="modal">
-    <div class="modal-box">
-      <span class="close" id="closeDetail">✖</span>
-
-      <h3 id="mAgenda"></h3>
-
-      <p>🏢 Ruangan: <b><span id="mRuangan"></span></b></p>
-      <p>📅 Tanggal: <b><span id="mTanggal"></span></b></p>
-      <p>⏰ Jam: <b><span id="mJam"></span></b></p>
-      <p>👤 Peminjam: <b><span id="mNama"></span></b></p>
-    </div>
+  <div class="column">
+    <h3>Ruang Gatot Kaca</h3>
+    <div id="gatot"></div>
   </div>
+</div>
 
-  <!-- LOGIN MODAL -->
-  <div class="modal" id="loginModal">
-    <div class="modal-box">
-      <h3>Login Admin</h3>
-      <input type="password" id="pinInput" placeholder="Masukkan PIN" />
-      <button class="btn btn-login" style="width: 100%" id="loginSubmit">
-        Login
-      </button>
-    </div>
-  </div>
+<a href="daftar.html" class="fab" id="addBtn">+</a>
 
-  <!-- EDIT MODAL -->
-  <div class="modal" id="editModal">
-    <div class="modal-box">
-      <h3>Edit Jadwal</h3>
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
 
-      <input type="hidden" id="eId" />
-      <input id="eRuangan" placeholder="Ruangan" />
-      <input id="eAgenda" placeholder="Agenda" />
-      <input type="date" id="eTanggal" />
-      <input type="time" id="eMulai" />
-      <input type="time" id="eSelesai" />
-      <input id="eNama" placeholder="Nama" />
+let DATA = [];
 
-      <button class="btn btn-login" style="width: 100%" id="editSubmit">
-        Simpan
-      </button>
-    </div>
-  </div>
-
-  <!-- SCRIPT -->
-  <script>
-    const API_URL =
-      "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
-
-    const ADMIN_PIN_HASH =
-      "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
-
-    let ROLE = localStorage.getItem("role") || "user";
-    let DATA = [];
-
-    /* ===========================
-       FORMAT TANGGAL
-    =========================== */
-    function formatTanggalIndo(tanggal) {
-      const d = new Date(tanggal + "T00:00:00");
-      return d.toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      });
-    }
-
-    /* ===========================
-       CEK BOOKING SEDANG BERLANGSUNG (LIVE)
-       Sangat ringan, hanya dicek saat load data
-    =========================== */
-    function isLiveBooking(d) {
+/* ===========================
+   LIVE CHECK
+=========================== */
+function isLiveBooking(d) {
   const now = new Date();
-
-  const [y, m, day] = d.tanggal.split("-");
-  const [sh, sm] = d.mulai.split(":");
-  const [eh, em] = d.selesai.split(":");
-
-  const start = new Date(
-    Number(y),
-    Number(m) - 1,
-    Number(day),
-    Number(sh),
-    Number(sm),
-    0
-  );
-
-  const end = new Date(
-    Number(y),
-    Number(m) - 1,
-    Number(day),
-    Number(eh),
-    Number(em),
-    0
-  );
-
+  const start = new Date(d.tanggal + "T" + d.mulai);
+  const end   = new Date(d.tanggal + "T" + d.selesai);
   return now >= start && now <= end;
 }
 
-    /* ===========================
-       LOGIN SYSTEM
-    =========================== */
-    loginBtn.onclick = () => (loginModal.style.display = "flex");
+/* ===========================
+   LOAD DATA (SORT BARU)
+=========================== */
+async function loadData() {
+  const r = await fetch(API_URL + "?_=" + Date.now());
+  DATA = await r.json();
 
-    logoutBtn.onclick = () => {
-      ROLE = "user";
-      localStorage.removeItem("role");
-      updateUI();
-      render();
-    };
+  const now = new Date();
 
-    loginSubmit.onclick = async () => {
-      const hashBuffer = await crypto.subtle.digest(
-        "SHA-256",
-        new TextEncoder().encode(pinInput.value)
-      );
+  DATA.sort((a, b) => {
+    const da = new Date(a.tanggal + "T" + a.mulai);
+    const db = new Date(b.tanggal + "T" + b.mulai);
 
-      const pinHash = [...new Uint8Array(hashBuffer)]
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
+    const diffA = da - now;
+    const diffB = db - now;
 
-      if (pinHash === ADMIN_PIN_HASH) {
-        ROLE = "admin";
-        localStorage.setItem("role", "admin");
-        loginModal.style.display = "none";
-        updateUI();
-        render();
-      } else {
-        alert("PIN salah!");
-      }
-    };
+    return diffA - diffB;
+  });
 
-    function updateUI() {
-      loginBtn.style.display = ROLE === "admin" ? "none" : "inline-block";
-      logoutBtn.style.display = ROLE === "admin" ? "inline-block" : "none";
-      addBtn.style.display = ROLE === "admin" ? "flex" : "none";
-    }
+  render();
+}
 
-    /* ===========================
-       LOAD DATA
-    =========================== */
-    async function loadData() {
-      const r = await fetch(API_URL + "?_=" + Date.now());
-      DATA = await r.json();
+/* ===========================
+   RENDER
+=========================== */
+function render() {
+  arjuna.innerHTML = "";
+  srikandi.innerHTML = "";
+  gatot.innerHTML = "";
 
-      DATA.sort((a, b) => {
-        const da = new Date(a.tanggal + "T" + a.mulai);
-        const db = new Date(b.tanggal + "T" + b.mulai);
-        return da - db;
-      });
+  DATA.forEach(d => {
+    const el = document.createElement("div");
+    el.className = "booking";
 
-      render();
-    }
+    if (isLiveBooking(d)) el.classList.add("live");
 
-    /* ===========================
-       RENDER DATA
-    =========================== */
-    function render() {
-      arjuna.innerHTML = "";
-      srikandi.innerHTML = "";
-      gatot.innerHTML = "";
+    el.innerHTML = `
+      <b>${d.agenda}</b><br>
+      📅 ${d.tanggal}<br>
+      ⏰ ${d.mulai} - ${d.selesai}<br>
+      👤 ${d.nama}
+    `;
 
-      DATA.forEach((d) => {
-        const el = document.createElement("div");
-        el.className = "booking";
+    const r = d.ruangan.toLowerCase();
+    if (r.includes("arjuna")) arjuna.appendChild(el);
+    if (r.includes("srikandi")) srikandi.appendChild(el);
+    if (r.includes("gatot")) gatot.appendChild(el);
+  });
+}
 
-        /* ✅ Jika booking sedang berlangsung → tandai LIVE */
-        if (isLiveBooking(d)) {
-          el.classList.add("live");
-        }
+/* ===========================
+   CLOCK
+=========================== */
+setInterval(() => {
+  clock.textContent = new Date().toLocaleString("id-ID");
+}, 1000);
 
-        el.innerHTML = `
-          <b>${d.agenda}</b><br>
-          📅 ${formatTanggalIndo(d.tanggal)}<br>
-          ⏰ ${d.mulai} - ${d.selesai}<br>
-          👤 ${d.nama}
+loadData();
+</script>
 
-          ${
-            ROLE === "admin"
-              ? `
-              <br><br>
-              <button class="icon-btn icon-edit">✏️ Edit</button>
-              <button class="icon-btn icon-delete">🗑️ Hapus</button>
-            `
-              : ""
-          }
-        `;
-
-        el.onclick = () => openDetail(d);
-
-        if (ROLE === "admin") {
-          el.querySelector(".icon-edit").onclick = (e) => {
-            e.stopPropagation();
-            openEdit(d);
-          };
-
-          el.querySelector(".icon-delete").onclick = (e) => {
-            e.stopPropagation();
-            hapus(d.id);
-          };
-        }
-
-        const r = d.ruangan.toLowerCase();
-        if (r.includes("arjuna")) arjuna.appendChild(el);
-        if (r.includes("srikandi")) srikandi.appendChild(el);
-        if (r.includes("gatot")) gatot.appendChild(el);
-      });
-    }
-
-    /* ===========================
-       DETAIL MODAL
-    =========================== */
-    function openDetail(d) {
-      mAgenda.textContent = d.agenda;
-      mRuangan.textContent = d.ruangan;
-      mTanggal.textContent = formatTanggalIndo(d.tanggal);
-      mJam.textContent = d.mulai + " - " + d.selesai;
-      mNama.textContent = d.nama;
-
-      modal.style.display = "flex";
-    }
-
-    closeDetail.onclick = () => (modal.style.display = "none");
-
-    /* ===========================
-       EDIT MODAL
-    =========================== */
-    function openEdit(d) {
-      eId.value = d.id;
-      eRuangan.value = d.ruangan;
-      eAgenda.value = d.agenda;
-      eTanggal.value = d.tanggal;
-      eMulai.value = d.mulai;
-      eSelesai.value = d.selesai;
-      eNama.value = d.nama;
-
-      editModal.style.display = "flex";
-    }
-
-    editSubmit.onclick = async () => {
-      const f = new FormData();
-      f.append("action", "edit");
-
-      f.append("id", eId.value);
-      f.append("ruangan", eRuangan.value);
-      f.append("agenda", eAgenda.value);
-      f.append("tanggal", eTanggal.value);
-      f.append("mulai", eMulai.value);
-      f.append("selesai", eSelesai.value);
-      f.append("nama", eNama.value);
-
-      await fetch(API_URL, { method: "POST", body: f });
-
-      editModal.style.display = "none";
-      loadData();
-    };
-
-    /* ===========================
-       DELETE
-    =========================== */
-    async function hapus(id) {
-      if (!confirm("Hapus data ini?")) return;
-
-      const f = new FormData();
-      f.append("action", "delete");
-      f.append("id", id);
-
-      await fetch(API_URL, { method: "POST", body: f });
-      loadData();
-    }
-
-    /* ===========================
-       CLOCK
-    =========================== */
-    setInterval(() => {
-      clock.textContent = new Date().toLocaleString("id-ID");
-    }, 1000);
-
-    updateUI();
-    loadData();
-  </script>
 </body>
 </html>
