@@ -1,368 +1,297 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jadwal Meeting</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jadwal Meeting</title>
 
-  <style>
-    body {   
-      margin: 0;
-      padding: 20px;
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(
-          0deg,
-          rgba(0, 0, 0, 0.55),
-          rgba(0, 0, 0, 0.55)
-        ),
-        url("mas.png") no-repeat center/cover;
-      color: #fff;
-    }
+<style>
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: "Segoe UI", sans-serif;
+  background:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url("mas.png") no-repeat center/cover;
+  color: #fff;
+}
 
-    .logo {
-      display: block;
-      width: 130px;
-      margin: 0 auto 10px;
-    }
+.logo {
+  display: block;
+  width: 130px;
+  margin: 0 auto 10px;
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
 
-    .top-bar {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+.top-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
-    #clock {
-      margin-right: auto;
-      font-weight: 600;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 6px 12px;
-      border-radius: 10px;
-      backdrop-filter: blur(6px);
-    }
+#clock {
+  margin-right: auto;
+  font-weight: 600;
+  background: rgba(255,255,255,0.2);
+  padding: 6px 12px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+}
 
-    .btn {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+.btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
 
-    .btn-login {
-      background: #00d4ff;
-      color: #000;
-    }
+.btn-login { background: #00d4ff; color: #000; }
+.btn-logout { background: #ff4d4d; color: #fff; }
 
-    .btn-logout {
-      background: #ff4d4d;
-      color: #fff;
-    }
+.container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
 
-    .container {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
+.column {
+  flex: 1;
+  background: rgba(255,255,255,0.15);
+  padding: 16px;
+  border-radius: 18px;
+  min-width: 260px;
+}
 
-    .column {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 16px;
-      border-radius: 18px;
-      min-width: 260px;
-    }
+.column h3 {
+  text-align: center;
+  margin: 6px 0 14px;
+}
 
-    .column h3 {
-      text-align: center;
-      margin: 6px 0 14px;
-    }
+.booking {
+  background: rgba(255,255,255,0.25);
+  padding: 14px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: 0.25s;
+}
 
-    .booking {
-      background: rgba(255, 255, 255, 0.25);
-      padding: 14px;
-      border-radius: 14px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: 0.25s;
-    }
+.booking:hover {
+  transform: scale(1.02);
+  background: rgba(255,255,255,0.35);
+}
 
-    .booking:hover {
-      transform: scale(1.02);
-      background: rgba(255, 255, 255, 0.35);
-    }
+/* LIVE BOOKING */
+.booking.live {
+  background: rgba(0,255,120,0.22) !important;
+  border: 2px solid rgba(0,255,120,0.65);
+  box-shadow: 0 0 8px rgba(0,255,120,0.35);
+}
 
-    .booking.live {
-      background: rgba(0, 255, 120, 0.22) !important;
-      border: 2px solid rgba(0, 255, 120, 0.65);
-      box-shadow: 0 0 8px rgba(0, 255, 120, 0.35);
-    }
+.booking.live::before {
+  content: "● ";
+  font-size: 11px;
+  font-weight: bold;
+  color: rgba(0,255,120,0.9);
+  margin-bottom: 6px;
+}
 
-    .booking.live::before {
-      content: "● ";
-      display: inline-block;
-      font-size: 11px;
-      font-weight: bold;
-      color: rgba(0, 255, 120, 0.9);
-      margin-bottom: 6px;
-    }
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 6px;
+}
 
-    .icon-btn {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      margin-right: 6px;
-    }
+.icon-delete { color: #ff4d4d; }
+.icon-edit { color: #00d4ff; }
 
-    .icon-delete {
-      color: #ff4d4d;
-    }
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00d4ff, #0090ff);
+  color: #fff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  text-decoration: none;
+}
 
-    .icon-edit {
-      color: #00d4ff;
-    }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(8px);
+}
 
-    .fab {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #00d4ff, #0090ff);
-      color: #fff;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      text-decoration: none;
-    }
+.modal-box {
+  background:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url("citylight.png") no-repeat center/cover;
+  padding: 26px;
+  width: 360px;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  animation: popup 0.35s ease;
+}
 
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-      backdrop-filter: blur(8px);
-    }
+@keyframes popup {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
 
-    .modal-box {
-      background: linear-gradient(
-          rgba(0, 0, 0, 0.55),
-          rgba(0, 0, 0, 0.55)
-        ),
-        url("citylight.png") no-repeat center/cover;
-      color: #fff;
-      padding: 26px;
-      width: 360px;
-      border-radius: 22px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(10px);
-      animation: popup 0.35s ease;
-    }
+.modal-box h3 {
+  font-size: 20px;
+  margin-bottom: 14px;
+  text-align: center;
+}
 
-    @keyframes popup {
-      from { transform: scale(0.85); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+.modal-box p {
+  font-size: 15px;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+}
 
-    .modal-box h3 {
-      font-size: 20px;
-      margin-bottom: 14px;
-      text-align: center;
-    }
+.close {
+  float: right;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
 
-    .modal-box p {
-      font-size: 15px;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .close {
-      float: right;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin: 6px 0;
-    }
-
-    /* ===========================
-       LOADING SPINNER (ADDED ONLY)
-    =========================== */
-    .loading-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      backdrop-filter: blur(6px);
-    }
-
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 6px solid rgba(255,255,255,0.3);
-      border-top: 6px solid #00d4ff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-  </style>
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin: 6px 0;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="loading-overlay" id="loading">
-    <div class="spinner"></div>
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div id="clock">--</div>
+  <button id="loginBtn" class="btn btn-login">@</button>
+  <button id="logoutBtn" class="btn btn-logout" style="display:none">
+    Logout
+  </button>
+</div>
+
+<img src="map-log.png" class="logo" />
+
+<h1>
+  Jadwal Penggunaan Ruang Meeting <br />
+  PT Mitra Asa Pratama
+</h1>
+
+<!-- ROOM COLUMNS -->
+<div class="container">
+  <div class="column">
+    <h3>Ruang Arjuna</h3>
+    <div id="arjuna"></div>
   </div>
 
-  <!-- SEMUA KODE ANDA TETAP SAMA -->
+  <div class="column">
+    <h3>Ruang Srikandi</h3>
+    <div id="srikandi"></div>
+  </div>
 
+  <div class="column">
+    <h3>Ruang Gatot Kaca</h3>
+    <div id="gatot"></div>
+  </div>
+</div>
+
+<a href="daftar.html" class="fab" id="addBtn">+</a>
+
+<!-- SCRIPT -->
 <script>
-    function showLoading(){ loading.style.display="flex"; }
-    function hideLoading(){ loading.style.display="none"; }
-</script>
+const API_URL = "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
+const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
-<!-- SCRIPT ASLI ANDA (TIDAK DIRUBAH) -->
-<script>
+let ROLE = localStorage.getItem("role") || "user";
+let DATA = [];
 
-    const API_URL =
-      "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
+/* FORMAT TANGGAL */
+function formatTanggalIndo(tanggal) {
+  const d = new Date(tanggal + "T00:00:00");
+  return d.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
+}
 
-    const ADMIN_PIN_HASH =
-      "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+/* CEK LIVE */
+function isLiveBooking(d) {
+  const now = new Date();
+  const [y,m,day] = d.tanggal.split("-");
+  const [sh,sm] = d.mulai.split(":");
+  const [eh,em] = d.selesai.split(":");
 
-    let ROLE = localStorage.getItem("role") || "user";
-    let DATA = [];
+  const start = new Date(y, m-1, day, sh, sm);
+  const end   = new Date(y, m-1, day, eh, em);
 
-    function formatTanggalIndo(tanggal) {
-      const d = new Date(tanggal + "T00:00:00");
-      return d.toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      });
-    }
+  return now >= start && now <= end;
+}
 
-    function isLiveBooking(d) {
-      const now = new Date();
-      const [y, m, day] = d.tanggal.split("-");
-      const [sh, sm] = d.mulai.split(":");
-      const [eh, em] = d.selesai.split(":");
+/* RENDER */
+function render() {
+  arjuna.innerHTML = "";
+  srikandi.innerHTML = "";
+  gatot.innerHTML = "";
 
-      const start = new Date(Number(y),Number(m)-1,Number(day),Number(sh),Number(sm),0);
-      const end   = new Date(Number(y),Number(m)-1,Number(day),Number(eh),Number(em),0);
+  DATA.forEach(d => {
+    const el = document.createElement("div");
+    el.className = "booking";
 
-      return now >= start && now <= end;
-    }
+    if (isLiveBooking(d)) el.classList.add("live");
 
-    loginBtn.onclick = () => (loginModal.style.display = "flex");
-
-    logoutBtn.onclick = () => {
-      ROLE = "user";
-      localStorage.removeItem("role");
-      updateUI();
-      render();
-    };
-
-    loginSubmit.onclick = async () => {
-      const hashBuffer = await crypto.subtle.digest(
-        "SHA-256",
-        new TextEncoder().encode(pinInput.value)
-      );
-
-      const pinHash = [...new Uint8Array(hashBuffer)]
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-
-      if (pinHash === ADMIN_PIN_HASH) {
-        ROLE = "admin";
-        localStorage.setItem("role", "admin");
-        loginModal.style.display = "none";
-        updateUI();
-        render();
-      } else {
-        alert("PIN salah!");
+    el.innerHTML = `
+      <b>${d.agenda}</b><br>
+      📅 ${formatTanggalIndo(d.tanggal)}<br>
+      ⏰ ${d.mulai} - ${d.selesai}<br>
+      👤 ${d.nama}
+      ${
+        ROLE === "admin"
+        ? `
+        <br><br>
+        <button class="icon-btn icon-edit">✏️ Edit</button>
+        <button class="icon-btn icon-delete">🗑️ Hapus</button>
+        `
+        : ""
       }
-    };
+    `;
 
-    function updateUI() {
-      loginBtn.style.display = ROLE === "admin" ? "none" : "inline-block";
-      logoutBtn.style.display = ROLE === "admin" ? "inline-block" : "none";
-      addBtn.style.display = ROLE === "admin" ? "flex" : "none";
-    }
+    el.onclick = () => openDetail(d);
 
-    async function loadData() {
-      showLoading();
-      const r = await fetch(API_URL + "?_=" + Date.now());
-      DATA = await r.json();
-      DATA.sort((a, b) => {
-        const da = new Date(a.tanggal + "T" + a.mulai);
-        const db = new Date(b.tanggal + "T" + b.mulai);
-        return da - db;
-      });
-      render();
-      hideLoading();
-    }
-
-    async function hapus(id) {
-      if (!confirm("Hapus data ini?")) return;
-      showLoading();
-      const f = new FormData();
-      f.append("action", "delete");
-      f.append("id", id);
-      await fetch(API_URL, { method: "POST", body: f });
-      await loadData();
-      hideLoading();
-    }
-
-    editSubmit.onclick = async () => {
-      showLoading();
-      const f = new FormData();
-      f.append("action", "edit");
-      f.append("id", eId.value);
-      f.append("ruangan", eRuangan.value);
-      f.append("agenda", eAgenda.value);
-      f.append("tanggal", eTanggal.value);
-      f.append("mulai", eMulai.value);
-      f.append("selesai", eSelesai.value);
-      f.append("nama", eNama.value);
-      await fetch(API_URL, { method: "POST", body: f });
-      editModal.style.display = "none";
-      await loadData();
-      hideLoading();
-    };
-
-    setInterval(() => {
-      clock.textContent = new Date().toLocaleString("id-ID");
-    }, 1000);
-
-    updateUI();
-    loadData();
+    const r = d.ruangan.toLowerCase();
+    if (r.includes("arjuna")) arjuna.appendChild(el);
+    if (r.includes("srikandi")) srikandi.appendChild(el);
+    if (r.includes("gatot")) gatot.appendChild(el);
+  });
+}
 </script>
 
 </body>
