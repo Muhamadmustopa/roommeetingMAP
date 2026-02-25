@@ -216,6 +216,32 @@
       border: 1px solid #ccc;
       margin: 6px 0;
     }
+    /* ===========================
+   LOADING SPINNER
+=========================== */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(6px);
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255,255,255,0.3);
+  border-top: 6px solid #00d4ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
   </style>
 </head>
 
@@ -394,22 +420,31 @@
       logoutBtn.style.display = ROLE === "admin" ? "inline-block" : "none";
       addBtn.style.display = ROLE === "admin" ? "flex" : "none";
     }
+  function showLoading() {
+  loading.style.display = "flex";
+}
 
+function hideLoading() {
+  loading.style.display = "none";
+}
     /* ===========================
        LOAD DATA
     =========================== */
-    async function loadData() {
-      const r = await fetch(API_URL + "?_=" + Date.now());
-      DATA = await r.json();
+   async function loadData() {
+  showLoading();
 
-      DATA.sort((a, b) => {
-        const da = new Date(a.tanggal + "T" + a.mulai);
-        const db = new Date(b.tanggal + "T" + b.mulai);
-        return da - db;
-      });
+  const r = await fetch(API_URL + "?_=" + Date.now());
+  DATA = await r.json();
 
-      render();
-    }
+  DATA.sort((a, b) => {
+    const da = new Date(a.tanggal + "T" + a.mulai);
+    const db = new Date(b.tanggal + "T" + b.mulai);
+    return da - db;
+  });
+
+  render();
+  hideLoading();
+}
 
     /* ===========================
        RENDER DATA
@@ -497,36 +532,44 @@
     }
 
     editSubmit.onclick = async () => {
-      const f = new FormData();
-      f.append("action", "edit");
+  showLoading();
 
-      f.append("id", eId.value);
-      f.append("ruangan", eRuangan.value);
-      f.append("agenda", eAgenda.value);
-      f.append("tanggal", eTanggal.value);
-      f.append("mulai", eMulai.value);
-      f.append("selesai", eSelesai.value);
-      f.append("nama", eNama.value);
+  const f = new FormData();
+  f.append("action", "edit");
 
-      await fetch(API_URL, { method: "POST", body: f });
+  f.append("id", eId.value);
+  f.append("ruangan", eRuangan.value);
+  f.append("agenda", eAgenda.value);
+  f.append("tanggal", eTanggal.value);
+  f.append("mulai", eMulai.value);
+  f.append("selesai", eSelesai.value);
+  f.append("nama", eNama.value);
 
-      editModal.style.display = "none";
-      loadData();
-    };
+  await fetch(API_URL, { method: "POST", body: f });
+
+  editModal.style.display = "none";
+  await loadData();
+
+  hideLoading();
+};
 
     /* ===========================
        DELETE
     =========================== */
-    async function hapus(id) {
-      if (!confirm("Hapus data ini?")) return;
+ async function hapus(id) {
+  if (!confirm("Hapus data ini?")) return;
 
-      const f = new FormData();
-      f.append("action", "delete");
-      f.append("id", id);
+  showLoading();
 
-      await fetch(API_URL, { method: "POST", body: f });
-      loadData();
-    }
+  const f = new FormData();
+  f.append("action", "delete");
+  f.append("id", id);
+
+  await fetch(API_URL, { method: "POST", body: f });
+
+  await loadData();
+  hideLoading();
+}
 
     /* ===========================
        CLOCK
@@ -537,6 +580,10 @@
 
     updateUI();
     loadData();
+    <!-- LOADING SPINNER -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+</div>
   </script>
 </body>
 </html>
