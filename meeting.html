@@ -82,37 +82,49 @@
       margin: 6px 0 14px;
     }
 
-    .booking {
-      background: rgba(255, 255, 255, 0.25);
-      padding: 14px;
-      border-radius: 14px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: 0.25s;
-    }
+   .booking {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
 
-    .booking:hover {
-      transform: scale(1.02);
-      background: rgba(255, 255, 255, 0.35);
-    }
+.booking:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.28);
+}
 
     /* ==================================================
        ✅ LIVE BOOKING (Glow Hijau Paling Ringan)
     ================================================== */
     .booking.live {
-      background: rgba(0, 255, 120, 0.22) !important;
-      border: 2px solid rgba(0, 255, 120, 0.65);
-      box-shadow: 0 0 8px rgba(0, 255, 120, 0.35);
-    }
+  background: rgba(255, 60, 60, 0.20) !important;
+  border: 2px solid rgba(255, 60, 60, 0.75);
+  box-shadow: 0 0 14px rgba(255, 60, 60, 0.5);
+  position: relative;
+}
 
-    .booking.live::before {
-      content: "● ";
-      display: inline-block;
-      font-size: 11px;
-      font-weight: bold;
-      color: rgba(0, 255, 120, 0.9);
-      margin-bottom: 6px;
-    }
+.booking.live::before {
+  content: "LIVE";
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: red;
+  color: white;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.5; }
+}
 
     .icon-btn {
       background: transparent;
