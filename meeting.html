@@ -441,21 +441,37 @@ function render() {
   srikandi.innerHTML = "";
   gatot.innerHTML = "";
 
+  const now = new Date();
+
   DATA.forEach((d) => {
     const el = document.createElement("div");
-    el.className = "card";
+    el.className = "booking";
+
+    const start = new Date(`${d.tanggal}T${d.mulai}`);
+    const end = new Date(`${d.tanggal}T${d.selesai}`);
+
+    if (now >= start && now <= end) {
+      el.classList.add("live");
+    }
 
     el.innerHTML = `
-      <b>${d.agenda}</b><br>
-      📅 ${formatTanggalIndo(d.tanggal)}<br>
-      ⏰ ${d.mulai} - ${d.selesai}<br>
-      👤 ${d.nama}
+      <div style="font-weight:600; margin-bottom:6px;">
+        ${d.agenda}
+      </div>
+
+      <div style="font-size:13px; line-height:1.6;">
+        📅 ${formatTanggalIndo(d.tanggal)} <br>
+        ⏰ ${d.mulai} - ${d.selesai} <br>
+        👤 ${d.nama}
+      </div>
+
       ${
         ROLE === "admin"
           ? `
-          <br><br>
-          <button onclick="editData('${d.id}')">✏️ Edit</button>
-          <button onclick="deleteData('${d.id}')">🗑️ Hapus</button>
+          <div style="margin-top:10px;">
+            <button class="icon-btn icon-edit" onclick="editData('${d.id}')">✏️</button>
+            <button class="icon-btn icon-delete" onclick="deleteData('${d.id}')">🗑️</button>
+          </div>
           `
           : ""
       }
@@ -465,9 +481,7 @@ function render() {
     if (d.ruangan === "Srikandi") srikandi.appendChild(el);
     if (d.ruangan === "Gatotkaca") gatot.appendChild(el);
   });
-}
-
-/* ===========================
+}/* ===========================
    DELETE
 =========================== */
 
