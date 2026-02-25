@@ -299,244 +299,227 @@
         Simpan
       </button>
     </div>
-  </div>
-
-  <!-- SCRIPT -->
+  </div>   
+  
   <script>
-    const API_URL =
-      "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
+/* ===========================
+   CONFIG
+=========================== */
 
-    const ADMIN_PIN_HASH =
-      "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+const API_URL = "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
+const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"; // 123456
 
-    let ROLE = localStorage.getItem("role") || "user";
-    let DATA = [];
+let DATA = [];
+let ROLE = localStorage.getItem("role") || "user";
 
-    /* ===========================
-       FORMAT TANGGAL
-    =========================== */
-    function formatTanggalIndo(tanggal) {
-      const d = new Date(tanggal + "T00:00:00");
-      return d.toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      });
-    }
+/* ===========================
+   AMBIL ELEMENT
+=========================== */
 
-    /* ===========================
-       CEK BOOKING SEDANG BERLANGSUNG (LIVE)
-       Sangat ringan, hanya dicek saat load data
-    =========================== */
-    function isLiveBooking(d) {
-  const now = new Date();
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const loginModal = document.getElementById("loginModal");
+const loginSubmit = document.getElementById("loginSubmit");
+const pinInput = document.getElementById("pinInput");
+const addBtn = document.getElementById("addBtn");
 
-  const [y, m, day] = d.tanggal.split("-");
-  const [sh, sm] = d.mulai.split(":");
-  const [eh, em] = d.selesai.split(":");
+const arjuna = document.getElementById("arjuna");
+const srikandi = document.getElementById("srikandi");
+const gatot = document.getElementById("gatot");
 
-  const start = new Date(
-    Number(y),
-    Number(m) - 1,
-    Number(day),
-    Number(sh),
-    Number(sm),
-    0
-  );
+const modal = document.getElementById("modal");
+const closeDetail = document.getElementById("closeDetail");
 
-  const end = new Date(
-    Number(y),
-    Number(m) - 1,
-    Number(day),
-    Number(eh),
-    Number(em),
-    0
-  );
+const mAgenda = document.getElementById("mAgenda");
+const mRuangan = document.getElementById("mRuangan");
+const mTanggal = document.getElementById("mTanggal");
+const mJam = document.getElementById("mJam");
+const mNama = document.getElementById("mNama");
 
-  return now >= start && now <= end;
+const editModal = document.getElementById("editModal");
+const editSubmit = document.getElementById("editSubmit");
+
+const eId = document.getElementById("eId");
+const eRuangan = document.getElementById("eRuangan");
+const eAgenda = document.getElementById("eAgenda");
+const eTanggal = document.getElementById("eTanggal");
+const eMulai = document.getElementById("eMulai");
+const eSelesai = document.getElementById("eSelesai");
+const eNama = document.getElementById("eNama");
+
+const clock = document.getElementById("clock");
+
+/* ===========================
+   LOGIN SYSTEM
+=========================== */
+
+function updateUI() {
+  if (ROLE === "admin") {
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    addBtn.style.display = "flex";
+  } else {
+    loginBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    addBtn.style.display = "none";
+  }
 }
 
-    /* ===========================
-       LOGIN SYSTEM
-    =========================== */
-    loginBtn.onclick = () => (loginModal.style.display = "flex");
+loginBtn.onclick = function () {
+  loginModal.style.display = "flex";
+};
 
-    logoutBtn.onclick = () => {
-      ROLE = "user";
-      localStorage.removeItem("role");
-      updateUI();
-      render();
-    };
+logoutBtn.onclick = function () {
+  ROLE = "user";
+  localStorage.removeItem("role");
+  updateUI();
+  render();
+};
 
-    loginSubmit.onclick = async () => {
-      const hashBuffer = await crypto.subtle.digest(
-        "SHA-256",
-        new TextEncoder().encode(pinInput.value)
-      );
+loginSubmit.onclick = async function () {
+  const pin = pinInput.value;
 
-      const pinHash = [...new Uint8Array(hashBuffer)]
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(pin)
+  );
 
-      if (pinHash === ADMIN_PIN_HASH) {
-        ROLE = "admin";
-        localStorage.setItem("role", "admin");
-        loginModal.style.display = "none";
-        updateUI();
-        render();
-      } else {
-        alert("PIN salah!");
-      }
-    };
+  const pinHash = [...new Uint8Array(hashBuffer)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 
-    function updateUI() {
-      loginBtn.style.display = ROLE === "admin" ? "none" : "inline-block";
-      logoutBtn.style.display = ROLE === "admin" ? "inline-block" : "none";
-      addBtn.style.display = ROLE === "admin" ? "flex" : "none";
-    }
-
-    /* ===========================
-       LOAD DATA
-    =========================== */
-    async function loadData() {
-      const r = await fetch(API_URL + "?_=" + Date.now());
-      DATA = await r.json();
-
-      DATA.sort((a, b) => {
-        const da = new Date(a.tanggal + "T" + a.mulai);
-        const db = new Date(b.tanggal + "T" + b.mulai);
-        return da - db;
-      });
-
-      render();
-    }
-
-    /* ===========================
-       RENDER DATA
-    =========================== */
-    function render() {
-      arjuna.innerHTML = "";
-      srikandi.innerHTML = "";
-      gatot.innerHTML = "";
-
-      DATA.forEach((d) => {
-        const el = document.createElement("div");
-        el.className = "booking";
-
-        /* ✅ Jika booking sedang berlangsung → tandai LIVE */
-        if (isLiveBooking(d)) {
-          el.classList.add("live");
-        }
-
-        el.innerHTML = 
-          <b>${d.agenda}</b><br>
-          📅 ${formatTanggalIndo(d.tanggal)}<br>
-          ⏰ ${d.mulai} - ${d.selesai}<br>
-          👤 ${d.nama}
-
-          ${
-            ROLE === "admin"
-              ? 
-              <br><br>
-              <button class="icon-btn icon-edit">✏️ Edit</button>
-              <button class="icon-btn icon-delete">🗑️ Hapus</button>
-            
-              : ""
-          }
-        ;
-
-        el.onclick = () => openDetail(d);
-
-        if (ROLE === "admin") {
-          el.querySelector(".icon-edit").onclick = (e) => {
-            e.stopPropagation();
-            openEdit(d);
-          };
-
-          el.querySelector(".icon-delete").onclick = (e) => {
-            e.stopPropagation();
-            hapus(d.id);
-          };
-        }
-
-        const r = d.ruangan.toLowerCase();
-        if (r.includes("arjuna")) arjuna.appendChild(el);
-        if (r.includes("srikandi")) srikandi.appendChild(el);
-        if (r.includes("gatot")) gatot.appendChild(el);
-      });
-    }
-
-    /* ===========================
-       DETAIL MODAL
-    =========================== */
-    function openDetail(d) {
-      mAgenda.textContent = d.agenda;
-      mRuangan.textContent = d.ruangan;
-      mTanggal.textContent = formatTanggalIndo(d.tanggal);
-      mJam.textContent = d.mulai + " - " + d.selesai;
-      mNama.textContent = d.nama;
-
-      modal.style.display = "flex";
-    }
-
-    closeDetail.onclick = () => (modal.style.display = "none");
-
-    /* ===========================
-       EDIT MODAL
-    =========================== */
-    function openEdit(d) {
-      eId.value = d.id;
-      eRuangan.value = d.ruangan;
-      eAgenda.value = d.agenda;
-      eTanggal.value = d.tanggal;
-      eMulai.value = d.mulai;
-      eSelesai.value = d.selesai;
-      eNama.value = d.nama;
-
-      editModal.style.display = "flex";
-    }
-
-    editSubmit.onclick = async () => {
-      const f = new FormData();
-      f.append("action", "edit");
-
-      f.append("id", eId.value);
-      f.append("ruangan", eRuangan.value);
-      f.append("agenda", eAgenda.value);
-      f.append("tanggal", eTanggal.value);
-      f.append("mulai", eMulai.value);
-      f.append("selesai", eSelesai.value);
-      f.append("nama", eNama.value);
-
-      await fetch(API_URL, { method: "POST", body: f });
-
-      editModal.style.display = "none";
-      loadData();
-    };
-
-    /* ===========================
-       DELETE
-    =========================== */
-    async function hapus(id) {
-      if (!confirm("Hapus data ini?")) return;
-
-      const f = new FormData();
-      f.append("action", "delete");
-      f.append("id", id);
-
-      await fetch(API_URL, { method: "POST", body: f });
-      loadData();
-    }
-
-    /* ===========================
-       CLOCK
-    =========================== */
-    setInterval(() => {
-      clock.textContent = new Date().toLocaleString("id-ID");
-    }, 1000);
-
+  if (pinHash === ADMIN_PIN_HASH) {
+    ROLE = "admin";
+    localStorage.setItem("role", "admin");
+    loginModal.style.display = "none";
     updateUI();
-    loadData();
-  </script>
-</body>
-</html>
+    render();
+  } else {
+    alert("PIN salah!");
+  }
+};
+
+updateUI();
+
+/* ===========================
+   FORMAT TANGGAL
+=========================== */
+
+function formatTanggalIndo(tanggal) {
+  const opsi = { day: "numeric", month: "long", year: "numeric" };
+  return new Date(tanggal).toLocaleDateString("id-ID", opsi);
+}
+
+/* ===========================
+   LOAD DATA
+=========================== */
+
+async function loadData() {
+  const res = await fetch(API_URL);
+  DATA = await res.json();
+  render();
+}
+
+/* ===========================
+   RENDER
+=========================== */
+
+function render() {
+  arjuna.innerHTML = "";
+  srikandi.innerHTML = "";
+  gatot.innerHTML = "";
+
+  DATA.forEach((d) => {
+    const el = document.createElement("div");
+    el.className = "card";
+
+    el.innerHTML = `
+      <b>${d.agenda}</b><br>
+      📅 ${formatTanggalIndo(d.tanggal)}<br>
+      ⏰ ${d.mulai} - ${d.selesai}<br>
+      👤 ${d.nama}
+      ${
+        ROLE === "admin"
+          ? `
+          <br><br>
+          <button onclick="editData('${d.id}')">✏️ Edit</button>
+          <button onclick="deleteData('${d.id}')">🗑️ Hapus</button>
+          `
+          : ""
+      }
+    `;
+
+    if (d.ruangan === "Arjuna") arjuna.appendChild(el);
+    if (d.ruangan === "Srikandi") srikandi.appendChild(el);
+    if (d.ruangan === "Gatotkaca") gatot.appendChild(el);
+  });
+}
+
+/* ===========================
+   DELETE
+=========================== */
+
+async function deleteData(id) {
+  if (!confirm("Yakin hapus?")) return;
+
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ action: "delete", id }),
+  });
+
+  loadData();
+}
+
+/* ===========================
+   EDIT
+=========================== */
+
+function editData(id) {
+  const d = DATA.find((x) => x.id == id);
+
+  eId.value = d.id;
+  eRuangan.value = d.ruangan;
+  eAgenda.value = d.agenda;
+  eTanggal.value = d.tanggal;
+  eMulai.value = d.mulai;
+  eSelesai.value = d.selesai;
+  eNama.value = d.nama;
+
+  editModal.style.display = "flex";
+}
+
+editSubmit.onclick = async function () {
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "update",
+      id: eId.value,
+      ruangan: eRuangan.value,
+      agenda: eAgenda.value,
+      tanggal: eTanggal.value,
+      mulai: eMulai.value,
+      selesai: eSelesai.value,
+      nama: eNama.value,
+    }),
+  });
+
+  editModal.style.display = "none";
+  loadData();
+};
+
+/* ===========================
+   JAM LIVE
+=========================== */
+
+setInterval(() => {
+  const now = new Date();
+  clock.textContent = now.toLocaleTimeString("id-ID");
+}, 1000);
+
+/* ===========================
+   START
+=========================== */
+
+loadData();
+
+</script>
