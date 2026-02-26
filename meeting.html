@@ -515,19 +515,25 @@ function editData(id) {
 }
 
 editSubmit.onclick = async function () {
+
+  const formData = new FormData();
+  formData.append("action", "update");
+  formData.append("id", eId.value);
+  formData.append("ruangan", eRuangan.value);
+  formData.append("agenda", eAgenda.value);
+  formData.append("tanggal", eTanggal.value);
+  formData.append("mulai", eMulai.value);
+  formData.append("selesai", eSelesai.value);
+  formData.append("nama", eNama.value);
+
   await fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify({
-      action: "update",
-      id: eId.value,
-      ruangan: eRuangan.value,
-      agenda: eAgenda.value,
-      tanggal: eTanggal.value,
-      mulai: eMulai.value,
-      selesai: eSelesai.value,
-      nama: eNama.value,
-    }),
+    body: formData,
   });
+
+  editModal.style.display = "none";
+  loadData();
+};
 
   editModal.style.display = "none";
   loadData();
