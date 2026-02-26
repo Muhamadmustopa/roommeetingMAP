@@ -312,7 +312,6 @@
       </button>
     </div>
   </div>   
-  
   <script>
 /* ===========================
    CONFIG
@@ -338,15 +337,6 @@ const addBtn = document.getElementById("addBtn");
 const arjuna = document.getElementById("arjuna");
 const srikandi = document.getElementById("srikandi");
 const gatot = document.getElementById("gatot");
-
-const modal = document.getElementById("modal");
-const closeDetail = document.getElementById("closeDetail");
-
-const mAgenda = document.getElementById("mAgenda");
-const mRuangan = document.getElementById("mRuangan");
-const mTanggal = document.getElementById("mTanggal");
-const mJam = document.getElementById("mJam");
-const mNama = document.getElementById("mNama");
 
 const editModal = document.getElementById("editModal");
 const editSubmit = document.getElementById("editSubmit");
@@ -377,9 +367,7 @@ function updateUI() {
   }
 }
 
-loginBtn.onclick = function () {
-  loginModal.style.display = "flex";
-};
+loginBtn.onclick = () => loginModal.style.display = "flex";
 
 logoutBtn.onclick = function () {
   ROLE = "user";
@@ -427,7 +415,7 @@ function formatTanggalIndo(tanggal) {
 =========================== */
 
 async function loadData() {
-  const res = await fetch(API_URL);
+  const res = await fetch(API_URL + "?_=" + Date.now());
   DATA = await res.json();
   render();
 }
@@ -481,16 +469,22 @@ function render() {
     if (d.ruangan === "Srikandi") srikandi.appendChild(el);
     if (d.ruangan === "Gatotkaca") gatot.appendChild(el);
   });
-}/* ===========================
-   DELETE
+}
+
+/* ===========================
+   DELETE (FIXED)
 =========================== */
 
 async function deleteData(id) {
   if (!confirm("Yakin hapus?")) return;
 
+  const formData = new FormData();
+  formData.append("action", "delete");
+  formData.append("id", id);
+
   await fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify({ action: "delete", id }),
+    body: formData,
   });
 
   loadData();
@@ -535,10 +529,6 @@ editSubmit.onclick = async function () {
   loadData();
 };
 
-  editModal.style.display = "none";
-  loadData();
-};
-
 /* ===========================
    JAM LIVE
 =========================== */
@@ -555,3 +545,4 @@ setInterval(() => {
 loadData();
 
 </script>
+ 
