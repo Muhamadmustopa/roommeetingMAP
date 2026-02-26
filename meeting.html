@@ -313,18 +313,19 @@
     </div>
   </div>   
   <script>
+
 /* ===========================
    CONFIG
 =========================== */
 
 const API_URL = "https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec";
-const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"; // 123456
+const ADMIN_PIN_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
 
 let DATA = [];
 let ROLE = localStorage.getItem("role") || "user";
 
 /* ===========================
-   AMBIL ELEMENT
+   ELEMENT
 =========================== */
 
 const loginBtn = document.getElementById("loginBtn");
@@ -352,7 +353,7 @@ const eNama = document.getElementById("eNama");
 const clock = document.getElementById("clock");
 
 /* ===========================
-   LOGIN SYSTEM
+   LOGIN
 =========================== */
 
 function updateUI() {
@@ -369,7 +370,7 @@ function updateUI() {
 
 loginBtn.onclick = () => loginModal.style.display = "flex";
 
-logoutBtn.onclick = function () {
+logoutBtn.onclick = () => {
   ROLE = "user";
   localStorage.removeItem("role");
   updateUI();
@@ -377,15 +378,13 @@ logoutBtn.onclick = function () {
 };
 
 loginSubmit.onclick = async function () {
-  const pin = pinInput.value;
-
   const hashBuffer = await crypto.subtle.digest(
     "SHA-256",
-    new TextEncoder().encode(pin)
+    new TextEncoder().encode(pinInput.value)
   );
 
   const pinHash = [...new Uint8Array(hashBuffer)]
-    .map((b) => b.toString(16).padStart(2, "0"))
+    .map(b => b.toString(16).padStart(2, "0"))
     .join("");
 
   if (pinHash === ADMIN_PIN_HASH) {
@@ -406,8 +405,11 @@ updateUI();
 =========================== */
 
 function formatTanggalIndo(tanggal) {
-  const opsi = { day: "numeric", month: "long", year: "numeric" };
-  return new Date(tanggal).toLocaleDateString("id-ID", opsi);
+  return new Date(tanggal).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
 }
 
 /* ===========================
@@ -417,7 +419,37 @@ function formatTanggalIndo(tanggal) {
 async function loadData() {
   const res = await fetch(API_URL + "?_=" + Date.now());
   DATA = await res.json();
+
+  sortData();   // 🔥 SORT PRIORITAS
   render();
+}
+
+/* ===========================
+   SORT DATA (PRIORITAS CERDAS)
+=========================== */
+
+function sortData() {
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  DATA.sort((a,b) => {
+
+    const dateA = new Date(a.tanggal);
+    const dateB = new Date(b.tanggal);
+
+    dateA.setHours(0,0,0,0);
+    dateB.setHours(0,0,0,0);
+
+    const diffA = dateA - today;
+    const diffB = dateB - today;
+
+    // Prioritas tanggal terdekat (hari ini = 0)
+    if (diffA !== diffB) return diffA - diffB;
+
+    // Kalau tanggal sama → urut jam mulai
+    return a.mulai.localeCompare(b.mulai);
+  });
 }
 
 /* ===========================
@@ -425,29 +457,31 @@ async function loadData() {
 =========================== */
 
 function render() {
+
   arjuna.innerHTML = "";
   srikandi.innerHTML = "";
   gatot.innerHTML = "";
 
   const now = new Date();
 
-  DATA.forEach((d) => {
+  DATA.forEach(d => {
+
     const el = document.createElement("div");
     el.className = "booking";
 
     const start = new Date(`${d.tanggal}T${d.mulai}`);
-    const end = new Date(`${d.tanggal}T${d.selesai}`);
+    const end   = new Date(`${d.tanggal}T${d.selesai}`);
 
     if (now >= start && now <= end) {
       el.classList.add("live");
     }
 
     el.innerHTML = `
-      <div style="font-weight:600; margin-bottom:6px;">
+      <div style="font-weight:600;margin-bottom:6px;">
         ${d.agenda}
       </div>
 
-      <div style="font-size:13px; line-height:1.6;">
+      <div style="font-size:13px;line-height:1.6;">
         📅 ${formatTanggalIndo(d.tanggal)} <br>
         ⏰ ${d.mulai} - ${d.selesai} <br>
         👤 ${d.nama}
@@ -455,13 +489,13 @@ function render() {
 
       ${
         ROLE === "admin"
-          ? `
-          <div style="margin-top:10px;">
-            <button class="icon-btn icon-edit" onclick="editData('${d.id}')">✏️</button>
-            <button class="icon-btn icon-delete" onclick="deleteData('${d.id}')">🗑️</button>
-          </div>
-          `
-          : ""
+        ? `
+        <div style="margin-top:10px;">
+          <button class="icon-btn icon-edit" onclick="editData('${d.id}')">✏️</button>
+          <button class="icon-btn icon-delete" onclick="deleteData('${d.id}')">🗑️</button>
+        </div>
+        `
+        : ""
       }
     `;
 
@@ -472,21 +506,17 @@ function render() {
 }
 
 /* ===========================
-   DELETE (FIXED)
+   DELETE
 =========================== */
 
 async function deleteData(id) {
   if (!confirm("Yakin hapus?")) return;
 
   const formData = new FormData();
-  formData.append("action", "delete");
-  formData.append("id", id);
+  formData.append("action","delete");
+  formData.append("id",id);
 
-  await fetch(API_URL, {
-    method: "POST",
-    body: formData,
-  });
-
+  await fetch(API_URL,{ method:"POST", body:formData });
   loadData();
 }
 
@@ -494,8 +524,8 @@ async function deleteData(id) {
    EDIT
 =========================== */
 
-function editData(id) {
-  const d = DATA.find((x) => x.id == id);
+function editData(id){
+  const d = DATA.find(x => x.id == id);
 
   eId.value = d.id;
   eRuangan.value = d.ruangan;
@@ -508,22 +538,19 @@ function editData(id) {
   editModal.style.display = "flex";
 }
 
-editSubmit.onclick = async function () {
+editSubmit.onclick = async function(){
 
   const formData = new FormData();
-  formData.append("action", "update");
-  formData.append("id", eId.value);
-  formData.append("ruangan", eRuangan.value);
-  formData.append("agenda", eAgenda.value);
-  formData.append("tanggal", eTanggal.value);
-  formData.append("mulai", eMulai.value);
-  formData.append("selesai", eSelesai.value);
-  formData.append("nama", eNama.value);
+  formData.append("action","update");
+  formData.append("id",eId.value);
+  formData.append("ruangan",eRuangan.value);
+  formData.append("agenda",eAgenda.value);
+  formData.append("tanggal",eTanggal.value);
+  formData.append("mulai",eMulai.value);
+  formData.append("selesai",eSelesai.value);
+  formData.append("nama",eNama.value);
 
-  await fetch(API_URL, {
-    method: "POST",
-    body: formData,
-  });
+  await fetch(API_URL,{ method:"POST", body:formData });
 
   editModal.style.display = "none";
   loadData();
@@ -533,10 +560,17 @@ editSubmit.onclick = async function () {
    JAM LIVE
 =========================== */
 
-setInterval(() => {
-  const now = new Date();
-  clock.textContent = now.toLocaleTimeString("id-ID");
-}, 1000);
+setInterval(()=>{
+  clock.textContent = new Date().toLocaleTimeString("id-ID");
+},1000);
+
+/* ===========================
+   AUTO REFRESH DATA
+=========================== */
+
+setInterval(()=>{
+  loadData();
+},30000);
 
 /* ===========================
    START
@@ -545,4 +579,3 @@ setInterval(() => {
 loadData();
 
 </script>
- 
