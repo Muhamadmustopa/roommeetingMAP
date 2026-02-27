@@ -448,20 +448,18 @@ function sortData() {
     const isPastA = diffA < 0;
     const isPastB = diffB < 0;
 
-    // Yang belum lewat selalu di atas
     if (isPastA !== isPastB) {
       return isPastA ? 1 : -1;
     }
 
-    // Kalau sama-sama belum lewat → paling dekat dulu
     if (!isPastA && !isPastB) {
       return diffA - diffB;
     }
-
-    // Kalau sama-sama sudah lewat → terbaru dulu
+    
     return dateB - dateA;
   });
-}    // 2️⃣ Kalau sama-sama belum lewat → urut dari yang paling dekat waktunya
+}   
+    // 2️⃣ Kalau sama-sama belum lewat → urut dari yang paling dekat waktunya
     if (!isPastA && !isPastB) {
       return diffA - diffB;
     }
