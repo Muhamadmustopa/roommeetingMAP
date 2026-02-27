@@ -433,33 +433,29 @@ function sortData() {
 
   DATA.sort((a, b) => {
 
-    const dateA = new Date(a.tanggal);
-    const dateB = new Date(b.tanggal);
+    const startA = new Date(`${a.tanggal}T${a.mulai}`);
+    const endA   = new Date(`${a.tanggal}T${a.selesai}`);
 
-    const [jamA, menitA] = a.mulai.split(":");
-    const [jamB, menitB] = b.mulai.split(":");
+    const startB = new Date(`${b.tanggal}T${b.mulai}`);
+    const endB   = new Date(`${b.tanggal}T${b.selesai}`);
 
-    dateA.setHours(jamA, menitA, 0, 0);
-    dateB.setHours(jamB, menitB, 0, 0);
+    const isLiveA = now >= startA && now <= endA;
+    const isLiveB = now >= startB && now <= endB;
 
-    const diffA = dateA - now;
-    const diffB = dateB - now;
+    if (isLiveA !== isLiveB) {
+      return isLiveA ? -1 : 1;
+    }
 
-    const isPastA = diffA < 0;
-    const isPastB = diffB < 0;
+    const isPastA = now > endA;
+    const isPastB = now > endB;
 
     if (isPastA !== isPastB) {
       return isPastA ? 1 : -1;
     }
 
-    if (!isPastA && !isPastB) {
-      return diffA - diffB;
-    }
-    
-    return dateB - dateA;
+    return startA - startB;
   });
-}
-   
+}   
 /* ===========================
    RENDER
 =========================== */
@@ -578,7 +574,7 @@ setInterval(()=>{
 
 setInterval(()=>{
   loadData();
-},30000);
+},90000);
 
 /* ===========================
    START
