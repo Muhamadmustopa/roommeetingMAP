@@ -427,31 +427,36 @@ async function loadData() {
 /* ===========================
    SORT DATA (PRIORITAS CERDAS)
 =========================== */
-
 function sortData() {
 
-  const today = new Date();
-  today.setHours(0,0,0,0);
+  const now = new Date();
 
-  DATA.sort((a,b) => {
+  DATA.sort((a, b) => {
 
-    const dateA = new Date(a.tanggal);
-    const dateB = new Date(b.tanggal);
+    const startA = new Date(`${a.tanggal}T${a.mulai}`);
+    const startB = new Date(`${b.tanggal}T${b.mulai}`);
 
-    dateA.setHours(0,0,0,0);
-    dateB.setHours(0,0,0,0);
+    const diffA = startA - now;
+    const diffB = startB - now;
 
-    const diffA = dateA - today;
-    const diffB = dateB - today;
+    // 1️⃣ Prioritas jadwal yang BELUM lewat dan paling dekat dengan sekarang
+    const isPastA = diffA < 0;
+    const isPastB = diffB < 0;
 
-    // Prioritas tanggal terdekat (hari ini = 0)
-    if (diffA !== diffB) return diffA - diffB;
+    if (isPastA !== isPastB) {
+      return isPastA ? 1 : -1; 
+      // yang sudah lewat taruh di bawah
+    }
 
-    // Kalau tanggal sama → urut jam mulai
-    return a.mulai.localeCompare(b.mulai);
+    // 2️⃣ Kalau sama-sama belum lewat → urut dari yang paling dekat waktunya
+    if (!isPastA && !isPastB) {
+      return diffA - diffB;
+    }
+
+    // 3️⃣ Kalau sama-sama sudah lewat → tetap urut berdasarkan waktu terbaru
+    return startB - startA;
   });
 }
-
 /* ===========================
    RENDER
 =========================== */
