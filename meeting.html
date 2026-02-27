@@ -433,22 +433,35 @@ function sortData() {
 
   DATA.sort((a, b) => {
 
-    const startA = new Date(`${a.tanggal}T${a.mulai}`);
-    const startB = new Date(`${b.tanggal}T${b.mulai}`);
+    const dateA = new Date(a.tanggal);
+    const dateB = new Date(b.tanggal);
 
-    const diffA = startA - now;
-    const diffB = startB - now;
+    const [jamA, menitA] = a.mulai.split(":");
+    const [jamB, menitB] = b.mulai.split(":");
 
-    // 1️⃣ Prioritas jadwal yang BELUM lewat dan paling dekat dengan sekarang
+    dateA.setHours(jamA, menitA, 0, 0);
+    dateB.setHours(jamB, menitB, 0, 0);
+
+    const diffA = dateA - now;
+    const diffB = dateB - now;
+
     const isPastA = diffA < 0;
     const isPastB = diffB < 0;
 
+    // Yang belum lewat selalu di atas
     if (isPastA !== isPastB) {
-      return isPastA ? 1 : -1; 
-      // yang sudah lewat taruh di bawah
+      return isPastA ? 1 : -1;
     }
 
-    // 2️⃣ Kalau sama-sama belum lewat → urut dari yang paling dekat waktunya
+    // Kalau sama-sama belum lewat → paling dekat dulu
+    if (!isPastA && !isPastB) {
+      return diffA - diffB;
+    }
+
+    // Kalau sama-sama sudah lewat → terbaru dulu
+    return dateB - dateA;
+  });
+}    // 2️⃣ Kalau sama-sama belum lewat → urut dari yang paling dekat waktunya
     if (!isPastA && !isPastB) {
       return diffA - diffB;
     }
