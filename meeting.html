@@ -325,6 +325,23 @@ let DATA = [];
 let ROLE = localStorage.getItem("role") || "user";
 
 /* ===========================
+   PARSE DATE FIX (ANTI ERROR)
+=========================== */
+
+function parseDateTime(tanggal, jam) {
+  const [year, month, day] = tanggal.split("-");
+  const [hour, minute] = jam.split(":");
+
+  return new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour),
+    Number(minute)
+  );
+}
+
+/* ===========================
    ELEMENT
 =========================== */
 
@@ -420,24 +437,25 @@ async function loadData() {
   const res = await fetch(API_URL + "?_=" + Date.now());
   DATA = await res.json();
 
-  sortData();   // 🔥 SORT PRIORITAS
+  sortData();
   render();
 }
 
 /* ===========================
-   SORT DATA (PRIORITAS CERDAS)
+   SORT DATA
 =========================== */
+
 function sortData() {
 
   const now = new Date();
 
   DATA.sort((a, b) => {
 
-    const startA = new Date(`${a.tanggal}T${a.mulai}`);
-    const endA   = new Date(`${a.tanggal}T${a.selesai}`);
+    const startA = parseDateTime(a.tanggal, a.mulai);
+    const endA   = parseDateTime(a.tanggal, a.selesai);
 
-    const startB = new Date(`${b.tanggal}T${b.mulai}`);
-    const endB   = new Date(`${b.tanggal}T${b.selesai}`);
+    const startB = parseDateTime(b.tanggal, b.mulai);
+    const endB   = parseDateTime(b.tanggal, b.selesai);
 
     const isLiveA = now >= startA && now <= endA;
     const isLiveB = now >= startB && now <= endB;
@@ -455,7 +473,8 @@ function sortData() {
 
     return startA - startB;
   });
-}   
+}
+
 /* ===========================
    RENDER
 =========================== */
@@ -473,8 +492,8 @@ function render() {
     const el = document.createElement("div");
     el.className = "booking";
 
-    const start = new Date(`${d.tanggal}T${d.mulai}`);
-    const end   = new Date(`${d.tanggal}T${d.selesai}`);
+    const start = parseDateTime(d.tanggal, d.mulai);
+    const end   = parseDateTime(d.tanggal, d.selesai);
 
     if (now >= start && now <= end) {
       el.classList.add("live");
@@ -583,3 +602,4 @@ setInterval(()=>{
 loadData();
 
 </script>
+
