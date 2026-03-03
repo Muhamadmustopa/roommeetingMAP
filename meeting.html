@@ -18,6 +18,63 @@
         url("mas.png") no-repeat center/cover;
       color: #fff;
     }
+    .popup {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 9999;
+}
+
+.popup.hidden {
+  display: none;
+}
+
+.popup-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #1f2937, #111827);
+  color: white;
+  padding: 18px 20px;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+  min-width: 320px;
+  animation: slideIn 0.4s ease;
+}
+
+.popup-icon {
+  font-size: 22px;
+}
+
+.popup-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #60a5fa;
+}
+
+.popup-text {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.popup-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.popup-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
 
     .logo {
       display: block;
@@ -245,7 +302,16 @@
       Logout
     </button>
   </div>
-
+<div id="livePopup" class="popup hidden">
+  <div class="popup-card">
+    <div class="popup-icon">🔔</div>
+    <div class="popup-body">
+      <div class="popup-title">M</div>
+      <div id="popupText" class="popup-text"></div>
+    </div>
+    <button class="popup-close" onclick="closePopup()">✕</button>
+  </div>
+</div>
   <img src="map-log.png" class="logo" />
 
   <h1>
@@ -479,7 +545,36 @@ function sortData() {
     return startA - startB;
   });
 }
+let notifiedMeetings = new Set();
+let popupTimeout = null;
 
+function showPopup(id, text) {
+
+  // Kalau sudah pernah muncul, jangan tampilkan lagi
+  if (notifiedMeetings.has(id)) return;
+
+  notifiedMeetings.add(id);
+
+  const popup = document.getElementById("livePopup");
+  const popupText = document.getElementById("popupText");
+
+  popupText.innerText = text;
+  popup.classList.remove("hidden");
+
+  popupTimeout = setTimeout(() => {
+    closePopup();
+  }, 60000);
+}
+
+function closePopup() {
+  const popup = document.getElementById("livePopup");
+  popup.classList.add("hidden");
+
+  if (popupTimeout) {
+    clearTimeout(popupTimeout);
+    popupTimeout = null;
+  }
+}
 /* ===========================
    RENDER
 =========================== */
@@ -524,9 +619,14 @@ function render() {
     `;
 
     /* STATUS CHECK */
-    if (now >= start && now <= end) {
-      el.classList.add("live");
-    } 
+  if (now >= start && now <= end) {
+  el.classList.add("live");
+
+  showPopup(
+    d.id,
+    `"${d.agenda}" sedang berlangsung di Ruang ${d.ruangan}`
+  );
+}
     else if (now > end) {
       el.classList.add("past");
       el.innerHTML += `
