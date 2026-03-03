@@ -493,36 +493,14 @@ function render() {
   const now = new Date();
 
   DATA.forEach(d => {
-const el = document.createElement("div");
-el.className = "booking";
 
-const start = parseDateTime(d.tanggal, d.mulai);
-const end   = parseDateTime(d.tanggal, d.selesai);
+    const el = document.createElement("div");
+    el.className = "booking";
 
-el.innerHTML = `
-  <div style="font-weight:600;margin-bottom:6px;">
-    ${d.agenda}
-  </div>
+    const start = parseDateTime(d.tanggal, d.mulai);
+    const end   = parseDateTime(d.tanggal, d.selesai);
 
-  <div style="font-size:13px;line-height:1.6;">
-    📅 ${formatTanggalIndo(d.tanggal)} <br>
-    ⏰ ${d.mulai} - ${d.selesai} <br>
-    👤 ${d.nama}
-  </div>
-`;
-
-/* STATUS CHECK */
-if (now >= start && now <= end) {
-  el.classList.add("live");
-} 
-else if (now > end) {
-  el.classList.add("past");
-  el.innerHTML += `
-    <div style="font-size:9px;margin-top:5px;opacity:0.7;">
-      done
-    </div>
-  `;
-}
+    el.innerHTML = `
       <div style="font-weight:600;margin-bottom:6px;">
         ${d.agenda}
       </div>
@@ -545,13 +523,26 @@ else if (now > end) {
       }
     `;
 
+    /* STATUS CHECK */
+    if (now >= start && now <= end) {
+      el.classList.add("live");
+    } 
+    else if (now > end) {
+      el.classList.add("past");
+      el.innerHTML += `
+        <div style="font-size:11px;margin-top:6px;opacity:0.7;">
+          ⏳ Selesai
+        </div>
+      `;
+    }
+
     if (d.ruangan === "Arjuna") arjuna.appendChild(el);
     if (d.ruangan === "Srikandi") srikandi.appendChild(el);
     if (d.ruangan === "Gatot Kaca") gatot.appendChild(el);
+
   });
 }
-
-/* ===========================
+    /* ===========================
    DELETE
 =========================== */
 
