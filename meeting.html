@@ -123,7 +123,7 @@
 }
     .booking.past {
   opacity: 0.45;
-  filter: brightness(60%);
+  filter: brightness(75%);
   transition: 0.4s ease;
 }
 
@@ -530,8 +530,8 @@ function render() {
     else if (now > end) {
       el.classList.add("past");
       el.innerHTML += `
-        <div style="font-size:11px;margin-top:6px;opacity:0.7;">
-          ⏳ Selesai
+        <div style="font-size:10px;margin-top:6px;opacity:0.7;">
+          Done
         </div>
       `;
     }
