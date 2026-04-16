@@ -42,6 +42,35 @@
   animation: slideIn 0.4s ease;
 }
 
+.running-text {
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  overflow: hidden;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.running-content {
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: scrollText 20s linear infinite;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+    
 .popup-icon {
   font-size: 22px;
 }
@@ -295,6 +324,11 @@
 
 <body>
   <!-- TOP BAR -->
+  <div class="running-text">
+  <div class="running-content">
+    📢 Info: Physiotherapy di buka mulai tanggal 15 April - 25 Mei 2026  Pukul 10.00 - 15.00 di Klinik UG Gatot Kaca •
+  </div>
+</div>
   <div class="top-bar">
     <div id="clock">--</div>
     <button id="loginBtn" class="btn btn-login">@</button>
