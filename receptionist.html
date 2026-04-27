@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MAP Smart Reception Dashboard</title>
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+padding:18px;
+font-family:Segoe UI,Arial;
+background:linear-gradient(135deg,#031329,#0b2f57);
+color:#fff;
+}
+.gridTop{
+display:grid;
+grid-template-columns:1.3fr 1fr 1fr;
+gap:18px;
+margin-bottom:18px;
+}
+.card{
+background:rgba(255,255,255,.07);
+border:1px solid rgba(255,255,255,.08);
+backdrop-filter:blur(12px);
+border-radius:22px;
+padding:20px;
+box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+.brand{font-size:38px;font-weight:800}
+.sub{opacity:.85}
+#clock{font-size:58px;font-weight:800}
+.metric{font-size:54px;font-weight:800}
+.main{
+display:grid;
+grid-template-columns:1fr 1.4fr 1.2fr;
+gap:18px;
+}
+.roomBox{
+padding:16px;border-radius:18px;margin-bottom:14px;
+background:rgba(255,255,255,.06);border-left:7px solid #22c55e;
+}
+.roomBox.upcoming{border-left-color:#f59e0b}
+.roomBox.occupied{box-shadow:0 0 18px rgba(34,197,94,.35)}
+.badge{display:inline-block;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700;margin-top:8px}
+.green{background:#16a34a}.amber{background:#d97706}.blue{background:#2563eb}
+.tableHead,.row{display:grid;grid-template-columns:110px 1fr 120px 120px;gap:12px}
+.tableHead{font-weight:700;padding:12px;border-bottom:1px solid rgba(255,255,255,.12)}
+.row{padding:14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.row.live{background:rgba(34,197,94,.12);border-radius:12px}
+.alertBox{
+padding:18px;border-radius:18px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4)
+}
+#ticker{
+margin-top:18px;background:#fff;color:#111;padding:14px 18px;border-radius:14px;
+font-weight:700;white-space:nowrap;overflow:hidden
+}
+.scroll{display:inline-block;padding-left:100%;animation:run 30s linear infinite}
+@keyframes run{100%{transform:translateX(-100%)}}
+.small{font-size:13px;opacity:.85}
+</style>
+</head>
+<body>
+
+<div class='gridTop'>
+<div class='card'>
+<div class='brand'>PT MITRA ASA PRATAMA</div>
+<div class='sub'>Receptionist Dashboard</div>
+</div>
+<div class='card' style='text-align:center'>
+<div id='clock'>--:--</div>
+<div id='today'></div>
+</div>
+<div class='card'>
+<div>Today's Visitors</div>
+<div class='metric' id='visitorCount'>0</div>
+<div style='margin-top:12px'>Ruangan sedang pakai: <b id='roomCount'>0</b></div>
+</div>
+</div>
+
+<div class='main'>
+
+<div class='card'>
+<h2>Room Status</h2>
+<div id='rooms'></div>
+</div>
+
+<div class='card'>
+<h2>Today's Meetings</h2>
+<div class='tableHead'>
+<div>Time</div><div>Agenda</div><div>Host</div><div>Status</div>
+</div>
+<div id='meetingRows'></div>
+</div>
+
+<div>
+<div class='card'>
+<h2>Today's Visitors</h2>
+<div id='visitorRows'></div>
+</div>
+<br>
+<div class='card'>
+<h2>Live Alert</h2>
+<div id='liveAlert'>No live meeting now</div>
+</div>
+</div>
+
+</div>
+
+<div id='ticker'>
+<div class='scroll'>📢 Fasilitas Physiotherapy tersedia pukul 13.00–16.00 di Klinik UG Gatot Kaca • Dashboard refresh otomatis tiap 60 detik</div>
+</div>
+
+<script>
+const API_URL='https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec';
+let DATA=[];
+
+function parseDateTime(t,j){
+const [y,m,d]=t.split('-');
+const [h,i]=j.split(':');
+return new Date(y,m-1,d,h,i)
+}
+
+function updateClock(){
+const n=new Date();
+document.getElementById('clock').innerText=n.toLocaleTimeString('id-ID');
+document.getElementById('today').innerText=n.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+async function loadData(){
+try{
+const r=await fetch(API_URL+'?_='+Date.now());
+DATA=await r.json();
+render();
+}catch(e){console.error(e)}
+}
+
+function render(){
+let rooms={
+'Arjuna':{status:'Available'},
+'Srikandi':{status:'Available'},
+'Gatot Kaca':{status:'Available'}
+};
+
+let roomUse=0;
+let meetings='';
+let visitors='';
+let liveAgenda='';
+const now=new Date();
+
+DATA.sort((a,b)=> parseDateTime(a.tanggal,a.mulai)-parseDateTime(b.tanggal,b.mulai));
+
+DATA.forEach(d=>{
+let start=parseDateTime(d.tanggal,d.mulai);
+let end=parseDateTime(d.tanggal,d.selesai);
+
+let status='Upcoming';
+let cls='';
+let badge='<span class="badge blue">Upcoming</span>';
+
+if(now>=start && now<=end){
+status='Live';
+cls='live';
+badge='<span class="badge green">In Use</span>';
+rooms[d.ruangan]={status:'Occupied',agenda:d.agenda,time:d.mulai+'-'+d.selesai,host:d.nama};
+roomUse++;
+liveAgenda=d;
+}else if(now>end){
+status='Done';
+badge='<span class="badge">Done</span>';
+}else{
+if(rooms[d.ruangan].status==='Available'){
+rooms[d.ruangan]={status:'Upcoming',agenda:d.agenda,time:d.mulai+'-'+d.selesai,host:d.nama};
+}
+}
+
+meetings += `
+<div class='row ${cls}'>
+<div>${d.mulai}-${d.selesai}</div>
+<div>${d.agenda}</div>
+<div>${d.nama}</div>
+<div>${badge}</div>
+</div>`;
+
+visitors += `
+<div class='row'>
+<div>${d.mulai}</div>
+<div>${d.nama}<div class='small'>${d.ruangan}</div></div>
+<div>${d.nama}</div>
+<div>${badge}</div>
+</div>`;
+});
+
+document.getElementById('meetingRows').innerHTML=meetings;
+document.getElementById('visitorRows').innerHTML=visitors;
+document.getElementById('visitorCount').innerText=DATA.length;
+document.getElementById('roomCount').innerText=roomUse;
+
+let roomHtml='';
+for(let r in rooms){
+let x=rooms[r];
+let c='green',label='AVAILABLE',box='';
+if(x.status==='Occupied'){c='green';label='IN USE';box='occupied';}
+if(x.status==='Upcoming'){c='amber';label='UPCOMING';box='upcoming';}
+roomHtml += `
+<div class='roomBox ${box}'>
+<h3>${r}</h3>
+<span class='badge ${c}'>${label}</span>
+<div style='margin-top:10px'>${x.agenda||'Ready to use'}</div>
+<div class='small'>${x.time||''}</div>
+<div class='small'>${x.host||''}</div>
+</div>`
+}
+
+document.getElementById('rooms').innerHTML=roomHtml;
+
+if(liveAgenda){
+document.getElementById('liveAlert').innerHTML=`
+<div class='alertBox'>
+<div><b>${liveAgenda.agenda}</b></div>
+<div>di Ruang ${liveAgenda.ruangan}</div>
+<div>Host: ${liveAgenda.nama}</div>
+<div>Sedang berlangsung sekarang</div>
+</div>`;
+}
+}
+
+setInterval(updateClock,1000);
+setInterval(loadData,60000);
+updateClock();
+loadData();
+</script>
+
+</body>
+</html>
