@@ -149,19 +149,21 @@ border-radius:20px;
 /* ROOM STATUS */
 .roomBox{
 padding:14px;
+border-radius:16px;
 margin-bottom:12px;
-border-radius:18px;
 background:rgba(255,255,255,.05);
-border-left:5px solid #2563eb;
+border-left:4px solid #2563eb; /* default biru */
 }
 
+/* hanya room yang dipakai */
 .roomBox.occupied{
-border-left:5px solid #f59e0b;
-box-shadow:0 0 14px rgba(245,158,11,.22);
+border-left:4px solid #f59e0b;
+box-shadow:0 0 12px rgba(245,158,11,.25);
 }
 
+/* upcoming */
 .roomBox.upcoming{
-border-left:5px solid #2563eb;
+border-left:4px solid #64748b;
 }
 
 .badge{
