@@ -18,7 +18,11 @@ color:white;
 }
 
 body{
-padding:18px;
+padding:16px;
+display:flex;
+flex-direction:column;
+min-height:100vh;
+overflow:hidden;
 }
 
 .card{
@@ -33,10 +37,9 @@ box-shadow:0 8px 28px rgba(0,0,0,.35);
 /* HEADER */
 .header{
 display:grid;
-grid-template-columns:1.6fr 1fr 1fr;
-gap:18px;
-margin-bottom:18px;
-height:18vh;
+grid-template-columns:44% 27% 27%;
+gap:14px;
+margin-bottom:14px;
 }
 
 .welcome{
@@ -103,9 +106,10 @@ margin:12px 0;
 /* MAIN */
 .main{
 display:grid;
-grid-template-columns:1.1fr 1.5fr 1.1fr;
-gap:18px;
-height:68vh;
+grid-template-columns:30% 40% 30%;
+gap:14px;
+flex:1;
+min-height:0;
 }
 
 h2{
@@ -118,6 +122,30 @@ font-size:18px;
 margin:0;
 }
 
+.card{
+min-height:0;
+overflow:hidden;
+}
+
+#meetingRows,
+#visitorRows,
+#rooms{
+max-height:calc(100vh - 310px);
+overflow:auto;
+padding-right:4px;
+}
+
+/* scrollbar tipis */
+#meetingRows::-webkit-scrollbar,
+#visitorRows::-webkit-scrollbar{
+width:6px;
+}
+
+#meetingRows::-webkit-scrollbar-thumb,
+#visitorRows::-webkit-scrollbar-thumb{
+background:rgba(255,255,255,.18);
+border-radius:20px;
+}
 /* ROOM STATUS */
 .roomBox{
 padding:14px;
