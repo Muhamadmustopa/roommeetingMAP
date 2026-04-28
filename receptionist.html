@@ -516,10 +516,9 @@ function renderData() {
         <div>${d.ruangan}</div>
         <div>${d.agenda}</div>
         <div>
-          ${item.status === 'RESERVED'
-  ? `<div class="room-text-status">${item.status}</div>`
-  : `<span class="badge ${item.class}">${item.status}</span>`
-}
+          <span class="badge ${item.class}">
+  ${item.status}
+</span>
         </div>
       </div>
     `;
