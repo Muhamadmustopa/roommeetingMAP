@@ -509,19 +509,19 @@ function renderData() {
 }
 
     // TABLE ROOM STATUS
-    visitorHTML += `
-      <div class="table-row">
-        <div>${formatTanggalLengkap(d.tanggal)}</div>
-        <div>${d.mulai} - ${d.selesai}</div>
-        <div>${d.ruangan}</div>
-        <div>${d.agenda}</div>
-        <div>
-          <span class="badge ${item.class}">
-  ${item.status}
-</span>
-        </div>
-      </div>
-    `;
+  visitorHTML += `
+  <div class="table-row">
+    <div>${formatTanggalLengkap(d.tanggal)}</div>
+    <div>${d.mulai} - ${d.selesai}</div>
+    <div>${d.ruangan}</div>
+    <div>${d.agenda}</div>
+    <div>
+      <span class="badge ${badge}">
+        ${status}
+      </span>
+    </div>
+  </div>
+`;
   });
 
   // ROOM CARD STATUS
