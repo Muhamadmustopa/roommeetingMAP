@@ -264,7 +264,7 @@ body{
     </div>
 
     <div class="card welcome-box">
-      <div class="welcome-title">WELCOME TO OUR OFFICE</div>
+      <div class="welcome-title">DASHBOARD RUANG MEETING</div>
       <div class="datetime" id="datetime">Loading...</div>
     </div>
 
@@ -464,7 +464,7 @@ function renderData() {
 
     // STATUS LOGIC
     if (now < start) {
-      status = 'On Schedule';
+      status = 'Menunggu Jadwal';
       badge = 'waiting';
       waiting++;
 
@@ -477,7 +477,7 @@ function renderData() {
       }
 
     } else if (now >= start && now <= end) {
-      status = 'In Meeting';
+      status = 'Sedang Berlangsung';
       badge = 'inmeeting';
       inMeeting++;
 
@@ -494,7 +494,7 @@ function renderData() {
   if (!roomMap[d.ruangan]) {
     roomMap[d.ruangan] = {
       agenda: 'Ready to Use',
-      status: 'AVAILABLE',
+      status: 'TERSEDIA',
       class: 'available'
     };
   }
