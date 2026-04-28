@@ -175,12 +175,42 @@ body{
   opacity:.8;
 }
 
+#rooms{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
 .room-item{
   background: rgba(255,255,255,0.05);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px;
+  border-radius: 18px;
+  padding: 18px;
+  min-height: 160px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: 0.3s;
+  position: relative;
 }
+
+.room-item.live-room{
+  border: 2px solid #22c55e;
+  box-shadow:
+    0 0 20px rgba(34,197,94,0.25),
+    0 0 40px rgba(34,197,94,0.12);
+}
+
+.room-item.live-room::before{
+  content: 'LIVE';
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #22c55e;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+  
 
 .room-name{
   font-size:18px;
@@ -477,19 +507,23 @@ function renderData() {
       class: 'available'
     };
 
-    roomHTML += `
-      <div class="room-item">
-        <div class="room-name">${room}</div>
+    const liveClass = item.class === 'inmeeting'
+  ? 'live-room'
+  : '';
 
-        <span class="badge ${item.class}">
-          ${item.status}
-        </span>
+roomHTML += `
+  <div class="room-item ${liveClass}">
+    <div class="room-name">${room}</div>
 
-        <div style="margin-top:8px">
-          ${item.agenda}
-        </div>
-      </div>
-    `;
+    <span class="badge ${item.class}">
+      ${item.status}
+    </span>
+
+    <div style="margin-top:12px">
+      ${item.agenda}
+    </div>
+  </div>
+`;
   });
 
   // RENDER TO HTML
