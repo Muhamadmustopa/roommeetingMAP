@@ -487,18 +487,20 @@ function renderData() {
         class: 'inmeeting'
       };
 
-    } else {
-      status = 'DONE';
-      badge = 'done';
+    }else {
+  // Meeting sudah selesai → tidak ditampilkan sebagai DONE
+  // Room kembali menjadi AVAILABLE
 
-      if (!roomMap[d.ruangan]) {
-        roomMap[d.ruangan] = {
-          agenda: 'No Schedule',
-          status: 'AVAILABLE',
-          class: 'available'
-        };
-      }
-    }
+  if (!roomMap[d.ruangan]) {
+    roomMap[d.ruangan] = {
+      agenda: 'Ready to Use',
+      status: 'AVAILABLE',
+      class: 'available'
+    };
+  }
+
+  return; // skip tampil di tabel visitorRows
+}
 
     // TABLE ROOM STATUS
     visitorHTML += `
