@@ -130,18 +130,28 @@ border-top:1px solid rgba(255,255,255,.18);
 padding:8px;
 border-right:1px solid rgba(255,255,255,.12);
 border-bottom:1px solid rgba(255,255,255,.12);
+
+display:flex;
+align-items:center;       /* isi rata tengah vertikal */
 }
 
 .table-head div:first-child,
 .table-row div:first-child{
 border-left:1px solid rgba(255,255,255,.12);
 }
+.table-row{
+align-items:stretch;
+}
+.table-row div:last-child,
+.table-head div:last-child{
+justify-content:center;
+}
 
 .badge{
   display:inline-block;
-  padding:6px 9px;
+  padding:4px 8px;
   border-radius:999px;
-  font-size:9px;
+  font-size:10px;
   font-weight:700;
   text-align:center;
 }
