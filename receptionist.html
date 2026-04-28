@@ -342,17 +342,17 @@ body{
       </div>
 
       <div class="card">
-        <div class="section-title">BOOKING FLOW</div>
+        <div class="section-title">FLOW</div>
 
         <div class="flow">
           <div class="flow-step">
             <h4>1. CHECK-IN</h4>
-            <p>Register at receptionist</p>
+            <p>Pengajuan kepada PIC Receptionist</p>
           </div>
 
           <div class="flow-step">
-            <h4>2.PIC</h4>
-            <p>Meet your host</p>
+            <h4>2.</h4>
+            <p>Menunggu Jadwal Pemakaian</p>
           </div>
 
           <div class="flow-step">
@@ -477,7 +477,7 @@ function renderData() {
       if (!roomMap[d.ruangan]) {
         roomMap[d.ruangan] = {
           agenda: d.agenda,
-          status: 'Reserved',
+          status: 'Menunggu Jadwal',
           class: 'waiting'
         };
       }
@@ -501,7 +501,7 @@ function renderData() {
     roomMap[d.ruangan] = {
       agenda: 'Ready to Use',
       status: 'TERSEDIA',
-      class: 'available'
+      class: 'TERSEDIA'
     };
   }
 
@@ -510,17 +510,19 @@ function renderData() {
 
     // TABLE ROOM STATUS
   visitorHTML += `
-  <div class="table-row">
-    <div>${formatTanggalLengkap(d.tanggal)}</div>
-    <div>${d.mulai} - ${d.selesai}</div>
-    <div>${d.ruangan}</div>
-    <div>${d.agenda}</div>
-    <div>
-      <span class="badge ${badge}">
-        ${status}
-      </span>
-    </div>
+<div class="table-row">
+  <div>${formatTanggalLengkap(d.tanggal)}</div>
+  <div>${d.mulai} - ${d.selesai}</div>
+  <div>${d.ruangan}</div>
+  <div>${d.agenda}</div>
+  <div>
+    ${
+      status === 'Menunggu Jadwal'
+      ? `<div class="room-text-status">${status}</div>`
+      : `<span class="badge ${badge}">${status}</span>`
+    }
   </div>
+</div>
 `;
   });
 
