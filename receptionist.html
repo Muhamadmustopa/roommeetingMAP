@@ -367,66 +367,145 @@ async function loadData(){
     console.error(err);
   }
 }
+function renderData() {
+  let visitorHTML = '';
+  let roomHTML = '';
+  let total = DATA.length;
+  let inMeeting = 0;
+  let waiting = 0;
+  let roomMap = {};
+  const now = new Date();
 
-function renderData(){
-  let visitorHTML='';
-  let roomHTML='';
-  let total=DATA.length;
-  let inMeeting=0;
-  let waiting=0;
-  let roomMap={};
-  const now=new Date();
+  // PRIORITAS STATUS
+  function getPriority(item) {
+    const start = parseDateTime(item.tanggal, item.mulai);
+    const end = parseDateTime(item.tanggal, item.selesai);
 
-  DATA.forEach(d=>{
-    const start=parseDateTime(d.tanggal,d.mulai);
-    const end=parseDateTime(d.tanggal,d.selesai);
+    if (now >= start && now <= end) {
+      return 1; // IN MEETING
+    } else if (now < start) {
+      return 2; // WAITING
+    } else {
+      return 3; // DONE
+    }
+  }
 
-   let status='WAITING';
-let badge='waiting';
+  // SORTING:
+  // 1. IN MEETING
+  // 2. WAITING
+  // 3. DONE
+  // lalu urut berdasarkan jam
+  DATA.sort((a, b) => {
+    const priorityA = getPriority(a);
+    const priorityB = getPriority(b);
 
-if(now < start){
-  status='WAITING';
-  badge='waiting';
-  waiting++;
-}
-else if(now >= start && now <= end){
-  status='IN MEETING';
-  badge='inmeeting';
-  inMeeting++;
-}
-else if(now > end){
-  status='DONE';
-  badge='available';
-}
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
 
+    return (
+      parseDateTime(a.tanggal, a.mulai) -
+      parseDateTime(b.tanggal, b.mulai)
+    );
+  });
+
+  DATA.forEach(d => {
+    const start = parseDateTime(d.tanggal, d.mulai);
+    const end = parseDateTime(d.tanggal, d.selesai);
+
+    let status = '';
+    let badge = '';
+
+    // STATUS LOGIC
+    if (now < start) {
+      status = 'WAITING';
+      badge = 'waiting';
+      waiting++;
+
+      if (!roomMap[d.ruangan]) {
+        roomMap[d.ruangan] = {
+          agenda: d.agenda,
+          status: 'RESERVED',
+          class: 'waiting'
+        };
+      }
+
+    } else if (now >= start && now <= end) {
+      status = 'IN MEETING';
+      badge = 'inmeeting';
+      inMeeting++;
+
+      roomMap[d.ruangan] = {
+        agenda: d.agenda,
+        status: 'IN USE',
+        class: 'inmeeting'
+      };
+
+    } else {
+      status = 'DONE';
+      badge = 'done';
+
+      if (!roomMap[d.ruangan]) {
+        roomMap[d.ruangan] = {
+          agenda: 'No Schedule',
+          status: 'AVAILABLE',
+          class: 'available'
+        };
+      }
+    }
+
+    // VISITOR TABLE
     visitorHTML += `
       <div class="table-row">
         <div>${d.mulai}</div>
         <div>${d.nama}</div>
         <div>${d.agenda}</div>
-        <div><span class="badge ${badge}">${status}</span></div>
-      </div>`;
+        <div>
+          <span class="badge ${badge}">
+            ${status}
+          </span>
+        </div>
+      </div>
+    `;
   });
 
-  ['Gatot Kaca','Srikandi','Arjuna'].forEach(room=>{
-    const item = roomMap[room] || {agenda:'No Schedule',status:'AVAILABLE',class:'available'};
+  // ROOM STATUS
+  ['Gatot Kaca', 'Srikandi', 'Arjuna'].forEach(room => {
+    const item = roomMap[room] || {
+      agenda: 'No Schedule',
+      status: 'AVAILABLE',
+      class: 'available'
+    };
+
     roomHTML += `
       <div class="room-item">
         <div class="room-name">${room}</div>
-        <span class="badge ${item.class}">${item.status}</span>
-        <div style="margin-top:8px">${item.agenda}</div>
-      </div>`;
+
+        <span class="badge ${item.class}">
+          ${item.status}
+        </span>
+
+        <div style="margin-top:8px">
+          ${item.agenda}
+        </div>
+      </div>
+    `;
   });
 
+  // RENDER TO HTML
   document.getElementById('visitorRows').innerHTML = visitorHTML;
   document.getElementById('rooms').innerHTML = roomHTML;
+
   document.getElementById('totalVisitors').innerText = total;
   document.getElementById('inMeetingCount').innerText = inMeeting;
   document.getElementById('waitingCount').innerText = waiting;
 }
 
-setInterval(updateDateTime,1000);
-setInterval(loadData,60000);
+
+// AUTO REFRESH
+setInterval(updateDateTime, 1000);
+setInterval(loadData, 60000);
+
 updateDateTime();
 loadData();
 </script>
