@@ -115,15 +115,6 @@ body{
 /* TABLE */
 .table-head,
 .table-row{
-  display: grid;
-  grid-template-columns: 22% 18% 15% 28% 17%;
-  gap: 10px;
-  padding: 12px;
-  align-items: center;
-}
-
-.table-head,
-.table-row{
 display:grid;
 grid-template-columns:22% 18% 15% 28% 17%;
 gap:0;
@@ -131,43 +122,19 @@ align-items:center;
 }
 
 .table-head{
-background:rgba(255,255,255,.08);
-font-weight:600;
-border:1px solid rgba(255,255,255,.18);
-border-bottom:none;
+border-top:1px solid rgba(255,255,255,.18);
 }
 
-.table-head div{
-padding:12px 10px;
-border-right:1px solid rgba(255,255,255,.15);
-}
-
-.table-head div:last-child{
-border-right:none;
-}
-
-.table-row{
-border-left:1px solid rgba(255,255,255,.12);
+.table-head div,
+.table-row div{
+padding:12px;
 border-right:1px solid rgba(255,255,255,.12);
 border-bottom:1px solid rgba(255,255,255,.12);
 }
 
-.table-row div{
-padding:13px 12px;
-border-right:1px solid rgba(255,255,255,.10);
-}
-
-.table-row div:last-child{
-border-right:none;
-}
-
-.table-row:nth-child(even){
-background:rgba(255,255,255,.03);
-}
-
-.table-row:hover{
-background:rgba(255,255,255,.06);
-transition:.2s;
+.table-head div:first-child,
+.table-row div:first-child{
+border-left:1px solid rgba(255,255,255,.12);
 }
 
 .badge{
