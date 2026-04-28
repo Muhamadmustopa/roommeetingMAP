@@ -481,7 +481,11 @@ function renderData() {
   DATA.forEach(d => {
     const start = parseDateTime(d.tanggal, d.mulai);
     const end = parseDateTime(d.tanggal, d.selesai);
+    const today = new Date().toISOString().slice(0,10);
 
+    if(d.tanggal !== today){
+    return; 
+    }
     let status = '';
     let badge = '';
 
