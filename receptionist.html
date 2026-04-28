@@ -102,7 +102,7 @@ body{
 /* MAIN GRID */
 .main{
   display:grid;
-  grid-template-columns: 58% 42%;
+  grid-template-columns: 50% 50%;
   gap:16px;
 }
 
@@ -381,20 +381,23 @@ function renderData(){
     const start=parseDateTime(d.tanggal,d.mulai);
     const end=parseDateTime(d.tanggal,d.selesai);
 
-    let status='WAITING';
-    let badge='waiting';
+   let status='WAITING';
+let badge='waiting';
 
-    if(now>=start && now<=end){
-      status='IN MEETING';
-      badge='inmeeting';
-      inMeeting++;
-      roomMap[d.ruangan]={agenda:d.agenda,status:'IN USE',class:'inmeeting'};
-    }else{
-      waiting++;
-      if(!roomMap[d.ruangan]){
-        roomMap[d.ruangan]={agenda:d.agenda,status:'RESERVED',class:'waiting'};
-      }
-    }
+if(now < start){
+  status='WAITING';
+  badge='waiting';
+  waiting++;
+}
+else if(now >= start && now <= end){
+  status='IN MEETING';
+  badge='inmeeting';
+  inMeeting++;
+}
+else if(now > end){
+  status='DONE';
+  badge='available';
+}
 
     visitorHTML += `
       <div class="table-row">
