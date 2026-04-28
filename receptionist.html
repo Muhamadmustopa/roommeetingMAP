@@ -115,11 +115,11 @@ body{
 /* TABLE */
 .table-head,
 .table-row{
-  display:grid;
-  grid-template-columns: 18% 22% 35% 25%;
-  gap:10px;
-  padding:12px;
-  align-items:center;
+  display: grid;
+  grid-template-columns: 22% 18% 15% 28% 17%;
+  gap: 10px;
+  padding: 12px;
+  align-items: center;
 }
 
 .table-head{
@@ -290,8 +290,9 @@ body{
       <div class="section-title">ROOM STATUS</div>
 
       <div class="table-head">
+        <div>HARI,TANGGAL</div> 
         <div>WAKTU</div> 
-        <div>PIC</div>
+        <div>RUANGAN</div>
         <div>AGENDA</div>
         <div>STATUS</div>
       </div>
@@ -406,6 +407,25 @@ function renderData() {
   let roomMap = {};
   const now = new Date();
 
+  // FORMAT HARI + TANGGAL
+  function formatTanggalLengkap(tanggal) {
+    const date = new Date(tanggal);
+
+    const hari = date.toLocaleDateString('id-ID', {
+      weekday: 'long'
+    });
+
+    const tgl = date.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+
+    // contoh:
+    // Selasa, 28/04/2026
+    return `${hari}, ${tgl}`;
+  }
+
   // PRIORITAS STATUS
   function getPriority(item) {
     const start = parseDateTime(item.tanggal, item.mulai);
@@ -420,11 +440,7 @@ function renderData() {
     }
   }
 
-  // SORTING:
-  // 1. IN MEETING
-  // 2. WAITING
-  // 3. DONE
-  // lalu urut berdasarkan jam
+  // SORTING
   DATA.sort((a, b) => {
     const priorityA = getPriority(a);
     const priorityB = getPriority(b);
@@ -484,11 +500,12 @@ function renderData() {
       }
     }
 
-    // VISITOR TABLE
+    // TABLE ROOM STATUS
     visitorHTML += `
       <div class="table-row">
-        <div>${d.mulai}</div>
-        <div>${d.nama}</div>
+        <div>${formatTanggalLengkap(d.tanggal)}</div>
+        <div>${d.mulai} - ${d.selesai}</div>
+        <div>${d.ruangan}</div>
         <div>${d.agenda}</div>
         <div>
           <span class="badge ${badge}">
@@ -499,7 +516,7 @@ function renderData() {
     `;
   });
 
-  // ROOM STATUS
+  // ROOM CARD STATUS
   ['Gatot Kaca', 'Srikandi', 'Arjuna'].forEach(room => {
     const item = roomMap[room] || {
       agenda: 'No Schedule',
@@ -508,25 +525,25 @@ function renderData() {
     };
 
     const liveClass = item.class === 'inmeeting'
-  ? 'live-room'
-  : '';
+      ? 'live-room'
+      : '';
 
-roomHTML += `
-  <div class="room-item ${liveClass}">
-    <div class="room-name">${room}</div>
+    roomHTML += `
+      <div class="room-item ${liveClass}">
+        <div class="room-name">${room}</div>
 
-    <span class="badge ${item.class}">
-      ${item.status}
-    </span>
+        <span class="badge ${item.class}">
+          ${item.status}
+        </span>
 
-    <div style="margin-top:12px">
-      ${item.agenda}
-    </div>
-  </div>
-`;
+        <div style="margin-top:8px">
+          ${item.agenda}
+        </div>
+      </div>
+    `;
   });
 
-  // RENDER TO HTML
+  // RENDER
   document.getElementById('visitorRows').innerHTML = visitorHTML;
   document.getElementById('rooms').innerHTML = roomHTML;
 
