@@ -217,7 +217,13 @@ body{
   font-weight:700;
   margin-bottom:8px;
 }
-
+  
+.room-text-status{
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.85;
+}
 .flow{
   display:grid;
   grid-template-columns: repeat(4,1fr);
@@ -510,9 +516,10 @@ function renderData() {
         <div>${d.ruangan}</div>
         <div>${d.agenda}</div>
         <div>
-          <span class="badge ${badge}">
-            ${status}
-          </span>
+          ${item.status === 'RESERVED'
+  ? `<div class="room-text-status">${item.status}</div>`
+  : `<span class="badge ${item.class}">${item.status}</span>`
+}
         </div>
       </div>
     `;
