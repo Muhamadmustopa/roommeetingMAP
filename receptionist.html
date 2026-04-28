@@ -275,11 +275,11 @@ body{
     </div>
 
     <div class="card weather-box">
-      <div class="small-title">TODAY WEATHER</div>
-      <div class="weather-temp">28°C</div>
-      <div>Jakarta</div>
-      <div>Partly Cloudy</div>
-    </div>
+  <div class="small-title">TODAY WEATHER</div>
+  <div class="weather-temp" id="weatherTemp">--°C</div>
+  <div id="weatherCity">Jakarta</div>
+  <div id="weatherDesc">Loading...</div>
+  </div>
 
     <div class="card announcement-box">
       <div class="small-title">🔔 ANNOUNCEMENT</div>
@@ -375,6 +375,7 @@ body{
 
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5WZB5edi4Tb4sy_4sx7MzaPs0wpxnMm7rS5vKFTzUSF/exec';
+const WEATHER_KEY='03984014b209bd35c3421e52bea54b8a';
 let DATA=[];
 
 function parseDateTime(t,j){
@@ -562,13 +563,42 @@ function renderData() {
   document.getElementById('waitingCount').innerText = waiting;
 }
 
+async function loadWeather(){
+
+try{
+
+const res = await fetch(
+`https://api.openweathermap.org/data/2.5/weather?q=Jakarta,id&appid=${WEATHER_KEY}&units=metric&lang=id`
+);
+
+const data = await res.json();
+
+document.getElementById("weatherTemp").innerHTML=
+Math.round(data.main.temp)+"°C";
+
+document.getElementById("weatherCity").innerHTML=
+data.name;
+
+document.getElementById("weatherDesc").innerHTML=
+data.weather[0].description;
+
+}catch(e){
+console.error("Weather error",e);
+}
+
+}
 
 // AUTO REFRESH
-setInterval(updateDateTime, 1000);
-setInterval(loadData, 60000);
+setInterval(updateDateTime,1000);
+
+setInterval(loadData,60000);
+
+setInterval(loadWeather,600000); 
+
 
 updateDateTime();
 loadData();
+loadWeather();
 </script>
 
 </body>
