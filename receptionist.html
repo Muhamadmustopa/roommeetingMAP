@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MAP Smart Reception Dashboard</title>
+<title>MAP Dashboard</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -323,7 +323,7 @@ animation:run 30s linear infinite;
 </div>
 
 <div id='ticker'>
-<div class='scroll'>📢 Fasilitas Physiotherapy tersedia 13.00–16.00 di Klinik UG Gatot Kaca • Dashboard refresh otomatis setiap 60 detik</div>
+<div class='scroll'>📢 Fasilitas Physiotherapy tersedia 13.00–16.00 di Klinik UG Gatot Kaca </div>
 </div>
 
 <script>
@@ -464,7 +464,7 @@ document.getElementById('liveAlert').innerHTML=`
 <div class='alertBox'>
 <div><b>${liveAgenda.agenda}</b></div>
 <div>di Ruang ${liveAgenda.ruangan}</div>
-<div>Host: ${liveAgenda.nama}</div>
+<div>PIC: ${liveAgenda.nama}</div>
 <div>Sedang berlangsung sekarang</div>
 </div>`;
 }
