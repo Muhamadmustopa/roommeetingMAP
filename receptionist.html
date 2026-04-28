@@ -287,7 +287,7 @@ body{
 
     <!-- LEFT -->
     <div class="card">
-      <div class="section-title">ROOM STATUS</div>
+      <div class="section-title">JADWAL PEMAKAIAN RUANG MEETING</div>
 
       <div class="table-head">
         <div>HARI,TANGGAL</div> 
@@ -464,26 +464,26 @@ function renderData() {
 
     // STATUS LOGIC
     if (now < start) {
-      status = 'WAITING';
+      status = 'On Schedule';
       badge = 'waiting';
       waiting++;
 
       if (!roomMap[d.ruangan]) {
         roomMap[d.ruangan] = {
           agenda: d.agenda,
-          status: 'RESERVED',
+          status: 'Reserved',
           class: 'waiting'
         };
       }
 
     } else if (now >= start && now <= end) {
-      status = 'IN MEETING';
+      status = 'In Meeting';
       badge = 'inmeeting';
       inMeeting++;
 
       roomMap[d.ruangan] = {
         agenda: d.agenda,
-        status: 'IN USE',
+        status: 'SEDANG DIGUNAKAN',
         class: 'inmeeting'
       };
 
