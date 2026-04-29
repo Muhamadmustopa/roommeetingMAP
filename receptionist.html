@@ -429,7 +429,19 @@ function renderData() {
   let waiting = 0;
   let roomMap = {};
   const now = new Date();
+  const today =
+  now.getFullYear()+'-'+
+  String(now.getMonth()+1).padStart(2,'0')+'-'+
+  String(now.getDate()).padStart(2,'0');
 
+  const tomorrowDate = new Date();
+  tomorrowDate.setDate(now.getDate()+1);
+
+  const tomorrow =
+  tomorrowDate.getFullYear()+'-'+
+  String(tomorrowDate.getMonth()+1).padStart(2,'0')+'-'+
+  String(tomorrowDate.getDate()).padStart(2,'0');
+  
   // FORMAT HARI + TANGGAL
   function formatTanggalLengkap(tanggal) {
     const date = new Date(tanggal);
@@ -481,7 +493,24 @@ function renderData() {
   DATA.forEach(d => {
     const start = parseDateTime(d.tanggal, d.mulai);
     const end = parseDateTime(d.tanggal, d.selesai);
-    
+    /* kalau booking besok */
+    if(d.tanggal===tomorrow){
+
+    if(!roomMap[d.ruangan]){
+    roomMap[d.ruangan]={
+    agenda:'Booked Tomorrow',
+    status:'AVAILABLE',
+    class:'available'
+    };
+  }
+
+  return;
+  }
+
+/* kalau bukan hari ini (mis. minggu depan), abaikan */
+if(d.tanggal!==today){
+return;
+}
     let status = '';
     let badge = '';
 
