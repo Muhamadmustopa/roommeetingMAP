@@ -612,56 +612,6 @@ Scheduled
 
 
 
-/* ===== TABLE DISPLAY ===== */
-
-/* hari ini tapi meeting sudah selesai -> skip */
-if(isToday && now>end){
-  // jangan tampilkan di tabel
-} 
-
-
-visitorHTML+=`
-<div class="table-row">
-<div>${formatTanggalLengkap(d.tanggal)}</div>
-<div>${d.mulai} - ${d.selesai}</div>
-<div>${d.ruangan}</div>
-<div>${d.agenda}</div>
-<div>
-${
-status==='Menunggu Jadwal'
-? `<div class="room-text-status">${status}</div>`
-: `<span class="badge ${badge}">${status}</span>`
-}
-</div>
-</div>
-`;
-
-}
-
-
-/* booking masa depan */
-else if(start>now){
-
-visitorHTML+=`
-<div class="table-row">
-<div>${formatTanggalLengkap(d.tanggal)}</div>
-<div>${d.mulai} - ${d.selesai}</div>
-<div>${d.ruangan}</div>
-<div>${d.agenda}</div>
-<div>
-<div class="room-text-status">
-Scheduled
-</div>
-</div>
-</div>
-`;
-
-}
-
-}); /* end DATA.forEach */
-
-
-
 /* ===== ROOM CARDS ===== */
 
 ['Gatot Kaca','Srikandi','Arjuna'].forEach(room=>{
