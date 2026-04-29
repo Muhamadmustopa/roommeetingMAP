@@ -563,8 +563,9 @@ class:'available'
 
 /* hari ini tapi meeting sudah selesai -> skip */
 if(isToday && now>end){
-return;
-}
+  // jangan tampilkan di tabel
+} 
+else if(isToday){
 
 
 /* booking hari ini tampil */
