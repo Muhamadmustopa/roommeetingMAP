@@ -559,7 +559,14 @@ class:'available'
 
 /* ---------- TABLE JADWAL (SEMUA DATA TETAP MUNCUL) ---------- */
 
+/* ===== TABEL HANYA YANG MASIH AKTIF ===== */
+
 if(isToday){
+
+/* kalau meeting sudah lewat selesai, hilangkan */
+if(now > end){
+return;
+}
 
 visitorHTML+=`
 <div class="table-row">
@@ -577,7 +584,10 @@ status==='Menunggu Jadwal'
 </div>
 `;
 
-}else{
+}
+
+/* future booking masih tampil */
+else if(start > now){
 
 visitorHTML+=`
 <div class="table-row">
@@ -592,9 +602,6 @@ visitorHTML+=`
 `;
 
 }
-
-});
-
 
 
 /* ---------- ROOM CARDS ---------- */
