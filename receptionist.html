@@ -113,12 +113,16 @@ body{
 }
 
 /* TABLE */
-.table-head,
-.table-row{
-display:grid;
-grid-template-columns:22% 18% 15% 28% 17%;
-gap:0;
-align-items:center;
+.table-head div,
+.table-row div{
+padding:8px;
+border-right:1px solid rgba(255,255,255,.12);
+border-bottom:1px solid rgba(255,255,255,.12);
+
+display:flex;
+align-items:center;      
+justify-content:center;  
+text-align:center;       
 }
 
 .table-head{
