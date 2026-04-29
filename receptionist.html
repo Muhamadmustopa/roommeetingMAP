@@ -416,20 +416,18 @@ document.getElementById('datetime').innerHTML=
 `${date} | ${time}`;
 }
 
+
 async function loadData(){
-
 try{
-
 const res=await fetch(API_URL+'?_='+Date.now());
 DATA=await res.json();
-
 renderData();
-
 }catch(err){
 console.error(err);
 }
-
 }
+
+
 
 function renderData(){
 
@@ -473,14 +471,16 @@ year:'numeric'
 });
 
 return `${hari}, ${tgl}`;
-
 }
 
 
+
+/* sorting waktu */
 DATA.sort((a,b)=>{
 return parseDateTime(a.tanggal,a.mulai)-
 parseDateTime(b.tanggal,b.mulai);
 });
+
 
 
 DATA.forEach(d=>{
@@ -495,7 +495,8 @@ let status='';
 let badge='';
 
 
-/* ---------- ROOM STATUS CARD LOGIC ---------- */
+
+/* ===== ROOM STATUS CARD ===== */
 
 if(isTomorrow){
 
@@ -557,16 +558,17 @@ class:'available'
 }
 
 
-/* ---------- TABLE JADWAL (SEMUA DATA TETAP MUNCUL) ---------- */
 
-/* ===== TABEL HANYA YANG MASIH AKTIF ===== */
+/* ===== TABLE DISPLAY ===== */
 
-if(isToday){
-
-/* kalau meeting sudah lewat selesai, hilangkan */
-if(now > end){
+/* hari ini tapi meeting sudah selesai -> skip */
+if(isToday && now>end){
 return;
 }
+
+
+/* booking hari ini tampil */
+if(isToday){
 
 visitorHTML+=`
 <div class="table-row">
@@ -586,8 +588,9 @@ status==='Menunggu Jadwal'
 
 }
 
-/* future booking masih tampil */
-else if(start > now){
+
+/* booking masa depan */
+else if(start>now){
 
 visitorHTML+=`
 <div class="table-row">
@@ -596,15 +599,20 @@ visitorHTML+=`
 <div>${d.ruangan}</div>
 <div>${d.agenda}</div>
 <div>
-<div class="room-text-status">Scheduled</div>
+<div class="room-text-status">
+Scheduled
+</div>
 </div>
 </div>
 `;
 
 }
 
+}); /* end DATA.forEach */
 
-/* ---------- ROOM CARDS ---------- */
+
+
+/* ===== ROOM CARDS ===== */
 
 ['Gatot Kaca','Srikandi','Arjuna'].forEach(room=>{
 
@@ -621,10 +629,7 @@ item.class==='inmeeting'
 
 roomHTML+=`
 <div class="room-item ${liveClass}">
-
-<div class="room-name">
-${room}
-</div>
+<div class="room-name">${room}</div>
 
 <span class="badge ${item.class}">
 ${item.status}
@@ -640,6 +645,7 @@ ${item.agenda}
 });
 
 
+
 document.getElementById('visitorRows').innerHTML=visitorHTML;
 document.getElementById('rooms').innerHTML=roomHTML;
 
@@ -647,11 +653,9 @@ document.getElementById('totalVisitors').innerText=total;
 document.getElementById('inMeetingCount').innerText=inMeeting;
 document.getElementById('waitingCount').innerText=waiting;
 
-}
+} /* end renderData */
 
 
-
-/* WEATHER */
 
 async function loadWeather(){
 
@@ -677,9 +681,7 @@ data.weather[0].description;
 }
 
 }catch(e){
-
 console.error("Weather error",e);
-
 }
 
 }
