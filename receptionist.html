@@ -481,22 +481,21 @@ return parseDateTime(a.tanggal,a.mulai)-
 parseDateTime(b.tanggal,b.mulai);
 });
 
-
-
 DATA.forEach(d=>{
 
 const start=parseDateTime(d.tanggal,d.mulai);
 const end=parseDateTime(d.tanggal,d.selesai);
 
-const isToday=d.tanggal===today;
-const isTomorrow=d.tanggal===tomorrow;
+const isToday = d.tanggal===today;
+const isTomorrow = d.tanggal===tomorrow;
 
 let status='';
 let badge='';
 
 
-
-/* ===== ROOM STATUS CARD ===== */
+/* =========================
+   STATUS ROOM CARD
+========================= */
 
 if(isTomorrow){
 
@@ -510,10 +509,9 @@ class:'available'
 
 }
 
-
 if(isToday){
 
-if(now<start){
+if(now < start){
 
 status='Menunggu Jadwal';
 badge='waiting';
@@ -558,6 +556,61 @@ class:'available'
 }
 
 
+/* =========================
+   TABLE FILTER
+   Meeting yg sudah lewat
+   langsung hilang
+========================= */
+
+if(isToday && now > end){
+return;
+}
+
+
+/* HARI INI tampil */
+if(isToday){
+
+visitorHTML += `
+<div class="table-row">
+<div>${formatTanggalLengkap(d.tanggal)}</div>
+<div>${d.mulai} - ${d.selesai}</div>
+<div>${d.ruangan}</div>
+<div>${d.agenda}</div>
+<div>
+${
+status==='Menunggu Jadwal'
+? `<div class="room-text-status">${status}</div>`
+: `<span class="badge ${badge}">${status}</span>`
+}
+</div>
+</div>
+`;
+
+}
+
+
+/* Jadwal besok / future */
+else if(start > now){
+
+visitorHTML += `
+<div class="table-row">
+<div>${formatTanggalLengkap(d.tanggal)}</div>
+<div>${d.mulai} - ${d.selesai}</div>
+<div>${d.ruangan}</div>
+<div>${d.agenda}</div>
+<div>
+<div class="room-text-status">
+Scheduled
+</div>
+</div>
+</div>
+`;
+
+}
+
+});
+
+
 
 /* ===== TABLE DISPLAY ===== */
 
@@ -565,11 +618,7 @@ class:'available'
 if(isToday && now>end){
   // jangan tampilkan di tabel
 } 
-else if(isToday){
 
-
-/* booking hari ini tampil */
-if(isToday){
 
 visitorHTML+=`
 <div class="table-row">
