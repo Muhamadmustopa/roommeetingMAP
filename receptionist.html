@@ -35,6 +35,11 @@ body{
   box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
+/* KHUSUS CARD ROOM BIAR LEBIH TINGGI */
+.card:has(#rooms){
+  min-height: 420px;
+}
+
 /* HEADER */
 .header{
   display:grid;
@@ -131,7 +136,7 @@ body{
   border-right: 1px solid rgba(255,255,255,0.12);
   border-bottom: 1px solid rgba(255,255,255,0.12);
   display: flex;
-  align-items: center; /* rata tengah vertikal */
+  align-items: center;
 }
 
 .table-head div:first-child,
@@ -139,14 +144,11 @@ body{
   border-left: 1px solid rgba(255,255,255,0.12);
 }
 
-.table-row {
-  align-items: stretch;
-}
-
 .table-head div:last-child,
 .table-row div:last-child {
   justify-content: center;
 }
+
 .badge{
   display:inline-block;
   padding:4px 8px;
@@ -191,22 +193,55 @@ body{
   opacity:.8;
 }
 
+/* ROOMS */
 #rooms{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  min-height: 300px;
 }
 
 .room-item{
-  background: rgba(255,255,255,0.05);
   border-radius: 18px;
   padding: 18px;
-  min-height: 160px;
-  border: 1px solid rgba(255,255,255,0.06);
-  transition: 0.3s;
+  min-height: 180px;
   position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  transition: 0.3s;
 }
 
+/* overlay gelap */
+.room-item::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+  z-index:0;
+}
+
+/* isi di atas overlay */
+.room-item *{
+  position:relative;
+  z-index:1;
+}
+
+/* background tiap room */
+.room-gatot{
+  background-image: url('gatotkaca.jpg');
+}
+
+.room-srikandi{
+  background-image: url('srikandi.jpg');
+}
+
+.room-arjuna{
+  background-image: url('arjuna.jpg');
+}
+
+/* efek active */
 .room-item.live-room{
   border: 2px solid #22c55e;
   box-shadow:
@@ -214,32 +249,40 @@ body{
     0 0 40px rgba(34,197,94,0.12);
 }
 
+/* titik live */
 .room-item.live-room::before{
-  content: '.';
+  content: 'LIVE';
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   background: #22c55e;
-  color: white;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border-radius: 999px;
+  z-index:2;
 }
-  
 
+/* hover efek */
+.room-item:hover{
+  transform: scale(1.03);
+}
+
+/* text */
 .room-name{
   font-size:18px;
   font-weight:700;
   margin-bottom:8px;
 }
-  
+
 .room-text-status{
   margin-top: 8px;
   font-size: 11px;
   font-weight: 600;
   opacity: 0.85;
 }
+
+/* FLOW */
 .flow{
   display:grid;
   grid-template-columns: repeat(4,1fr);
@@ -257,6 +300,7 @@ body{
   margin-bottom:8px;
 }
 
+/* RESPONSIVE */
 @media(max-width:1100px){
   .header,
   .main{
@@ -394,11 +438,42 @@ const API_URL='https://script.google.com/macros/s/AKfycby_Ib2KyhAnT9QuX4LIJ_JvK5
 const WEATHER_KEY='baaa1208cccebeb9c476ac63d4d8190a';
 let DATA=[];
 
+/* =========================
+   HELPER
+========================= */
+
 function parseDateTime(t,j){
 const [y,m,d]=t.split('-');
 const [h,i]=j.split(':');
 return new Date(y,m-1,d,h,i);
 }
+
+function getRoomClass(room){
+const r = room.toLowerCase();
+
+if(r.includes('gatot')) return 'room-gatot';
+if(r.includes('srikandi')) return 'room-srikandi';
+if(r.includes('arjuna')) return 'room-arjuna';
+
+return ''; // fallback kalau room baru
+}
+
+function formatTanggalLengkap(tanggal){
+const date=new Date(tanggal);
+
+const hari=date.toLocaleDateString('id-ID',{ weekday:'long' });
+const tgl=date.toLocaleDateString('id-ID',{
+day:'2-digit',
+month:'2-digit',
+year:'numeric'
+});
+
+return `${hari}, ${tgl}`;
+}
+
+/* =========================
+   DATE TIME
+========================= */
 
 function updateDateTime(){
 const now=new Date();
@@ -416,6 +491,9 @@ document.getElementById('datetime').innerHTML=
 `${date} | ${time}`;
 }
 
+/* =========================
+   LOAD DATA
+========================= */
 
 async function loadData(){
 try{
@@ -427,7 +505,9 @@ console.error(err);
 }
 }
 
-
+/* =========================
+   RENDER
+========================= */
 
 function renderData(){
 
@@ -442,7 +522,8 @@ let roomMap={};
 
 const now=new Date();
 
-const today=
+/* tanggal */
+const today =
 now.getFullYear()+'-'+
 String(now.getMonth()+1).padStart(2,'0')+'-'+
 String(now.getDate()).padStart(2,'0');
@@ -455,32 +536,13 @@ tomorrowDate.getFullYear()+'-'+
 String(tomorrowDate.getMonth()+1).padStart(2,'0')+'-'+
 String(tomorrowDate.getDate()).padStart(2,'0');
 
-
-function formatTanggalLengkap(tanggal){
-
-const date=new Date(tanggal);
-
-const hari=date.toLocaleDateString('id-ID',{
-weekday:'long'
-});
-
-const tgl=date.toLocaleDateString('id-ID',{
-day:'2-digit',
-month:'2-digit',
-year:'numeric'
-});
-
-return `${hari}, ${tgl}`;
-}
-
-
-
-/* sorting waktu */
+/* sorting */
 DATA.sort((a,b)=>{
 return parseDateTime(a.tanggal,a.mulai)-
 parseDateTime(b.tanggal,b.mulai);
 });
 
+/* LOOP DATA */
 DATA.forEach(d=>{
 
 const start=parseDateTime(d.tanggal,d.mulai);
@@ -492,13 +554,11 @@ const isTomorrow = d.tanggal===tomorrow;
 let status='';
 let badge='';
 
-
 /* =========================
-   STATUS ROOM CARD
+   STATUS ROOM
 ========================= */
 
 if(isTomorrow){
-
 if(!roomMap[d.ruangan]){
 roomMap[d.ruangan]={
 agenda:'Booked Tomorrow',
@@ -506,7 +566,6 @@ status:'AVAILABLE',
 class:'available'
 };
 }
-
 }
 
 if(isToday){
@@ -526,7 +585,6 @@ class:'waiting'
 }
 
 }
-
 else if(now>=start && now<=end){
 
 status='Sedang Berlangsung';
@@ -540,7 +598,6 @@ class:'inmeeting'
 };
 
 }
-
 else{
 
 if(!roomMap[d.ruangan]){
@@ -552,22 +609,14 @@ class:'available'
 }
 
 }
-
 }
 
-
-/* =========================
-   TABLE FILTER
-   Meeting yg sudah lewat
-   langsung hilang
-========================= */
-
+/* FILTER yg sudah lewat */
 if(isToday && now > end){
 return;
 }
 
-
-/* HARI INI tampil */
+/* TABLE TODAY */
 if(isToday){
 
 visitorHTML += `
@@ -588,8 +637,7 @@ status==='Menunggu Jadwal'
 
 }
 
-
-/* Jadwal besok / future */
+/* FUTURE */
 else if(start > now){
 
 visitorHTML += `
@@ -599,9 +647,7 @@ visitorHTML += `
 <div>${d.ruangan}</div>
 <div>${d.agenda}</div>
 <div>
-<div class="room-text-status">
-Scheduled
-</div>
+<div class="room-text-status">Scheduled</div>
 </div>
 </div>
 `;
@@ -610,9 +656,9 @@ Scheduled
 
 });
 
-
-
-/* ===== ROOM CARDS ===== */
+/* =========================
+   ROOM CARDS
+========================= */
 
 ['Gatot Kaca','Srikandi','Arjuna'].forEach(room=>{
 
@@ -622,13 +668,11 @@ status:'AVAILABLE',
 class:'available'
 };
 
-const liveClass=
-item.class==='inmeeting'
-? 'live-room'
-: '';
+const liveClass = item.class==='inmeeting' ? 'live-room' : '';
+const bgClass = getRoomClass(room);
 
 roomHTML+=`
-<div class="room-item ${liveClass}">
+<div class="room-item ${liveClass} ${bgClass}">
 <div class="room-name">${room}</div>
 
 <span class="badge ${item.class}">
@@ -638,14 +682,12 @@ ${item.status}
 <div style="margin-top:8px">
 ${item.agenda}
 </div>
-
 </div>
 `;
 
 });
 
-
-
+/* inject */
 document.getElementById('visitorRows').innerHTML=visitorHTML;
 document.getElementById('rooms').innerHTML=roomHTML;
 
@@ -653,14 +695,14 @@ document.getElementById('totalVisitors').innerText=total;
 document.getElementById('inMeetingCount').innerText=inMeeting;
 document.getElementById('waitingCount').innerText=waiting;
 
-} /* end renderData */
+}
 
-
+/* =========================
+   WEATHER
+========================= */
 
 async function loadWeather(){
-
 try{
-
 const res=await fetch(
 `https://api.openweathermap.org/data/2.5/weather?q=Jakarta,id&appid=${WEATHER_KEY}&units=metric&lang=id`
 );
@@ -668,7 +710,6 @@ const res=await fetch(
 const data=await res.json();
 
 if(data.main){
-
 document.getElementById("weatherTemp").innerHTML=
 Math.round(data.main.temp)+"°C";
 
@@ -677,18 +718,16 @@ data.name;
 
 document.getElementById("weatherDesc").innerHTML=
 data.weather[0].description;
-
 }
 
 }catch(e){
 console.error("Weather error",e);
 }
-
 }
 
-
-
-/* AUTO REFRESH */
+/* =========================
+   AUTO REFRESH
+========================= */
 
 setInterval(updateDateTime,1000);
 setInterval(loadData,60000);
