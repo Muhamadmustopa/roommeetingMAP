@@ -122,31 +122,40 @@ body{
 .table-row {
   display: grid;
   grid-template-columns: 22% 18% 15% 28% 17%;
-  gap: 0;
-  align-items: center;
 }
 
-.table-head {
-  border-top: 1px solid rgba(255,255,255,0.18);
-}
-
+/* reset border semua dulu */
 .table-head div,
 .table-row div {
-  padding: 8px;
-  border-right: 1px solid rgba(255,255,255,0.12);
-  border-bottom: 1px solid rgba(255,255,255,0.12);
+  padding: 10px;
   display: flex;
   align-items: center;
+  border: none;
 }
 
+/* garis horizontal */
+.table-head{
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.table-row{
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+/* garis vertikal (rapi 1 sisi aja) */
+.table-head div:not(:last-child),
+.table-row div:not(:last-child){
+  border-right: 1px solid rgba(255,255,255,0.12);
+}
+
+/* kiri paling luar */
 .table-head div:first-child,
-.table-row div:first-child {
+.table-row div:first-child{
   border-left: 1px solid rgba(255,255,255,0.12);
 }
 
-.table-head div:last-child,
-.table-row div:last-child {
-  justify-content: center;
+.table-row:hover{
+  background: rgba(255,255,255,0.05);
 }
 
 .badge{
@@ -370,7 +379,7 @@ body{
     <div class="right-stack">
 
       <div class="card">
-        <div class="section-title">ON BOARD VISITOR'S</div>
+        <div class="section-title">ON BOARD MEETING</div>
 
         <div class="summary-grid">
           <div class="summary-box">
