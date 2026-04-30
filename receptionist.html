@@ -587,7 +587,7 @@ class:'waiting'
 }
 else if(now>=start && now<=end){
 
-status='Sedang Berlangsung';
+status='On going';
 badge='inmeeting';
 inMeeting++;
 
@@ -627,7 +627,7 @@ visitorHTML += `
 <div>${d.agenda}</div>
 <div>
 ${
-status==='Menunggu Jadwal'
+status==='Upcoming'
 ? `<div class="room-text-status">${status}</div>`
 : `<span class="badge ${badge}">${status}</span>`
 }
