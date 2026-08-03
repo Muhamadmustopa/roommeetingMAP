@@ -104,6 +104,45 @@ body{
   font-weight:800;
 }
 
+/* ANNOUNCEMENT */
+.announcement-box{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.announcement-content{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.announcement-text{
+    flex:1;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.announcement-qr{
+    flex-shrink:0;
+}
+
+.announcement-qr img{
+    width:60px;
+    height:60px;
+    object-fit:contain;
+    background:#fff;
+    padding:4px;
+    border-radius:8px;
+}
+
+.scan-text{
+    margin-top:4px;
+    text-align:center;
+    font-size:10px;
+    opacity:.8;
+}
 /* MAIN GRID */
 .main{
   display:grid;
@@ -333,45 +372,56 @@ body{
 
 <div class="dashboard">
 
-  <!-- HEADER -->
-  <div class="header">
+<!-- HEADER -->
+<div class="header">
 
-    <div class="card company-box">
-      <img src="map-log.png" class="logo">
-      <div>
-        <div class="company-title">PT MITRA ASA PRTAMA</div>
-        <div class="company-sub">HEAD OFFICE</div>
+  <!-- COMPANY -->
+  <div class="card company-box">
+    <img src="map-log.png" class="logo">
+    <div>
+      <div class="company-title">PT MITRA ASA PRATAMA</div>
+      <div class="company-sub">HEAD OFFICE</div>
+    </div>
+  </div>
+
+  <!-- WELCOME -->
+  <div class="card welcome-box">
+    <div class="welcome-title">DASHBOARD RUANG MEETING</div>
+    <div class="datetime" id="datetime">Loading...</div>
+  </div>
+
+  <!-- WEATHER -->
+  <div class="card weather-box">
+    <div class="small-title">🌤 CUACA HARI INI</div>
+    <div class="weather-temp" id="weatherTemp">--°C</div>
+    <div id="weatherCity">Jakarta</div>
+    <div id="weatherDesc">Loading...</div>
+  </div>
+
+  <!-- ANNOUNCEMENT -->
+  <div class="card announcement-box">
+
+    <div class="small-title">
+      🔔 ANNOUNCEMENT
+    </div>
+
+    <div class="announcement-content">
+
+      <div class="announcement-text">
+        <strong>Voice of Employee</strong><br>
+        Scan QR untuk memberikan masukan mengenai
+        PT Mitra Asa Pratama
       </div>
-    </div>
 
-    <div class="card welcome-box">
-      <div class="welcome-title">DASHBOARD RUANG MEETING</div>
-      <div class="datetime" id="datetime">Loading...</div>
-    </div>
+      <div class="announcement-qr">
+        <img src="voe.png" alt="QR Code">
+      </div>
 
-    <div class="card weather-box">
-  <div class="small-title">CUACA HARI INI</div>
-  <div class="weather-temp" id="weatherTemp">--°C</div>
-  <div id="weatherCity">Jakarta</div>
-  <div id="weatherDesc">Loading...</div>
-  </div>
-  <div class="small-title">
-    🔔 ANNOUNCEMENT
-  </div>
-
-  <div class="announcement-content">
-
-    <div class="announcement-text">
-      <strong>Scan QR untuk Memberi masukan mengenai Mitra Asa Pratama</strong><br>
-    </div>
-
-    <div class="announcement-qr">
-      <img src="voe.png" alt="QR Code">
     </div>
 
   </div>
- 
-  </div>
+
+</div>
     <!-- LEFT -->
     <div class="card">
       <div class="section-title">JADWAL PEMAKAIAN RUANG MEETING</div>
