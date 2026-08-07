@@ -40,8 +40,9 @@ body{
   min-height: 420px;
 }
 .meeting-card{
-    height:calc(100vh - 170px);
-    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    height:calc(100vh - 200px);
 }
 
 /* HEADER */
@@ -407,86 +408,116 @@ body{
   </div>
 
 </div>
-    <!-- LEFT -->
-   <div class="card meeting-card">
-      <div class="section-title">JADWAL PEMAKAIAN RUANG MEETING</div>
+  </div> <!-- announcement-content -->
+</div> <!-- announcement-box -->
 
-      <div class="table-head">
-        <div>HARI,TANGGAL</div> 
-        <div>WAKTU</div> 
-        <div>RUANGAN</div>
-        <div>AGENDA</div>
-        <div>STATUS</div>
-      </div>
+</div> <!-- HEADER -->
 
-      <div id="visitorRows"></div>
+<!-- ================= MAIN ================= -->
+<div class="main">
+
+    <!-- ================= LEFT ================= -->
+    <div class="card meeting-card">
+
+        <div class="section-title">
+            JADWAL PEMAKAIAN RUANG MEETING
+        </div>
+
+        <div class="table-head">
+            <div>HARI, TANGGAL</div>
+            <div>WAKTU</div>
+            <div>RUANGAN</div>
+            <div>AGENDA</div>
+            <div>STATUS</div>
+        </div>
+
+        <div id="visitorRows"></div>
+
     </div>
 
-    <!-- RIGHT -->
+    <!-- ================= RIGHT ================= -->
     <div class="right-stack">
 
-      <div class="card">
-        <div class="section-title">ON BOARD MEETING</div>
+        <!-- ON BOARD -->
+        <div class="card summary-card">
 
-        <div class="summary-grid">
-          <div class="summary-box">
-            <div class="summary-number" id="totalVisitors">0</div>
-            <div class="summary-label">BOOKED</div>
-          </div>
+            <div class="section-title">
+                ON BOARD MEETING
+            </div>
 
-          <div class="summary-box">
-            <div class="summary-number" id="inMeetingCount">0</div>
-            <div class="summary-label">IN MEETING</div>
-          </div>
+            <div class="summary-grid">
 
-          <div class="summary-box">
-            <div class="summary-number" id="waitingCount">0</div>
-            <div class="summary-label">WAITING</div>
-          </div>
+                <div class="summary-box">
+                    <div class="summary-number" id="totalVisitors">0</div>
+                    <div class="summary-label">BOOKED</div>
+                </div>
 
-          <div class="summary-box">
-            <div class="summary-number">0</div>
-            <div class="summary-label">OUTFLOW</div>
-          </div>
+                <div class="summary-box">
+                    <div class="summary-number" id="inMeetingCount">0</div>
+                    <div class="summary-label">IN MEETING</div>
+                </div>
+
+                <div class="summary-box">
+                    <div class="summary-number" id="waitingCount">0</div>
+                    <div class="summary-label">WAITING</div>
+                </div>
+
+                <div class="summary-box">
+                    <div class="summary-number">0</div>
+                    <div class="summary-label">OUTFLOW</div>
+                </div>
+
+            </div>
+
         </div>
-      </div>
 
-      <div class="card">
-        <div class="section-title">TODAY'S MEETING ROOMS</div>
+        <!-- TODAY ROOM -->
+        <div class="card rooms-card">
 
-        <div id="rooms"></div>
-      </div>
+            <div class="section-title">
+                TODAY'S MEETING ROOMS
+            </div>
 
-      <div class="card">
-        <div class="section-title">FLOW</div>
+            <div id="rooms"></div>
 
-        <div class="flow">
-          <div class="flow-step">
-            <h4>1.APPLY BOOKING</h4>
-            <p>Pengajuan kepada PIC Receptionist</p>
-          </div>
-
-          <div class="flow-step">
-            <h4>2. WAITING</h4>
-            <p>Menunggu Jadwal Pemakaian</p>
-          </div>
-
-          <div class="flow-step">
-            <h4>3. ON MEETING</h4>
-            <p>Berlangsung</p>
-          </div>
-
-          <div class="flow-step">
-            <h4>4. DONE</h4>
-            <p></p>
-          </div>
         </div>
-      </div>
+
+        <!-- FLOW -->
+        <div class="card flow-card">
+
+            <div class="section-title">
+                FLOW
+            </div>
+
+            <div class="flow">
+
+                <div class="flow-step">
+                    <h4>1. APPLY BOOKING</h4>
+                    <p>Pengajuan kepada PIC Receptionist</p>
+                </div>
+
+                <div class="flow-step">
+                    <h4>2. WAITING</h4>
+                    <p>Menunggu Jadwal Pemakaian</p>
+                </div>
+
+                <div class="flow-step">
+                    <h4>3. ON MEETING</h4>
+                    <p>Meeting Sedang Berlangsung</p>
+                </div>
+
+                <div class="flow-step">
+                    <h4>4. DONE</h4>
+                    <p>Meeting Selesai</p>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
-  </div>
-
+</div>
 </div>
 
 <script>
